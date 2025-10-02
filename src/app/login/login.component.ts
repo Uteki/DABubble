@@ -64,4 +64,8 @@ export class LoginComponent implements OnInit {
     // Hier würdest du als Gast einloggen
     // this.router.navigate(['/dashboard']);
   }
+
+  goToRegister(): void {
+  this.router.navigate(['/register']);
+}
 }
