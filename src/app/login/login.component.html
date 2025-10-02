@@ -1,1 +1,116 @@
-<p>login works!</p>
+<div class="login-container" [class.intro-active]="!showLogin">
+  <!-- Logo -->
+  <div class="logo-wrapper" [class.logo-moved]="showLogin">
+    <img
+      *ngIf="!showLogin"
+      src="./../../assets/icons/logo.png"
+      alt="Logo"
+      class="logo logo-intro"
+    />
+    <img
+      *ngIf="showLogin"
+      src="./../../assets/icons/logo-DABubble.png"
+      alt="DABubble"
+      class="logo logo-small"
+    />
+    <span *ngIf="showLogin" class="logo-text"></span>
+  </div>
+
+    <div class="signup-hint" [class.show]="showLogin">
+    <span class="signup-text">Neu bei DABubble?</span>
+    <a href="#" class="signup-link">Konto erstellen</a>
+  </div>
+
+  <!-- Login Form -->
+  <div class="login-form-wrapper" [class.show]="showLogin">
+    <div class="login-card">
+      <h2>Anmeldung</h2>
+      <p class="subtitle">
+        Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit
+        verwendest.
+      </p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M2 6L10 11L18 6" stroke="#686868" stroke-width="1.5" />
+                <rect
+                  x="2"
+                  y="5"
+                  width="16"
+                  height="11"
+                  rx="2"
+                  stroke="#686868"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+              </svg>
+            </span>
+            <input
+              type="email"
+              formControlName="email"
+              placeholder="beispielname@email.com"
+              class="form-input"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <rect
+                  x="5"
+                  y="9"
+                  width="10"
+                  height="8"
+                  rx="1"
+                  stroke="#686868"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <path
+                  d="M7 9V6C7 4.34315 8.34315 3 10 3C11.6569 3 13 4.34315 13 6V9"
+                  stroke="#686868"
+                  stroke-width="1.5"
+                />
+              </svg>
+            </span>
+            <input
+              type="password"
+              formControlName="password"
+              placeholder="Passwort"
+              class="form-input"
+            />
+          </div>
+        </div>
+
+        <a href="#" class="forgot-password">Passwort vergessen?</a>
+
+        <div class="divider">
+          <span>ODER</span>
+        </div>
+
+        <button type="button" class="google-login">
+          <img
+            src="./../../assets/icons/google.png"
+            alt="Google"
+            class="google-icon"
+          />
+          Anmelden mit Google
+        </button>
+
+        <div class="button-group">
+          <button type="submit" class="btn-primary">Anmelden</button>
+          <button type="button" class="btn-secondary">Gäste-Login</button>
+        </div>
+      </form>
+    </div>
+  </div>
+    <div class="footer-links" [class.show]="showLogin">
+    <a href="#" class="footer-link">Impressum</a>
+    <a href="#" class="footer-link">Datenschutz</a>
+  </div>
+</div>
