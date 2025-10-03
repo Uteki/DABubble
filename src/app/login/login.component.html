@@ -16,7 +16,7 @@
     <span *ngIf="showLogin" class="logo-text"></span>
   </div>
 
-    <div class="signup-hint" [class.show]="showLogin">
+  <div class="signup-hint" [class.show]="showLogin">
     <span class="signup-text">Neu bei DABubble?</span>
     <a (click)="goToRegister()" class="signup-link">Konto erstellen</a>
   </div>
@@ -29,6 +29,11 @@
         Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit
         verwendest.
       </p>
+
+      <!-- Fehlermeldung -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
@@ -53,7 +58,25 @@
               formControlName="email"
               placeholder="beispielname@email.com"
               class="form-input"
+              [class.error]="
+                loginForm.get('email')?.touched &&
+                loginForm.get('email')?.invalid
+              "
             />
+            <div
+              *ngIf="
+                loginForm.get('email')?.touched &&
+                loginForm.get('email')?.invalid
+              "
+              class="error-text"
+            >
+              <span *ngIf="loginForm.get('email')?.errors?.['required']">
+                E-Mail ist erforderlich.
+              </span>
+              <span *ngIf="loginForm.get('email')?.errors?.['email']">
+                Ungültige E-Mail-Adresse.
+              </span>
+            </div>
           </div>
         </div>
 
@@ -83,7 +106,25 @@
               formControlName="password"
               placeholder="Passwort"
               class="form-input"
+              [class.error]="
+                loginForm.get('password')?.touched &&
+                loginForm.get('password')?.invalid
+              "
             />
+            <div
+              *ngIf="
+                loginForm.get('password')?.touched &&
+                loginForm.get('password')?.invalid
+              "
+              class="error-text"
+            >
+              <span *ngIf="loginForm.get('password')?.errors?.['required']">
+                Passwort ist erforderlich.
+              </span>
+              <span *ngIf="loginForm.get('password')?.errors?.['minlength']">
+                Passwort muss mindestens 6 Zeichen lang sein.
+              </span>
+            </div>
           </div>
         </div>
 
@@ -93,7 +134,7 @@
           <span>ODER</span>
         </div>
 
-        <button type="button" class="google-login">
+        <button type="button" (click)="loginWithGoogle()" class="google-login">
           <img
             src="./../../assets/icons/google.png"
             alt="Google"
@@ -104,12 +145,15 @@
 
         <div class="button-group">
           <button type="submit" class="btn-primary">Anmelden</button>
-          <button type="button" class="btn-secondary">Gäste-Login</button>
+          <button type="button" (click)="guestLogin()" class="btn-secondary">
+            Gäste-Login
+          </button>
         </div>
       </form>
     </div>
   </div>
-    <div class="footer-links" [class.show]="showLogin">
+
+  <div class="footer-links" [class.show]="showLogin">
     <a href="#" class="footer-link">Impressum</a>
     <a href="#" class="footer-link">Datenschutz</a>
   </div>

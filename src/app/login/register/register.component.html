@@ -1,7 +1,11 @@
 <div class="register-container">
-  <!-- Logo (bleibt bestehen) -->
+  <!-- Logo -->
   <div class="logo-wrapper logo-moved">
-    <img src="./../../../assets/icons/logo-DABubble.png" alt="DABubble" class="logo" />
+    <img
+      src="./../../../assets/icons/logo-DABubble.png"
+      alt="DABubble"
+      class="logo"
+    />
   </div>
 
   <!-- Register Form -->
@@ -42,6 +46,11 @@
         DABubble-Konto.
       </p>
 
+      <!-- Fehlermeldung -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <div class="input-wrapper">
@@ -67,7 +76,25 @@
               formControlName="fullName"
               placeholder="Name und Nachname"
               class="form-input"
+              [class.error]="
+                registerForm.get('fullName')?.touched &&
+                registerForm.get('fullName')?.invalid
+              "
             />
+            <div
+              *ngIf="
+                registerForm.get('fullName')?.touched &&
+                registerForm.get('fullName')?.invalid
+              "
+              class="error-text"
+            >
+              <span *ngIf="registerForm.get('fullName')?.errors?.['required']">
+                Name ist erforderlich.
+              </span>
+              <span *ngIf="registerForm.get('fullName')?.errors?.['minlength']">
+                Name muss mindestens 3 Zeichen lang sein.
+              </span>
+            </div>
           </div>
         </div>
 
@@ -93,7 +120,25 @@
               formControlName="email"
               placeholder="beispielname@email.com"
               class="form-input"
+              [class.error]="
+                registerForm.get('email')?.touched &&
+                registerForm.get('email')?.invalid
+              "
             />
+            <div
+              *ngIf="
+                registerForm.get('email')?.touched &&
+                registerForm.get('email')?.invalid
+              "
+              class="error-text"
+            >
+              <span *ngIf="registerForm.get('email')?.errors?.['required']">
+                E-Mail ist erforderlich.
+              </span>
+              <span *ngIf="registerForm.get('email')?.errors?.['email']">
+                Ungültige E-Mail-Adresse.
+              </span>
+            </div>
           </div>
         </div>
 
@@ -123,7 +168,25 @@
               formControlName="password"
               placeholder="Passwort"
               class="form-input"
+              [class.error]="
+                registerForm.get('password')?.touched &&
+                registerForm.get('password')?.invalid
+              "
             />
+            <div
+              *ngIf="
+                registerForm.get('password')?.touched &&
+                registerForm.get('password')?.invalid
+              "
+              class="error-text"
+            >
+              <span *ngIf="registerForm.get('password')?.errors?.['required']">
+                Passwort ist erforderlich.
+              </span>
+              <span *ngIf="registerForm.get('password')?.errors?.['minlength']">
+                Passwort muss mindestens 6 Zeichen lang sein.
+              </span>
+            </div>
           </div>
         </div>
 
@@ -133,11 +196,24 @@
             id="privacy-check"
             formControlName="privacyAccepted"
             class="checkbox"
+            [class.error]="
+              registerForm.get('privacyAccepted')?.touched &&
+              registerForm.get('privacyAccepted')?.invalid
+            "
           />
           <label for="privacy-check">
             Ich stimme der
             <a href="#" class="privacy-link">Datenschutzerklärung</a> zu.
           </label>
+          <div
+            *ngIf="
+              registerForm.get('privacyAccepted')?.touched &&
+              registerForm.get('privacyAccepted')?.invalid
+            "
+            class="error-text"
+          >
+            Du musst der Datenschutzerklärung zustimmen.
+          </div>
         </div>
 
         <button
@@ -151,7 +227,7 @@
     </div>
   </div>
 
-  <!-- Footer Links (bleiben bestehen) -->
+  <!-- Footer Links -->
   <div class="footer-links show">
     <a href="#" class="footer-link">Impressum</a>
     <a href="#" class="footer-link">Datenschutz</a>

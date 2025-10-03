@@ -7,6 +7,11 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import {
+  Auth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from '@angular/fire/auth';
 
 @Component({
   selector: 'app-register',
@@ -17,8 +22,13 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
+  errorMessage: string | null = null;
 
-  constructor(private formBuilder: FormBuilder, private router: Router) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private auth: Auth
+  ) {
     this.registerForm = this.formBuilder.group({
       fullName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
@@ -27,25 +37,46 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    // Optional: Animation beim Laden
-  }
+  ngOnInit(): void {}
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.registerForm.valid) {
-      const formData = this.registerForm.value;
-      console.log('Register attempt:', formData);
-
-      // Hier würdest du normalerweise einen Auth-Service aufrufen
-      // this.authService.register(formData)
-      //   .subscribe(
-      //     success => this.router.navigate(['/verify-email']),
-      //     error => console.error('Registration failed:', error)
-      //   );
+      const { fullName, email, password } = this.registerForm.value;
+      try {
+        const userCredential = await createUserWithEmailAndPassword(
+          this.auth,
+          email,
+          password
+        );
+        await updateProfile(userCredential.user, { displayName: fullName });
+        console.log('Registriert:', userCredential.user);
+        this.errorMessage = null;
+        this.router.navigate(['/avatar-selection'], {
+          state: { userName: fullName },
+        });
+      } catch (error: any) {
+        this.errorMessage = this.getErrorMessage(error.code);
+        console.error('Fehler bei der Registrierung:', error);
+      }
+    } else {
+      Object.keys(this.registerForm.controls).forEach((key) => {
+        this.registerForm.get(key)?.markAsTouched();
+      });
     }
   }
 
   goBack(): void {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/login'], { state: { skipAnimation: true } });
+  }
+
+  private getErrorMessage(errorCode: string): string {
+    switch (errorCode) {
+      case 'auth/email-already-in-use':
+        return 'Diese E-Mail-Adresse ist bereits registriert.';
+      case 'auth/invalid-email':
+        return 'Ungültige E-Mail-Adresse.';
+      default:
+        return 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.';
+    }
   }
 }

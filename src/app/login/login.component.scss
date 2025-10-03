@@ -101,14 +101,15 @@
   align-items: center;
   gap: 30px;
   transition: all 0.3s ease;
+  border: 1px solid transparent;
 
   &:hover:not(:focus-within) {
-    border: 1px solid #000000;
+    border-color: #000000;
   }
 
   &:focus-within {
+    border-color: transparent;
     box-shadow: 0 0 0 2px #444df2;
-    border: 1px solid transparent;
   }
 
   .input-icon {
@@ -129,6 +130,10 @@
 
     &::placeholder {
       color: #686868;
+    }
+
+    &.error {
+      border-color: #ff4d4f;
     }
   }
 }
@@ -253,7 +258,22 @@
   }
 }
 
-// Animations
+.error-message {
+  color: #ff4d4f;
+  font-family: "Nunito", sans-serif;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.error-text {
+  color: #ff4d4f;
+  font-family: "Nunito", sans-serif;
+  font-size: 12px;
+  margin-top: 5px;
+  margin-left: 50px;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -307,7 +327,7 @@
     font-weight: 400;
     font-style: normal;
     font-size: 18px;
-    line-height: 1.2; // 120%
+    line-height: 1.2;
     letter-spacing: 0;
     color: #797ef3;
     text-decoration: none;
@@ -368,7 +388,6 @@
   }
 }
 
-// Responsive
 @media (max-width: 600px) {
   .login-card {
     padding: 30px 20px;

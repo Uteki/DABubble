@@ -103,14 +103,15 @@
   align-items: center;
   gap: 30px;
   transition: all 0.3s ease;
+  border: 1px solid transparent;
 
   &:hover:not(:focus-within) {
-    border: 1px solid #000000;
+    border-color: #000000;
   }
 
   &:focus-within {
+    border-color: transparent;
     box-shadow: 0 0 0 2px #444df2;
-    border: 1px solid transparent;
   }
 
   .input-icon {
@@ -132,6 +133,10 @@
     &::placeholder {
       color: #686868;
     }
+
+    &.error {
+      border-color: #ff4d4f;
+    }
   }
 }
 
@@ -147,6 +152,10 @@
     margin-top: 2px;
     cursor: pointer;
     accent-color: #444df2;
+
+    &.error {
+      outline: 1px solid #ff4d4f;
+    }
   }
 
   label {
@@ -207,6 +216,22 @@
   }
 }
 
+.error-message {
+  color: #ff4d4f;
+  font-family: "Nunito", sans-serif;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.error-text {
+  color: #ff4d4f;
+  font-family: "Nunito", sans-serif;
+  font-size: 12px;
+  margin-top: 5px;
+  margin-left: 50px;
+}
+
 .footer-links {
   position: absolute;
   bottom: 40px;
@@ -253,7 +278,6 @@
   }
 }
 
-// Responsive
 @media (max-width: 600px) {
   .register-card {
     padding: 30px 20px;
