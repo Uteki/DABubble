@@ -1,5 +1,4 @@
 <div class="register-container">
-  <!-- Logo -->
   <div class="logo-wrapper logo-moved">
     <img
       src="./../../../assets/icons/logo-DABubble.png"
@@ -7,11 +6,8 @@
       class="logo"
     />
   </div>
-
-  <!-- Register Form -->
   <div class="register-form-wrapper show">
     <div class="register-card">
-      <!-- Zurück Button -->
       <button class="back-button" (click)="goBack()">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -45,8 +41,6 @@
         Mit deinem Namen und deiner E-Mail-Adresse hast du dein neues
         DABubble-Konto.
       </p>
-
-      <!-- Fehlermeldung -->
       <div *ngIf="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
@@ -226,8 +220,6 @@
       </form>
     </div>
   </div>
-
-  <!-- Footer Links -->
   <div class="footer-links show">
     <a href="#" class="footer-link">Impressum</a>
     <a href="#" class="footer-link">Datenschutz</a>
