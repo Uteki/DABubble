@@ -1,8 +1,8 @@
-@import './../../../assets/styles/_colors.scss';
+@import "./../../../assets/styles/_colors.scss";
 
 .header-section {
   position: relative;
-  padding: 10px 40px;
+  padding: 10px 15px;
   width: 100%;
   height: 150px;
   display: flex;
@@ -32,44 +32,332 @@
     max-width: 700px;
     border: none;
     border-radius: 42px;
-   &::placeholder {
-    font: 400;
-     border: none;
-    color: var($text-gray);
-   }
-   &:focus {
-    outline: none;
-   }
+    font-family: "Nunito";
+    &::placeholder {
+      font: 400;
+      border: none;
+      color: var($text-gray);
+    }
+    &:focus {
+      outline: none;
+    }
   }
-  >img {
+  > img {
     width: 35px;
   }
 }
 
 .profile-wrapper {
- display: flex;
- align-items: center;
- gap: 10px;
- >div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  > div {
     position: relative;
-    >img:last-child {
+    > img:last-child {
       position: absolute;
       bottom: 10%;
       right: 0;
       width: 20px;
     }
- }
- >svg {
+  }
+  > svg {
     &:hover {
-    cursor: pointer;
+      cursor: pointer;
     }
- }
- &:hover {
-    >h2 {
+  }
+  &:hover {
+    > h2 {
+      color: $purple-font;
+    }
+    > svg path {
+      fill: $purple-font !important;
+    }
+  }
+}
+
+.dropdown-menu {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.416);
+
+  z-index: 100;
+}
+
+.dropdown-item {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  top: 130px;
+  right: 6%;
+  width: 212px;
+  height: 141px;
+  background-color: white;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 30px 0 30px 30px;
+  > button {
+    background-color: white;
+    border: none;
+    font-family: "Nunito";
+    font-weight: 600;
+    font-size: 18px;
+    width: 100%;
+    max-width: 180px;
+    height: 40px;
+    border-radius: 40px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  > button:last-child {
+    &:hover {
+      color: $purple-font;
+      background-color: $main-accent;
+    }
+  }
+}
+
+.no-display {
+  display: none;
+}
+
+.toggle-menu {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.623);
+
+  z-index: 200;
+}
+
+.toggle-item {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  top: 130px;
+  right: 6%;
+  width: 350px;
+  height: 400px;
+  background-color: white;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 30px 0 30px 30px;
+  padding: 30px 30px 30px 35px;
+  > div:nth-child(1) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+    > h2 {
+      font-family: "Nunito";
+      font-weight: 700;
+      font-size: 20px;
+    }
+    > button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      width: 30px;
+      height: 30px;
+      background-color: white;
+      font-family: "Nunito";
+      font-weight: 400;
+      font-size: 14px;
+      border: none;
+      font-size: 18px;
+      border-radius: 30px;
+      &:hover {
+        cursor: pointer;
         color: $purple-font;
+        background-color: $main-accent;
+        > svg path {
+          fill: $purple-font !important;
+        }
+      }
+
+      > svg {
+        width: 18px;
+        height: 18px;
+      }
     }
-    >svg path{
-        fill: $purple-font !important;
+  }
+
+  > img {
+    width: 130px;
+    border-radius: 50%;
+  }
+
+  > div:nth-child(5) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      > img {
+        width: 30px;
+      }
+      > h3 {
+        font-family: "Nunito";
+        font-weight: 700;
+        font-size: 18px;
+        text-align: center;
+      }
     }
- }
+
+    > a {
+      width: 200px;
+
+      font-family: "Nunito";
+      font-weight: 400;
+      font-size: 14px;
+      color: $email-blue;
+      text-decoration: none;
+      margin-block-start: 5px;
+    }
+  }
+}
+
+.edit-profile {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  margin-top: 15px;
+  > h3 {
+    font-family: "Nunito";
+    font-weight: 700;
+    font-style: bold;
+    font-size: 20px;
+  }
+
+  > h4 {
+    font-family: "Nunito";
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    color: $purple-font;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.profile-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+
+  margin-bottom: 10px;
+  > h3 {
+    font-family: "Nunito";
+    font-weight: 400;
+    font-style: regular;
+    font-size: 16px;
+    color: $online-green;
+  }
+}
+
+.profile-email {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+
+  margin-bottom: 10px;
+  > h3 {
+    font-family: "Nunito";
+    font-weight: 400;
+    font-style: regular;
+    font-size: 16px;
+    color: $online-green;
+  }
+}
+
+.edit-profile-mask {
+  width: 100%;
+  gap: 20px;
+  > div:nth-child(1) {
+    > div:nth-child(1) {
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      > img {
+        width: 20px;
+      }
+    }
+
+    > div:nth-child(2) {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      height: 52px;
+      margin-top: 5px;
+      > input {
+        height: 32px;
+        border-radius: 30px;
+        border: 1px solid $light-purple;
+        padding: 10px;
+      }
+    }
+  }
+
+  > div:nth-child(2) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    > button {
+      width: 100%;
+      max-width: 110px;
+      height: 35px;
+      border-radius: 40px;
+      font-family: "Nunito";
+      font-weight: 600;
+      font-size: 14px;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    > button:first-child {
+      background-color: white;
+      border: 1px solid $purple-font;
+      color: $purple-font;
+      &:hover {
+        color: white;
+        border: none;
+        background-color: $purple-button;
+        transform: scale(0.96);
+        transform-origin: left bottom;
+        transition: all 0.1s ease-in-out;
+      }
+    }
+    > button:last-child {
+      background-color: $purple-button;
+      border: none;
+      color: white;
+      &:hover {
+        background-color: $purple-message;
+            transform: scale(0.96);
+        transform-origin: left top;
+        transition: all 0.1s ease-in-out;
+      }
+    }
+  }
 }
