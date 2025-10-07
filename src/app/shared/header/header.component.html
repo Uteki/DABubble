@@ -95,6 +95,7 @@
   </div>
   <div class="search-wrapper">
     <input
+    (input)="onInputChange($any($event.target).value)"
       type="text"
       placeholder="Devspace durchsuchen"
       class="search-input"

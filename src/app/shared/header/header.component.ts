@@ -12,7 +12,17 @@ export class HeaderComponent {
 username:string = "Frederik Beck";
 useremail:string = " fred.back@email.com ";
 edit: boolean = false;
+private wasEmpty = true;
 
+onInputChange(value: string) {
+  if (this.wasEmpty && value.length > 0 && value === '@') {
+    
+    this.wasEmpty = false;
+  }
+  if (value.length === 0) {
+    this.wasEmpty = true;
+  }
+}
 
 toggleDropdown() {
   const dropdown = document.getElementById("dropdownMenu");
