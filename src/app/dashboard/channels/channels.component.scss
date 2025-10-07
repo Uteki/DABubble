@@ -1,0 +1,73 @@
+:host {
+  gap: 25px;
+  opacity: 1;
+  height: auto;
+  background: white;
+  padding: 32px 30px;
+  border-radius: 30px;
+
+  > header {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+
+    > div {
+      display: flex;
+      align-items: center;
+
+      > div {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        border-radius: 100%;
+        justify-content: center;
+        background-image: url("../../../assets/img/devspace.png");
+      }
+
+      > h2 {
+        padding-left: 15px;
+      }
+    }
+
+    > svg {
+      cursor: pointer;
+    }
+  }
+
+  > nav {
+    display: flex;
+    margin-top: 25px;
+    flex-direction: column;
+    position: relative;
+    margin-left: 50px;
+
+    > div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      > h3 {
+        display: flex;
+        left: -37.5px;
+        cursor: pointer;
+        position: relative;
+        align-items: center;
+
+        > svg {
+          margin-right: 10px;
+        }
+
+        &:before {
+          content: url("../../../assets/icons/svgs/arrow_drop_down.svg");
+          margin-right: 25px;
+        }
+      }
+
+      > svg {
+        cursor: pointer;
+      }
+    }
+  }
+}

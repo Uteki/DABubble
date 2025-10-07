@@ -1,5 +1,4 @@
 <div class="login-container" [class.intro-active]="!showLogin">
-  <!-- Logo -->
   <div class="logo-wrapper" [class.logo-moved]="showLogin">
     <img
       *ngIf="!showLogin"
@@ -15,13 +14,10 @@
     />
     <span *ngIf="showLogin" class="logo-text"></span>
   </div>
-
   <div class="signup-hint" [class.show]="showLogin">
     <span class="signup-text">Neu bei DABubble?</span>
     <a (click)="goToRegister()" class="signup-link">Konto erstellen</a>
   </div>
-
-  <!-- Login Form -->
   <div class="login-form-wrapper" [class.show]="showLogin">
     <div class="login-card">
       <h2>Anmeldung</h2>
@@ -29,12 +25,9 @@
         Wir empfehlen dir, die E-Mail-Adresse zu nutzen, die du bei der Arbeit
         verwendest.
       </p>
-
-      <!-- Fehlermeldung -->
       <div *ngIf="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
-
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <div class="input-wrapper">
@@ -79,7 +72,6 @@
             </div>
           </div>
         </div>
-
         <div class="form-group">
           <div class="input-wrapper">
             <span class="input-icon">
@@ -127,13 +119,10 @@
             </div>
           </div>
         </div>
-
         <a href="#" class="forgot-password">Passwort vergessen?</a>
-
         <div class="divider">
           <span>ODER</span>
         </div>
-
         <button type="button" (click)="loginWithGoogle()" class="google-login">
           <img
             src="./../../assets/icons/google.png"
@@ -142,7 +131,6 @@
           />
           Anmelden mit Google
         </button>
-
         <div class="button-group">
           <button type="submit" class="btn-primary">Anmelden</button>
           <button type="button" (click)="guestLogin()" class="btn-secondary">
@@ -152,7 +140,6 @@
       </form>
     </div>
   </div>
-
   <div class="footer-links" [class.show]="showLogin">
     <a href="#" class="footer-link">Impressum</a>
     <a href="#" class="footer-link">Datenschutz</a>

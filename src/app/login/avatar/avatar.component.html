@@ -1,5 +1,4 @@
 <div class="avatar-container">
-  <!-- Logo -->
   <div class="logo-wrapper">
     <img
       src="./../../../assets/icons/logo-DABubble.png"
@@ -7,11 +6,8 @@
       class="logo"
     />
   </div>
-
-  <!-- Avatar Selection Form -->
   <div class="avatar-form-wrapper show">
     <div class="avatar-card">
-      <!-- Zurück Button -->
       <button class="back-button" (click)="goBack()">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -39,15 +35,10 @@
           </g>
         </svg>
       </button>
-
       <h2>Wähle deinen Avatar</h2>
-
-      <!-- Fehlermeldung -->
       <div *ngIf="showError" class="error-message">
         Bitte wähle einen Avatar aus.
       </div>
-
-      <!-- Selected Avatar Display -->
       <div class="selected-avatar-wrapper">
         <div class="selected-avatar" [class.has-avatar]="selectedAvatar">
           <img *ngIf="selectedAvatar" [src]="selectedAvatar" [alt]="userName" />
@@ -73,8 +64,6 @@
 
       <h3 class="user-name">{{ userName }}</h3>
       <p class="subtitle">Aus der Liste wählen</p>
-
-      <!-- Avatar Options -->
       <div class="avatar-options">
         <button
           *ngFor="let avatar of avatarOptions"
@@ -96,8 +85,6 @@
       </button>
     </div>
   </div>
-
-  <!-- Footer Links -->
   <div class="footer-links show">
     <a href="#" class="footer-link">Impressum</a>
     <a href="#" class="footer-link">Datenschutz</a>
