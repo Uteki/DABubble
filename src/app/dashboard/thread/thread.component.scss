@@ -1,0 +1,91 @@
+@use "../../../assets/styles/colors" as *;
+
+:host {
+  height: auto;
+  opacity: 1;
+  border-radius: 30px;
+  background: white;
+
+  > header {
+    display: flex;
+    padding: 32px 40px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 10px 0 #00000014;
+
+    > h2 {
+      display: flex;
+      align-items: center;
+
+      > output {
+        color: $purple-message;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 100%;
+
+        > code {
+          margin: 0 10px;
+        }
+      }
+    }
+
+    > svg {
+      cursor: pointer;
+    }
+  }
+
+  > output {
+    flex: 1;
+  }
+
+  > form {
+    margin: 20px;
+    height: 145px;
+    position: relative;
+
+    > textarea {
+      height: 100%;
+      width: 100%;
+      opacity: 1;
+      border-radius: 20px;
+      gap: 40px;
+      top: 755px;
+      left: 35px;
+      padding: 20px;
+      resize: none;
+      overflow-y: auto;
+
+      border: 1px solid #ADB0D9;
+
+      &::placeholder {
+        font-family: 'Nunito', sans-serif;
+        line-height: 100%;
+        font-weight: 400;
+        font-size: 18px;
+      }
+
+      &:focus,
+      &:active {
+        outline: none;
+        box-shadow: none;
+      }
+    }
+
+    > button {
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      color: inherit;
+      text-align: inherit;
+      text-transform: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+    }
+  }
+}

@@ -22,5 +22,7 @@ app-chat {
 }
 
 app-thread {
+  display: flex;
   flex: 0 0 485px;
+  flex-direction: column;
 }
