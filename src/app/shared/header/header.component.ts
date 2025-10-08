@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -14,13 +15,33 @@ useremail:string = " fred.back@email.com ";
 edit: boolean = false;
 private wasEmpty = true;
 
+constructor(private router: Router) { }
+
+goToLogin() {
+  window.location.href = '/login';
+}
+
 onInputChange(value: string) {
-  if (this.wasEmpty && value.length > 0 && value === '@') {
-    
+  const searchResultsContacts = document.getElementById("search-results-contacts");
+  const searchResultsChannels = document.getElementById("search-results-channels");
+  if (this.wasEmpty && value.length > 0) {
+    this.searchBar(value);
     this.wasEmpty = false;
   }
   if (value.length === 0) {
     this.wasEmpty = true;
+    searchResultsContacts?.classList.add("no-display");
+    searchResultsChannels?.classList.add("no-display");
+  }
+}
+
+searchBar(value: string) {
+  const searchResultsContacts = document.getElementById("search-results-contacts");
+  const searchResultsChannels = document.getElementById("search-results-channels");
+  if (value === "@") {
+     searchResultsContacts?.classList.remove("no-display");
+  } else if (value === "#") {
+   searchResultsChannels?.classList.remove("no-display");
   }
 }
 

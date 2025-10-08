@@ -82,7 +82,7 @@
 >
   <div (click)="stopPropagation($event)" class="dropdown-item">
     <button (click)="toggleProfile()">Profil</button>
-    <button>Log out</button>
+    <button [routerLink]="'login'">Log out</button>
   </div>
 </section>
 <section class="header-section">
@@ -106,6 +106,12 @@
       alt="Search"
       class="search-icon"
     />
+    <div class="no-display" id="search-results-contacts">
+
+    </div>
+     <div class="no-display" id="search-results-channels">
+
+    </div>
   </div>
   <div class="profile-wrapper">
     <h2>{{ username }}</h2>
