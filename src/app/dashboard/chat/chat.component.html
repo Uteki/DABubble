@@ -32,14 +32,14 @@
   Output
 </output>
 
-<form aria-label="Nachricht senden" (submit)="sendMessage($event)">
+<form aria-label="Nachricht senden" (submit)="sendMessage(); $event.preventDefault()">
   <label for="message"></label>
   <textarea
     id="message"
     name="message"
     placeholder="Nachricht an #Entwicklerteam"
     rows="2"
-    [(ngModel)]="message"
+    [(ngModel)]="messageText"
   ></textarea>
   <button type="submit" aria-label="Nachricht senden">
     <svg width="23" height="20" viewBox="0 0 23 20" fill="none" xmlns="http://www.w3.org/2000/svg">
