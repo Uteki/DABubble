@@ -19,9 +19,9 @@
 
       > output {
         color: $purple-message;
+        line-height: 100%;
         font-weight: 400;
         font-size: 14px;
-        line-height: 100%;
 
         > code {
           margin: 0 10px;

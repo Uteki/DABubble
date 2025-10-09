@@ -18,10 +18,20 @@
     align-items: center;
 
     > h2 {
+      padding: 0 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 10px;
+
+      &:hover {
+        background: $main-accent;
+        color: $purple-message;
+
+        > svg path {
+          fill: $purple-message;
+        }
+      }
     }
 
     > div {
@@ -30,6 +40,7 @@
       gap: 20px;
 
       > output {
+        padding: 3px 6px;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -60,6 +71,15 @@
             }
           }
         }
+
+        &:hover {
+          background: $main-accent;
+          border-radius: 30px;
+
+          > b {
+            color: $purple-message;
+          }
+        }
       }
 
       > div {
@@ -72,6 +92,16 @@
         gap: 10px;
         display: flex;
         align-items: center;
+
+        &:hover {
+          > svg {
+            transform: scale(1.1);
+
+            > path {
+              fill: $purple-message;
+            }
+          }
+        }
       }
     }
   }
