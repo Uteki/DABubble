@@ -51,7 +51,7 @@ export class RegisterComponent implements OnInit {
         await updateProfile(userCredential.user, { displayName: fullName });
         console.log('Registriert:', userCredential.user);
         this.errorMessage = null;
-        this.router.navigate(['/avatar-selection'], {
+        this.router.navigate(['/avatar'], {
           state: { userName: fullName },
         });
       } catch (error: any) {
