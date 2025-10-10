@@ -63,7 +63,7 @@ export class AvatarComponent implements OnInit {
           { merge: true }
         );
         console.log('Avatar gespeichert:', this.selectedAvatar);
-        this.router.navigate(['/']);
+        this.router.navigate(['/login']);
       } catch (error) {
         console.error('Fehler beim Speichern des Avatars:', error);
       }

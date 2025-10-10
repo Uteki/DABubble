@@ -1,0 +1,329 @@
+.send-mail-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: #eceefe;
+  transition: background 0.5s ease-out;
+  overflow: hidden;
+
+  &.intro-active {
+    background: linear-gradient(1.46deg, #313ae6 1.22%, #797ef3 98.76%);
+  }
+}
+
+.logo-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  transition: all 0.5s ease-out;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  &.logo-moved {
+    top: 40px;
+    left: 40px;
+    transform: translate(0, 0);
+  }
+
+  .logo {
+    height: auto;
+    transition: all 0.5s ease-out;
+
+    &.logo-intro {
+      width: 200px;
+    }
+  }
+
+  .logo-text {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-out 0.2s forwards;
+  }
+}
+
+.send-mail-form-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.5s ease-out;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+    animation: slideUp 0.5s ease-out;
+  }
+}
+
+.send-mail-card {
+  background: white;
+  border-radius: 30px;
+  padding: 50px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  width: 606px;
+  max-width: 90vw;
+  position: relative;
+
+  .back-button {
+    position: absolute;
+    top: 60px;
+    left: 30px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #eceefe;
+
+      svg path {
+        fill: #444df2;
+      }
+    }
+  }
+
+  h2 {
+    font-family: "Nunito", Bold;
+    font-size: 42px;
+    font-weight: 700;
+    color: #444df2;
+    text-align: center;
+    margin: 0 0 12px 0;
+    padding-left: 8px;
+  }
+
+  .subtitle {
+    font-size: 20px;
+    text-align: center;
+    margin: 0 0 12px 0;
+    line-height: 1.5;
+  }
+
+  .info-text {
+    font-size: 16px;
+    text-align: center;
+    margin: 0 0 40px 0;
+    color: #686868;
+    max-width: 300px;
+    margin: 0 auto;
+    padding-bottom: 20px;
+  }
+}
+
+.form-group {
+  margin-bottom: 36px;
+  cursor: pointer;
+}
+
+.input-wrapper {
+  position: relative;
+  background: #eceefe;
+  border-radius: 25px;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  max-width: 450px;
+  margin: 0 auto;
+
+  &:hover:not(:focus-within) {
+    border-color: #000000;
+  }
+
+  &:focus-within {
+    border-color: transparent;
+    box-shadow: 0 0 0 2px #444df2;
+  }
+
+  .input-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+  }
+
+  .form-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: #1c1c1c;
+
+    &::placeholder {
+      color: #686868;
+    }
+
+    &.error {
+      border-color: #ff4d4f;
+    }
+  }
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.btn-primary {
+  width: auto;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  background: #444df2;
+  color: white;
+
+  &:hover {
+    background: #6b71f2;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    background: #d9d9d9;
+    color: #a6a6a6;
+    cursor: not-allowed;
+  }
+}
+
+.error-message {
+  color: #ff4d4f;
+  font-family: "Nunito", sans-serif;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.success-message {
+  color: #52c41a;
+  font-family: "Nunito", sans-serif;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.error-text {
+  color: #ff4d4f;
+  font-family: "Nunito", sans-serif;
+  font-size: 12px;
+  margin-top: 5px;
+  margin-left: 50px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translate(-50%, -40%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}
+
+.footer-links {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 270px;
+  height: 42px;
+  gap: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.5s ease-out;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .footer-link {
+    font-family: "Figtree", "Nunito", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 18px;
+    line-height: 1.2;
+    letter-spacing: 0;
+    color: #797ef3;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+      color: #444df2;
+      border: 1px solid #797ef3;
+      text-decoration: none;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .send-mail-card {
+    padding: 30px 20px;
+
+    .back-button {
+      top: 30px;
+      left: 20px;
+    }
+
+    h2 {
+      font-size: 24px !important;
+      padding-left: 40px;
+    }
+  }
+
+  .logo-wrapper.logo-moved {
+    top: 20px;
+    left: 20px;
+  }
+
+  .footer-links {
+    bottom: 20px;
+    gap: 20px;
+
+    .footer-link {
+      font-size: 14px;
+    }
+  }
+}

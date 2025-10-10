@@ -1,1 +1,137 @@
-<p>reset works!</p>
+<div class="reset-container" [class.intro-active]="!showForm">
+  <div class="logo-wrapper" [class.logo-moved]="showForm">
+    <img
+      *ngIf="!showForm"
+      src="./../../assets/icons/logo.png"
+      alt="Logo"
+      class="logo logo-intro"
+    />
+    <img
+      *ngIf="showForm"
+      src="./../../assets/icons/logo-DABubble.png"
+      alt="DABubble"
+      class="logo logo-small"
+    />
+    <span *ngIf="showForm" class="logo-text"></span>
+  </div>
+  <div class="back-link" [class.show]="showForm">
+    <a (click)="goBackToLogin()" class="back-button">&larr;</a>
+  </div>
+  <div class="reset-form-wrapper" [class.show]="showForm">
+    <div class="reset-card">
+      <h2>Passwort zurücksetzen</h2>
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+      <form [formGroup]="resetForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <rect
+                  x="5"
+                  y="9"
+                  width="10"
+                  height="8"
+                  rx="1"
+                  stroke="#686868"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <path
+                  d="M7 9V6C7 4.34315 8.34315 3 10 3C11.6569 3 13 4.34315 13 6V9"
+                  stroke="#686868"
+                  stroke-width="1.5"
+                />
+              </svg>
+            </span>
+            <input
+              type="password"
+              formControlName="newPassword"
+              placeholder="Neues Passwort"
+              class="form-input"
+              [class.error]="
+                resetForm.get('newPassword')?.touched &&
+                resetForm.get('newPassword')?.invalid
+              "
+            />
+            <div
+              *ngIf="
+                resetForm.get('newPassword')?.touched &&
+                resetForm.get('newPassword')?.invalid
+              "
+              class="error-text"
+            >
+              <span *ngIf="resetForm.get('newPassword')?.errors?.['required']">
+                Neues Passwort ist erforderlich.
+              </span>
+              <span *ngIf="resetForm.get('newPassword')?.errors?.['minlength']">
+                Passwort muss mindestens 6 Zeichen lang sein.
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <rect
+                  x="5"
+                  y="9"
+                  width="10"
+                  height="8"
+                  rx="1"
+                  stroke="#686868"
+                  stroke-width="1.5"
+                  fill="none"
+                />
+                <path
+                  d="M7 9V6C7 4.34315 8.34315 3 10 3C11.6569 3 13 4.34315 13 6V9"
+                  stroke="#686868"
+                  stroke-width="1.5"
+                />
+              </svg>
+            </span>
+            <input
+              type="password"
+              formControlName="confirmPassword"
+              placeholder="Neues Kennwort bestätigen"
+              class="form-input"
+              [class.error]="
+                resetForm.get('confirmPassword')?.touched &&
+                (resetForm.get('confirmPassword')?.invalid || resetForm.errors?.['notMatching'])
+              "
+            />
+            <div
+              *ngIf="
+                resetForm.get('confirmPassword')?.touched &&
+                resetForm.get('confirmPassword')?.invalid
+              "
+              class="error-text"
+            >
+              <span
+                *ngIf="resetForm.get('confirmPassword')?.errors?.['required']"
+              >
+                Bestätigung ist erforderlich.
+              </span>
+            </div>
+            <div
+              *ngIf="resetForm.errors?.['notMatching'] && resetForm.get('confirmPassword')?.touched"
+              class="error-text"
+            >
+              Passwörter stimmen nicht überein.
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">Passwort ändern</button>
+      </form>
+    </div>
+  </div>
+  <div class="footer-links" [class.show]="showForm">
+    <a href="#" class="footer-link">Impressum</a>
+    <a href="#" class="footer-link">Datenschutz</a>
+  </div>
+</div>
