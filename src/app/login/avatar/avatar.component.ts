@@ -15,6 +15,7 @@ export class AvatarComponent implements OnInit {
   userName: string = 'Frederik Beck';
   selectedAvatar: string = '';
   showError: boolean = false;
+  showLogin = false;
   avatarOptions: string[] = [
     './../../../assets/avatars/avatarSmall1.png',
     './../../../assets/avatars/avatarSmall2.png',
@@ -44,6 +45,16 @@ export class AvatarComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/register']);
+  }
+
+    goTolegalNotice(): void {
+    this.router.navigate(['/legal-notice'], { state: { skipAnimation: true } });
+  }
+
+  goToPrivacyPolicy(): void {
+    this.router.navigate(['/privacy-policy'], {
+      state: { skipAnimation: true },
+    });
   }
 
   async onContinue(): Promise<void> {

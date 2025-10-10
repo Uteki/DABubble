@@ -21,6 +21,7 @@ export class SendMailComponent implements OnInit {
   showForm = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
+  showLogin = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -72,6 +73,16 @@ export class SendMailComponent implements OnInit {
 
   goBackToLogin(): void {
     this.router.navigate(['/login'], { state: { skipAnimation: true } });
+  }
+
+  goTolegalNotice(): void {
+    this.router.navigate(['/legal-notice'], { state: { skipAnimation: true } });
+  }
+
+  goToPrivacyPolicy(): void {
+    this.router.navigate(['/privacy-policy'], {
+      state: { skipAnimation: true },
+    });
   }
 
   private getErrorMessage(errorCode: string): string {
