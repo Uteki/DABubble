@@ -85,8 +85,8 @@
       </button>
     </div>
   </div>
-  <div class="footer-links show">
-    <a href="#" class="footer-link">Impressum</a>
-    <a href="#" class="footer-link">Datenschutz</a>
+<div class="footer-links" [class.show]="showLogin">
+    <a (click)="goTolegalNotice()" class="footer-link">Impressum</a>
+    <a (click)="goToPrivacyPolicy()" class="footer-link">Datenschutz</a>
   </div>
 </div>

@@ -7,7 +7,13 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Auth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signInAnonymously } from '@angular/fire/auth';
+import {
+  Auth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInAnonymously,
+} from '@angular/fire/auth';
 
 @Component({
   selector: 'app-login',
@@ -51,10 +57,14 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
       try {
-        const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(
+          this.auth,
+          email,
+          password
+        );
         console.log('Eingeloggt:', userCredential.user);
         this.errorMessage = null;
-        this.router.navigate(['/']);
+        this.router.navigate(['/dashboard']);
       } catch (error: any) {
         this.errorMessage = this.getErrorMessage(error.code);
         console.error('Fehler beim Login:', error);
@@ -72,7 +82,7 @@ export class LoginComponent implements OnInit {
       const userCredential = await signInWithPopup(this.auth, provider);
       console.log('Google-Login erfolgreich:', userCredential.user);
       this.errorMessage = null;
-      this.router.navigate(['/']);
+      this.router.navigate(['/dashboard']);
     } catch (error: any) {
       this.errorMessage = this.getErrorMessage(error.code);
       console.error('Fehler beim Google-Login:', error);
@@ -84,7 +94,7 @@ export class LoginComponent implements OnInit {
       const userCredential = await signInAnonymously(this.auth);
       console.log('Gäste-Login erfolgreich:', userCredential.user);
       this.errorMessage = null;
-      this.router.navigate(['/']);
+      this.router.navigate(['/dashboard']);
     } catch (error: any) {
       this.errorMessage = this.getErrorMessage(error.code);
       console.error('Fehler beim Gäste-Login:', error);
@@ -93,6 +103,20 @@ export class LoginComponent implements OnInit {
 
   goToRegister(): void {
     this.router.navigate(['/register'], { state: { skipAnimation: true } });
+  }
+
+  goToSendMail(): void {
+    this.router.navigate(['/send-mail'], { state: { skipAnimation: true } });
+  }
+
+  goTolegalNotice(): void {
+    this.router.navigate(['/legal-notice'], { state: { skipAnimation: true } });
+  }
+
+  goToPrivacyPolicy(): void {
+    this.router.navigate(['/privacy-policy'], {
+      state: { skipAnimation: true },
+    });
   }
 
   private getErrorMessage(errorCode: string): string {

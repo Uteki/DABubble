@@ -15,6 +15,7 @@ export class AvatarComponent implements OnInit {
   userName: string = 'Frederik Beck';
   selectedAvatar: string = '';
   showError: boolean = false;
+  showLogin = false;
   avatarOptions: string[] = [
     './../../../assets/avatars/avatarSmall1.png',
     './../../../assets/avatars/avatarSmall2.png',
@@ -46,6 +47,16 @@ export class AvatarComponent implements OnInit {
     this.router.navigate(['/register']);
   }
 
+    goTolegalNotice(): void {
+    this.router.navigate(['/legal-notice'], { state: { skipAnimation: true } });
+  }
+
+  goToPrivacyPolicy(): void {
+    this.router.navigate(['/privacy-policy'], {
+      state: { skipAnimation: true },
+    });
+  }
+
   async onContinue(): Promise<void> {
     if (this.selectedAvatar && this.auth.currentUser) {
       try {
@@ -63,7 +74,7 @@ export class AvatarComponent implements OnInit {
           { merge: true }
         );
         console.log('Avatar gespeichert:', this.selectedAvatar);
-        this.router.navigate(['/']);
+        this.router.navigate(['/login']);
       } catch (error) {
         console.error('Fehler beim Speichern des Avatars:', error);
       }
