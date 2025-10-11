@@ -1,5 +1,5 @@
 <section
-  (click)="overlayActivated = false; channelOverlay = false"
+  (click)="overlayActivated = false; channelOverlay = false;  viewMemberOverlay = false; addMemberOverlay = false" 
   class="overlay"
   [ngClass]="{ 'no-display': !overlayActivated }"
 ></section>
@@ -34,7 +34,29 @@
       </svg>
     </div>
 
-    <div [ngClass]="{ 'no-display': !channelOverlay }" ></div>
+    <div class="channel-infos" [ngClass]="{ 'no-diplay': !channelOverlay }" >
+      <div> 
+        <h3># Entwicklerteam</h3>
+        <div (click)="overlayFunction(false, 'Entwicklung', false)">X</div>
+      </div>
+      <div>
+        <div> 
+          <h3>Channel-Name</h3>
+          <h3>Bearbeiten</h3>
+        </div>
+        <h3># Entwicklerteam</h3>
+      </div>
+      <div>
+        <div>
+          <h3>Beschreibung</h3>
+          <h3>Bearbeiten</h3>
+        </div>
+        <p>Dies ist der Hauptchannel für alle Entwickler.</p>
+        <div></div>
+        <h3>Erstellt von:</h3>
+        <h3>{{ channelFounder}}</h3>
+      </div>
+    </div>
   </h2>
   <div>
     <output  (click)="overlayActivated = true; viewMemberOverlay = true">
@@ -46,10 +68,10 @@
       </div>
       <b>3</b>
       <!--Example-->
-      <div [ngClass]="{ 'no-display': !overlayActivated && !viewMemberOverlay }" ></div>
+      <div [ngClass]="{ 'no-display': !viewMemberOverlay }" ></div>
     </output>
 
-    <div>
+    <div (click)="overlayActivated = true; addMemberOverlay = true">
       <svg
         width="22"
         height="16"
@@ -62,6 +84,7 @@
           fill="black"
         />
       </svg>
+            <div [ngClass]="{ 'no-display': !addMemberOverlay }" ></div>
     </div>
   </div>
 </header>
