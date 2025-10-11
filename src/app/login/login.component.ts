@@ -109,6 +109,16 @@ export class LoginComponent implements OnInit {
     this.router.navigate(['/send-mail'], { state: { skipAnimation: true } });
   }
 
+  goTolegalNotice(): void {
+    this.router.navigate(['/legal-notice'], { state: { skipAnimation: true } });
+  }
+
+  goToPrivacyPolicy(): void {
+    this.router.navigate(['/privacy-policy'], {
+      state: { skipAnimation: true },
+    });
+  }
+
   private getErrorMessage(errorCode: string): string {
     switch (errorCode) {
       case 'auth/invalid-email':

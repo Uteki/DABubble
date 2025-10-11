@@ -6,6 +6,8 @@ import { HeaderComponent } from './shared/header/header.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SendMailComponent } from './login/send-mail/send-mail.component';
 import { ResetComponent } from './login/reset/reset.component';
+import { LegalNoticeComponent } from './login/legal-notice/legal-notice.component';
+import { PrivacyPolicyComponent } from './login/privacy-policy/privacy-policy.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -16,5 +18,7 @@ export const routes: Routes = [
   { path: 'header', component: HeaderComponent },
   { path: 'send-mail', component: SendMailComponent },
   { path: 'reset', component: ResetComponent },
+  { path: 'legal-notice', component: LegalNoticeComponent },
+  { path: 'privacy-policy', component: PrivacyPolicyComponent },
   { path: '**', redirectTo: '' },
 ];
