@@ -25,6 +25,8 @@ import {
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   showLogin = false;
+  showIntroStep = false;
+  showFinal = false;
   errorMessage: string | null = null;
 
   constructor(
@@ -42,14 +44,22 @@ export class LoginComponent implements OnInit {
 
     if (skipAnimation) {
       this.showLogin = true;
+      this.showIntroStep = true;
+      this.showFinal = true;
     }
   }
 
   ngOnInit(): void {
     if (!this.showLogin) {
       setTimeout(() => {
+        this.showIntroStep = true;
+      }, 1500);
+      setTimeout(() => {
+        this.showFinal = true;
+      }, 2500); // 1s after step-1
+      setTimeout(() => {
         this.showLogin = true;
-      }, 2500);
+      }, 3500);
     }
   }
 

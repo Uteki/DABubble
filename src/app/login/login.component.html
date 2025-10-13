@@ -1,10 +1,21 @@
 <div class="login-container" [class.intro-active]="!showLogin">
-  <div class="logo-wrapper" [class.logo-moved]="showLogin">
+  <div
+    class="logo-wrapper"
+    [class.step-1]="showIntroStep"
+    [class.reveal-text]="showFinal && !showLogin"
+    [class.logo-moved]="showLogin"
+  >
     <img
-      *ngIf="!showLogin"
+      *ngIf="!showIntroStep"
       src="./../../assets/icons/logo.png"
-      alt="Logo"
+      alt="Logo Default"
       class="logo logo-intro"
+    />
+    <img
+      *ngIf="showIntroStep && !showLogin"
+      src="./../../assets/icons/final.png"
+      alt="Logo Final"
+      class="logo logo-intro-step"
     />
     <img
       *ngIf="showLogin"
