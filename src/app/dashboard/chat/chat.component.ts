@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {ChatService} from "../../chat.service";
 import { NgClass } from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
+import { StopPropagationDirective } from "../../stop-propagation.directive";
 
 
 @Component({
@@ -9,7 +11,8 @@ import { NgClass } from '@angular/common';
   standalone: true,
   imports: [
     FormsModule,
-    NgClass
+    NgClass,
+    StopPropagationDirective
 ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
@@ -23,7 +26,7 @@ export class ChatComponent implements OnInit {
   addMemberOverlay: boolean = false;
   channelFounder: string = "Noah Braun";
 
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService, private cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.chatService.getMessages('general').subscribe(messages => {
@@ -46,12 +49,15 @@ export class ChatComponent implements OnInit {
 
   overlayFunction(darkOverlay: boolean, overlay: string, overlayBoolean: boolean ) {
     this.overlayActivated = darkOverlay;
+ this.cd.detectChanges();
     if (overlay == "Entwicklung") {
       this.channelOverlay = overlayBoolean;
+      console.log(this.channelOverlay);
+      
     } else if (overlay == "Mitglieder") {
       this.viewMemberOverlay = overlayBoolean;
     } else if (overlay == "Hinzufügen") {
-      this.addMemberOverlay == overlayBoolean;
+      this.addMemberOverlay = overlayBoolean;
     }
   }
 }
