@@ -31,7 +31,7 @@
 
   .logo {
     height: auto;
-
+    padding: 25px 50px;
 
     &.logo-intro-step {
       clip-path: inset(0 70% 0 0);
@@ -502,4 +502,26 @@
       transform: translate(0, 0);
     }
   }
+}
+
+.no-animation {
+  animation: none !important;
+  transition: none !important;
+}
+
+.logo-wrapper.no-animation.logo-moved {
+  top: 40px;
+  left: 40px;
+  transform: translate(0, 0);
+}
+
+.login-form-wrapper.no-animation.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%);
+}
+
+.footer-links.no-animation.show {
+  opacity: 1;
+  visibility: visible;
 }

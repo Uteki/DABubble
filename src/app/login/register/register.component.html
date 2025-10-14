@@ -197,7 +197,10 @@
           />
           <label for="privacy-check">
             Ich stimme der
-            <a href="#" class="privacy-link">Datenschutzerklärung</a> zu.
+            <a (click)="goToPrivacyPolicy()" class="privacy-link"
+              >Datenschutzerklärung</a
+            >
+            zu.
           </label>
           <div
             *ngIf="

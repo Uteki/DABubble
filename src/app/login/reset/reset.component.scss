@@ -30,11 +30,7 @@
 
   .logo {
     height: auto;
-    transition: all 0.5s ease-out;
-
-    &.logo-intro {
-      width: 200px;
-    }
+    padding: 25px 50px;
   }
 
   .logo-text {
@@ -70,13 +66,38 @@
   width: 606px;
   max-width: 90vw;
 
+  .back-button {
+    position: absolute;
+    top: 60px;
+    left: 30px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #eceefe;
+
+      svg path {
+        fill: #444df2;
+      }
+    }
+  }
+
   h2 {
     font-family: "Nunito", Bold;
-    font-size: 46px;
+    font-size: 42px;
     font-weight: 700;
     color: #444df2;
     text-align: center;
-    margin: 0 0 40px 0;
+    margin: 0 0 12px 0;
+    padding-left: 8px;
   }
 }
 
@@ -196,28 +217,6 @@
   }
 }
 
-.back-link {
-  position: absolute;
-  top: 40px;
-  left: 40px;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.5s ease-out;
-
-  &.show {
-    opacity: 1;
-    visibility: visible;
-    animation: fadeIn 0.5s ease-out;
-  }
-
-  .back-button {
-    font-size: 24px;
-    color: #797ef3;
-    cursor: pointer;
-    text-decoration: none;
-  }
-}
-
 .footer-links {
   position: absolute;
   bottom: 40px;
@@ -289,4 +288,26 @@
       font-size: 14px;
     }
   }
+}
+
+.no-animation {
+  animation: none !important;
+  transition: none !important;
+}
+
+.send-mail-form-wrapper.no-animation.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%);
+}
+
+.logo-wrapper.no-animation.logo-moved {
+  top: 40px;
+  left: 40px;
+  transform: translate(0, 0);
+}
+
+.footer-links.no-animation.show {
+  opacity: 1;
+  visibility: visible;
 }

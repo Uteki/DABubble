@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth, sendPasswordResetEmail } from '@angular/fire/auth';
+import { IntroService } from '../../intro.service';
 
 @Component({
   selector: 'app-send-mail',
@@ -19,6 +20,7 @@ import { Auth, sendPasswordResetEmail } from '@angular/fire/auth';
 export class SendMailComponent implements OnInit {
   forgotForm: FormGroup;
   showForm = false;
+  noAnimation = false;
   errorMessage: string | null = null;
   successMessage: string | null = null;
   showLogin = false;
@@ -26,29 +28,34 @@ export class SendMailComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private auth: Auth
+    private auth: Auth,
+    private introService: IntroService
   ) {
     this.forgotForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
     });
-
-    const navigation = this.router.getCurrentNavigation();
-    const skipAnimation = navigation?.extras?.state?.['skipAnimation'] ?? false;
-
-    if (skipAnimation) {
-      this.showForm = true;
-    }
   }
 
   ngOnInit(): void {
-    if (!this.showForm) {
+    console.log(
+      'SendMail Intro shown status:',
+      this.introService.getIntroShown()
+    );
+
+    if (this.introService.getIntroShown()) {
+      this.showForm = true;
+      this.noAnimation = true;
+    } else {
       setTimeout(() => {
         this.showForm = true;
+        this.introService.setIntroShown(true);
+        console.log('SendMail animation completed, status set to true');
       }, 2500);
     }
   }
 
   async onSubmit(): Promise<void> {
+    // Unverändert
     if (this.forgotForm.valid) {
       const { email } = this.forgotForm.value;
       try {
@@ -72,17 +79,15 @@ export class SendMailComponent implements OnInit {
   }
 
   goBackToLogin(): void {
-    this.router.navigate(['/login'], { state: { skipAnimation: true } });
+    this.router.navigate(['/login']);
   }
 
   goTolegalNotice(): void {
-    this.router.navigate(['/legal-notice'], { state: { skipAnimation: true } });
+    this.router.navigate(['/legal-notice']);
   }
 
   goToPrivacyPolicy(): void {
-    this.router.navigate(['/privacy-policy'], {
-      state: { skipAnimation: true },
-    });
+    this.router.navigate(['/privacy-policy']);
   }
 
   private getErrorMessage(errorCode: string): string {
