@@ -240,13 +240,19 @@
   .message-event {
     width: 100%;
     display: flex;
-    justify-content: center;
+    align-items: center;
 
     > span {
       gap: 10px;
       padding: 5px 15px;
       border-radius: 30px;
       border: 1px solid #ADB0D9;
+    }
+
+    > div {
+      border-top: 1px solid #ADB0D9;
+      height: 0;
+      flex: 1;
     }
   }
 
