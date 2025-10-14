@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {ChatService} from "../../chat.service";
-import { NgClass } from '@angular/common';
+import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { StopPropagationDirective } from "../../stop-propagation.directive";
 
@@ -12,8 +12,11 @@ import { StopPropagationDirective } from "../../stop-propagation.directive";
   imports: [
     FormsModule,
     NgClass,
-    StopPropagationDirective
-],
+    StopPropagationDirective,
+    NgForOf,
+    NgIf,
+    DatePipe
+  ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss'
 })
@@ -30,7 +33,7 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.chatService.getMessages('general').subscribe(messages => {
-      this.messages = messages;
+      this.messages = messages.sort((a, b) => a.timestamp - b.timestamp);
     });
   }
 
@@ -53,7 +56,7 @@ export class ChatComponent implements OnInit {
     if (overlay == "Entwicklung") {
       this.channelOverlay = overlayBoolean;
       console.log(this.channelOverlay);
-      
+
     } else if (overlay == "Mitglieder") {
       this.viewMemberOverlay = overlayBoolean;
     } else if (overlay == "Hinzufügen") {

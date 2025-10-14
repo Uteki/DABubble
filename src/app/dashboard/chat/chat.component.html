@@ -127,7 +127,21 @@
   </div>
 </header>
 
-<output> Output </output>
+<output>
+  <!-- TODO ng if own messages when user -->
+  <div *ngIf="messages.length > 0">
+    <div *ngFor="let msg of messages" class="message" [ngClass]="{ 'own-message': msg.user === 'Daniel' }">
+      <img src="assets/avatars/avatarSmall1.png" alt="{{ msg.user }}">
+      <div>
+        <div>
+          <strong>{{ msg.user }}</strong>
+          <span class="timestamp">{{ msg.timestamp | date:'HH:mm' }} Uhr</span>
+        </div>
+        <div class="message-text">{{ msg.text }}</div>
+      </div>
+    </div>
+  </div>
+</output>
 
 <form
   aria-label="Nachricht senden"
