@@ -257,18 +257,25 @@
     border-radius: 15px;
     margin: 10px 20px;
     padding: 15px 0;
+    
     > div {
+     
       display: flex;
       justify-content: space-between;
       margin: 0 20px 10px 20px;
       font-family: "Nunito";
       font-weight: 400;
       font-size: 14px;
+      >h3 {
+        transition: all 0.3s ease-in-out;
+      }
       > h3:last-child {
+
         font-family: "Nunito";
         font-weight: 600;
         color: $purple-font;
         font-size: 16px;
+        transition: all 0.3s ease-in-out;
       }
     }
     > h3 {
@@ -352,6 +359,90 @@
       cursor: pointer;
       &:hover {
         background-color: $purple-font;
+      }
+    }
+  }
+}
+
+
+.edit-one {
+  position: relative;
+ border: none !important;
+  height: 84px;
+  >div:nth-child(1) {
+    
+    justify-content: space-between !important;
+   
+    >h3:nth-child(1){
+      transform: translate(-20px,-20px);
+      transition: all 0.3s ease-in-out;
+    }
+    >h3:nth-child(2){
+      transform: translate(20px,-20px);
+      transition: all 0.3s ease-in-out;
+    }
+
+
+
+  }
+  >div:nth-child(2) {
+    display: flex;
+    justify-content: start !important;
+    border: 1px solid $light-purple !important;
+    padding: 10px;
+    border-radius: 25px;
+    gap: 10px;
+    transition: all 0.3s ease-in-out;
+    margin: 0 !important;
+      transform: translate(0,-20px);
+    >h2{
+      font-family: "Nunito";
+      font-weight: 700;
+      font-size: 18px;
+      
+    }
+    >input {
+        transition: all 0.3s ease-in-out;
+      border: none;
+      &:focus {
+        outline: none;
+      }
+      &::placeholder {
+        font-family: "Nunito";
+        font-weight: 400;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+
+.view-members{
+  padding: 15px;
+  >div:nth-child(1){
+   display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 20px;
+    > h3:first-child {
+      font-family: "Nunito";
+      font-weight: 700;
+      font-size: 20px;
+    }
+    > div {
+      > svg {
+        &:hover {
+          cursor: pointer;
+        }
+      }
+      &:hover {
+        > h2 {
+          color: $purple-font;
+        }
+        > svg path {
+          fill: $purple-font !important;
+        }
       }
     }
   }
