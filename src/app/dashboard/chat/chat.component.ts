@@ -46,7 +46,7 @@ export class ChatComponent implements OnInit {
     await this.chatService.sendMessage('general', {
       text: this.messageText,
       //TODO: bind it with user logger
-      user: 'Daniel',
+      user: 'Daniel Tran',
       timestamp: Date.now(),
     });
 
