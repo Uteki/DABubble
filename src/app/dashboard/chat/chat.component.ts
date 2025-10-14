@@ -27,6 +27,9 @@ export class ChatComponent implements OnInit {
   channelOverlay: boolean = false;
   viewMemberOverlay: boolean = false;
   addMemberOverlay: boolean = false;
+  switchAddMemberOverlay: boolean = false;
+  editOne: boolean = false;
+  editTwo: boolean = false
   channelFounder: string = "Noah Braun";
 
   constructor(private chatService: ChatService, private cd: ChangeDetectorRef) {}
