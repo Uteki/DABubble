@@ -23,6 +23,7 @@ import { StopPropagationDirective } from "../../stop-propagation.directive";
 export class ChatComponent implements OnInit {
   messages: any[] = [];
   messageText: string = '';
+  today = new Date();
   overlayActivated: boolean = false;
   channelOverlay: boolean = false;
   viewMemberOverlay: boolean = false;

@@ -205,14 +205,22 @@
 <output>
   <!-- TODO ng if own messages when user -->
   <div *ngIf="messages.length > 0">
-    <div *ngFor="let msg of messages" class="message" [ngClass]="{ 'own-message': msg.user === 'Daniel Tran' }">
-      <img src="assets/avatars/avatarSmall1.png" alt="{{ msg.user }}">
-      <div>
+    <div *ngFor="let msg of messages; let i = index" class="message" [ngClass]="{ 'own-message': msg.user === 'Daniel Tran' }">
+      <div class="message-event" *ngIf="i === 0 || (msg.timestamp | date:'yyyy-MM-dd') !== (messages[i-1].timestamp | date:'yyyy-MM-dd')">
+        <span class="timestamp">
+          {{ (msg.timestamp | date:'yyyy-MM-dd') === (today | date:'yyyy-MM-dd') ? 'Heute' : (msg.timestamp | date:'EEEE, d MMMM') }}
+        </span>
+      </div>
+
+      <div class="message-container">
+        <img src="assets/avatars/avatarSmall1.png" alt="{{ msg.user }}">
         <div>
-          <strong>{{ msg.user }}</strong>
-          <span class="timestamp">{{ msg.timestamp | date:'HH:mm' }} Uhr</span>
+          <div>
+            <strong>{{ msg.user }}</strong>
+            <span class="timestamp">{{ msg.timestamp | date:'HH:mm' }} Uhr</span>
+          </div>
+          <div class="message-text">{{ msg.text }}</div>
         </div>
-        <div class="message-text">{{ msg.text }}</div>
       </div>
     </div>
   </div>
