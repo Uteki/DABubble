@@ -14,7 +14,7 @@
 .logo-wrapper {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 65%;
   transform: translate(-50%, -50%);
   z-index: 10;
   display: flex;
@@ -36,14 +36,6 @@
     &.logo-intro-step {
       clip-path: inset(0 70% 0 0);
     }
-  }
-
-  .logo-text {
-    font-size: 24px;
-    font-weight: 700;
-    color: #000000;
-    opacity: 0;
-    animation: fadeIn 0.3s ease-out 0.2s forwards;
   }
 }
 
@@ -291,7 +283,7 @@
 
 @keyframes slideUp {
   from {
-    transform: translate(-50%, -40%);
+    transform: translate(-50%, -50%);
     opacity: 0;
   }
   to {
@@ -302,13 +294,12 @@
 
 @keyframes slideLeft {
   0% {
-    top: 50%;
-    transform: translate(-21%, -50%);
+
+    transform: translate(-50%, -50%);
   }
   100% {
-    top: 50%;
-    left: 30%;
-    transform: translate(0, -50%);
+left: 40%;
+    transform: translate(-30%, -50%);
   }
 }
 
