@@ -295,12 +295,19 @@
       font-size: 20px;
     }
     > div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 30px;
       > svg {
         &:hover {
           cursor: pointer;
         }
       }
       &:hover {
+           background-color: $main-accent;
         > h2 {
           color: $purple-font;
         }
@@ -534,12 +541,19 @@
       font-size: 20px;
     }
     > div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 30px;
       > svg {
         &:hover {
           cursor: pointer;
         }
       }
       &:hover {
+           background-color: $main-accent;
         > h2 {
           color: $purple-font;
         }
