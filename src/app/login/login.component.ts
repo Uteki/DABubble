@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+ngOnInit(): void {
     console.log('Intro shown status:', this.introService.getIntroShown());
     if (this.introService.getIntroShown()) {
       this.showIntroStep = true;
