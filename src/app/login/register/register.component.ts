@@ -70,7 +70,7 @@ export class RegisterComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-    goTolegalNotice(): void {
+  goTolegalNotice(): void {
     this.router.navigate(['/legal-notice']);
   }
 
