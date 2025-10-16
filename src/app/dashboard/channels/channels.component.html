@@ -41,5 +41,15 @@
     </h3>
   </div>
 
-  <output>Output</output>
+  <output class="direct-messages">
+    <div class="direct-messages-list">
+      <div *ngFor="let user of users">
+        <div class="user-avatar">
+          <img [src]="user.avatar" [alt]="user.name" />
+          <img src="./../../../assets/img/online.png" alt="">
+        </div>
+        <p>{{ user.name }}</p>
+      </div>
+    </div>
+  </output>
 </nav>

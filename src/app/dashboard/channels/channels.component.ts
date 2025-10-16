@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from './../../user.service';
+import { NgForOf } from '@angular/common';
 
 @Component({
   selector: 'app-channels',
   standalone: true,
-  imports: [],
+  imports: [NgForOf],
   templateUrl: './channels.component.html',
   styleUrl: './channels.component.scss',
 })
