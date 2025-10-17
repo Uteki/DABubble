@@ -71,7 +71,7 @@ export class ChatComponent implements OnInit {
 
   overlayFunction(darkOverlay: boolean, overlay: string, overlayBoolean: boolean ) {
     this.overlayActivated = darkOverlay;
- this.cd.detectChanges();
+    this.cd.detectChanges();
     if (overlay == "Entwicklung") {
       this.channelOverlay = overlayBoolean;
       console.log(this.channelOverlay);

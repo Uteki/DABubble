@@ -26,7 +26,7 @@ export class ThreadComponent implements OnChanges {
   constructor(private chatService: ChatService) {}
 
   async sendMessage() {
-    if (!this.messageText.trim()) return;
+    if (!this.messageText.trim() || this.messageId === null) return;
 
     await this.chatService.sendThreadMessage(`${this.chatService.currentChat}`, `${this.messageId}`, {
       text: this.messageText,
