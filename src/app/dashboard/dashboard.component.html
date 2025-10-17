@@ -2,7 +2,7 @@
 
 <section>
   <app-channels></app-channels>
-  <app-chat></app-chat>
-  <app-thread></app-thread>
+  <app-chat (threadSelected)="onThreadSelected($event)"></app-chat>
+  <app-thread [messageId]="selectedThreadId"></app-thread>
 <!--<app-message></app-message>-->
 </section>

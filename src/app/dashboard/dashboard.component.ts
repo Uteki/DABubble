@@ -17,5 +17,9 @@ import {ChatComponent} from "./chat/chat.component";
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent {
+  selectedThreadId: string | null = null;
 
+  onThreadSelected(id: string) {
+    this.selectedThreadId = id;
+  }
 }

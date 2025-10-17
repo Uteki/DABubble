@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {ChatService} from "../../chat.service";
 import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { StopPropagationDirective } from "../../stop-propagation.directive";
+import {addDoc, collection, Firestore, getDocs} from "@angular/fire/firestore";
 
 
 @Component({
@@ -21,6 +22,8 @@ import { StopPropagationDirective } from "../../stop-propagation.directive";
   styleUrl: './chat.component.scss'
 })
 export class ChatComponent implements OnInit {
+  @Output() threadSelected = new EventEmitter<string>();
+
   messages: any[] = [];
   messageText: string = '';
   today = new Date();
@@ -33,10 +36,10 @@ export class ChatComponent implements OnInit {
   editTwo: boolean = false
   channelFounder: string = "Noah Braun";
 
-  constructor(private chatService: ChatService, private cd: ChangeDetectorRef) {}
+  constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private firestore: Firestore) {}
 
   ngOnInit(): void {
-    this.chatService.getMessages('general').subscribe(messages => {
+    this.chatService.getMessages(this.chatService.currentChat).subscribe(messages => {
       this.messages = messages.sort((a, b) => a.timestamp - b.timestamp);
     });
   }
@@ -44,7 +47,7 @@ export class ChatComponent implements OnInit {
   async sendMessage() {
     if (!this.messageText.trim()) return;
 
-    await this.chatService.sendMessage('general', {
+    await this.chatService.sendMessage(this.chatService.currentChat, {
       text: this.messageText,
       //TODO: bind it with user logger
       user: 'Daniel Tran',
@@ -52,6 +55,18 @@ export class ChatComponent implements OnInit {
     });
 
     this.messageText = '';
+  }
+
+  async openThread(threadId: string, message: any) {
+    this.threadSelected.emit(threadId);
+
+    const threadRef = collection(
+      this.firestore, `channels/${this.chatService.currentChat}/messages/${threadId}/thread`
+    );
+
+    const snapshot = await getDocs(threadRef);
+    if (!snapshot.empty) return;
+    return addDoc(threadRef, { ...message, timestamp: message.timestamp || Date.now() });
   }
 
   overlayFunction(darkOverlay: boolean, overlay: string, overlayBoolean: boolean ) {
