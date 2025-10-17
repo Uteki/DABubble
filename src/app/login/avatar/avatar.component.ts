@@ -70,6 +70,8 @@ export class AvatarComponent implements OnInit {
             name: this.userName,
             avatar: this.selectedAvatar,
             email: this.auth.currentUser.email,
+            uid: this.auth.currentUser.uid,
+            status: false,
           },
           { merge: true }
         );

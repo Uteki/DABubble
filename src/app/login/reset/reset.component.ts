@@ -12,6 +12,7 @@ import {
   verifyPasswordResetCode,
   confirmPasswordReset,
 } from '@angular/fire/auth';
+import { IntroService } from '../../intro.service';
 
 @Component({
   selector: 'app-reset',
@@ -27,12 +28,14 @@ export class ResetComponent implements OnInit {
   successMessage: string | null = null;
   actionCode: string = '';
   showLogin = false;
+  noAnimation = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private auth: Auth
+    private auth: Auth,
+    private introService: IntroService
   ) {
     this.resetForm = this.formBuilder.group(
       {
@@ -100,17 +103,15 @@ export class ResetComponent implements OnInit {
   }
 
   goBackToLogin(): void {
-    this.router.navigate(['/login'], { state: { skipAnimation: true } });
+    this.router.navigate(['/login']);
   }
 
-    goTolegalNotice(): void {
-    this.router.navigate(['/legal-notice'], { state: { skipAnimation: true } });
+  goTolegalNotice(): void {
+    this.router.navigate(['/legal-notice']);
   }
 
   goToPrivacyPolicy(): void {
-    this.router.navigate(['/privacy-policy'], {
-      state: { skipAnimation: true },
-    });
+    this.router.navigate(['/privacy-policy']);
   }
 
   private getErrorMessage(errorCode: string): string {

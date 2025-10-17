@@ -67,17 +67,15 @@ export class RegisterComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/login'], { state: { skipAnimation: true } });
+    this.router.navigate(['/login']);
   }
 
-    goTolegalNotice(): void {
-    this.router.navigate(['/legal-notice'], { state: { skipAnimation: true } });
+  goTolegalNotice(): void {
+    this.router.navigate(['/legal-notice']);
   }
 
   goToPrivacyPolicy(): void {
-    this.router.navigate(['/privacy-policy'], {
-      state: { skipAnimation: true },
-    });
+    this.router.navigate(['/privacy-policy']);
   }
 
   private getErrorMessage(errorCode: string): string {

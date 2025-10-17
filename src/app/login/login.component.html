@@ -4,15 +4,10 @@
     [class.step-1]="showIntroStep"
     [class.reveal-text]="showFinal && !showLogin"
     [class.logo-moved]="showLogin"
+    [class.no-animation]="noAnimation"
   >
     <img
-      *ngIf="!showIntroStep"
-      src="./../../assets/icons/logo.png"
-      alt="Logo Default"
-      class="logo logo-intro"
-    />
-    <img
-      *ngIf="showIntroStep && !showLogin"
+      *ngIf="!showLogin" 
       src="./../../assets/icons/final.png"
       alt="Logo Final"
       class="logo logo-intro-step"
@@ -29,7 +24,11 @@
     <span class="signup-text">Neu bei DABubble?</span>
     <a (click)="goToRegister()" class="signup-link">Konto erstellen</a>
   </div>
-  <div class="login-form-wrapper" [class.show]="showLogin">
+  <div
+    class="login-form-wrapper"
+    [class.show]="showLogin"
+    [class.no-animation]="noAnimation"
+  >
     <div class="login-card">
       <h2>Anmeldung</h2>
       <p class="subtitle">
@@ -153,7 +152,11 @@
       </form>
     </div>
   </div>
-  <div class="footer-links" [class.show]="showLogin">
+  <div
+    class="footer-links"
+    [class.show]="showLogin"
+    [class.no-animation]="noAnimation"
+  >
     <a (click)="goTolegalNotice()" class="footer-link">Impressum</a>
     <a (click)="goToPrivacyPolicy()" class="footer-link">Datenschutz</a>
   </div>

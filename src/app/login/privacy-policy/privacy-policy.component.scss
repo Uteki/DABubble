@@ -1,11 +1,49 @@
+.logo-wrapper {
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .logo {
+    height: auto;
+    padding: 25px 50px;
+  }
+}
+
 .datenschutz-container {
   background: white;
   border-radius: 30px;
   padding: 50px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-  max-width: 800px; // Etwas breiter für längeren Text
-  margin: 0 auto;
+  max-width: 800px;
+  margin: 14px auto;
   position: relative;
+  max-height: 97vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  scrollbar-color: #444df2 #f1f1f1;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #444df2;
+    border-radius: 10px;
+    border: 2px solid #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #333bf0;
+  }
 
   h1 {
     font-family: "Nunito", Bold;
@@ -19,13 +57,13 @@
   h2 {
     font-size: 24px;
     margin: 30px 0 10px 0;
-    color: #1c1c1c;
+    color: #444df2;
   }
 
   p,
   ul {
     font-size: 16px;
-    color: #686868;
+    color: #000000;
     line-height: 1.5;
   }
 

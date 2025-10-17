@@ -1,5 +1,5 @@
 <div class="send-mail-container" [class.intro-active]="!showForm">
-  <div class="logo-wrapper" [class.logo-moved]="showForm">
+  <div class="logo-wrapper" [class.logo-moved]="showForm" [class.no-animation]="noAnimation">
     <img
       *ngIf="!showForm"
       src="./../../assets/icons/logo.png"
@@ -14,7 +14,7 @@
     />
     <span *ngIf="showForm" class="logo-text"></span>
   </div>
-  <div class="send-mail-form-wrapper" [class.show]="showForm">
+  <div class="send-mail-form-wrapper" [class.show]="showForm" [class.no-animation]="noAnimation">
     <div class="send-mail-card">
       <button class="back-button" (click)="goBackToLogin()">
         <svg
@@ -110,7 +110,7 @@
       </form>
     </div>
   </div>
-<div class="footer-links" [class.show]="showLogin">
+<div class="footer-links" [class.show]="showLogin" [class.no-animation]="noAnimation">
     <a (click)="goTolegalNotice()" class="footer-link">Impressum</a>
     <a (click)="goToPrivacyPolicy()" class="footer-link">Datenschutz</a>
   </div>

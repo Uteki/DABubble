@@ -30,11 +30,8 @@
 
   .logo {
     height: auto;
-    transition: all 0.5s ease-out;
+    padding: 25px 50px;
 
-    &.logo-intro {
-      width: 200px;
-    }
   }
 
   .logo-text {
@@ -326,4 +323,26 @@
       font-size: 14px;
     }
   }
+}
+
+.no-animation {
+  animation: none !important;
+  transition: none !important;
+}
+
+.send-mail-form-wrapper.no-animation.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%);
+}
+
+.logo-wrapper.no-animation.logo-moved {
+  top: 40px;
+  left: 40px;
+  transform: translate(0, 0);
+}
+
+.footer-links.no-animation.show {
+  opacity: 1;
+  visibility: visible;
 }
