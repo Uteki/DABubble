@@ -1,45 +1,61 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Auth, User, onAuthStateChanged } from '@angular/fire/auth';
+import {
+  Auth,
+  User,
+  onAuthStateChanged,
+  browserSessionPersistence,
+  setPersistence,
+  signInAnonymously,
+} from '@angular/fire/auth';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService implements OnDestroy {
   private currentUser: User | null = null;
-  private beforeUnloadHandler: ((event: BeforeUnloadEvent) => void) | undefined;
 
   constructor(private auth: Auth) {
+    setPersistence(this.auth, browserSessionPersistence)
+      .then(() => {
+        console.log('Auth Persistence auf SESSION gesetzt');
+      })
+      .catch((error) => {
+        console.error('Fehler beim Setzen der Persistence:', error);
+      });
+
     onAuthStateChanged(this.auth, (user) => {
       this.currentUser = user;
       if (user && user.isAnonymous) {
-        this.beforeUnloadHandler = this.deleteGuestUser.bind(this);
-        window.addEventListener('beforeunload', this.beforeUnloadHandler);
-        console.log('Guest-User-Listener aktiviert');
+        console.log('Guest-User aktiv (Session-only)');
+      } else if (!user) {
+        this.signInAsGuest();
       } else {
-        if (this.beforeUnloadHandler) {
-          window.removeEventListener('beforeunload', this.beforeUnloadHandler);
-        }
-        console.log('Listener deaktiviert (nicht Guest)');
+        console.log('Nicht-Guest-User aktiv');
       }
     });
   }
 
-  private deleteGuestUser(event: BeforeUnloadEvent): void {
-    if (this.currentUser && this.currentUser.isAnonymous) {
-      this.currentUser.delete()
-        .then(() => {
-          console.log('Guest-User erfolgreich gelöscht');
-        })
-        .catch((error) => {
-          console.error('Fehler beim Löschen des Guest-Users:', error);
-          this.auth.signOut();
-        });
-    }
+  private signInAsGuest(): void {
+    signInAnonymously(this.auth)
+      .then((credential) => {
+        console.log('Neuer Guest-User erstellt:', credential.user.uid);
+      })
+      .catch((error) => {
+        console.error('Fehler beim Guest-SignIn:', error);
+      });
+  }
+
+  signOut(): void {
+    this.auth
+      .signOut()
+      .then(() => {
+        console.log('User ausgeloggt');
+      })
+      .catch((error) => {
+        console.error('Fehler beim SignOut:', error);
+      });
   }
 
   ngOnDestroy(): void {
-    if (this.beforeUnloadHandler) {
-      window.removeEventListener('beforeunload', this.beforeUnloadHandler);
-    }
   }
 }
