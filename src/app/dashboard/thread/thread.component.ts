@@ -20,6 +20,7 @@ export class ThreadComponent implements OnChanges {
   @Input() messageId!: string | null;
 
   today = new Date();
+  currentThread: string = '';
   messageText: string = '';
   messages: any[] = [];
 
@@ -28,7 +29,7 @@ export class ThreadComponent implements OnChanges {
   async sendMessage() {
     if (!this.messageText.trim() || this.messageId === null) return;
 
-    await this.chatService.sendThreadMessage(`${this.chatService.currentChat}`, `${this.messageId}`, {
+    await this.chatService.sendThreadMessage(`${this.currentThread}`, `${this.messageId}`, {
       text: this.messageText,
       //TODO: bind it with user logger
       user: 'Daniel Tran',
@@ -40,6 +41,8 @@ export class ThreadComponent implements OnChanges {
 
   ngOnChanges() {
     if (this.messageId) {
+      this.currentThread = this.chatService.currentChat;
+
       this.chatService.getThreadMessage(`${this.chatService.currentChat}`, this.messageId).subscribe(messages => {
         this.messages = messages.sort((a:any, b:any) => a.timestamp - b.timestamp);
       });

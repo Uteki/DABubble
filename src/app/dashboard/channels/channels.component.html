@@ -119,8 +119,8 @@
   </div>
 
   <output>
-    <div *ngFor="let channel of channels">
-
+    <div *ngFor="let channel of channels" (click)="swapChannel(channel.id)">
+      # {{ channel.id.charAt(0).toUpperCase() + channel.id.slice(1) }}
     </div>
   </output>
 </nav>
