@@ -25,7 +25,6 @@ export class ChannelsComponent implements OnInit {
 
     this.chatService.getChannels().subscribe((data) => {
       this.channels = data;
-      this.chatService.setCurrentChat(this.channels[0].id);
     })
   }
 
