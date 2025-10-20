@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from './../../user.service';
+import { UserService } from '../../user.service';
 import { NgForOf, NgClass } from '@angular/common';
+import {ChatService} from "../../chat.service";
 
 @Component({
   selector: 'app-channels',
@@ -11,18 +12,24 @@ import { NgForOf, NgClass } from '@angular/common';
 })
 export class ChannelsComponent implements OnInit {
   users: any[] = [];
+  channels: any[] = [];
   directMessagesShown: boolean = true;
   directMessagesNone: boolean = false;
 
-  constructor(private UserService: UserService) {}
+  constructor(private UserService: UserService, private chatService: ChatService) {}
 
   ngOnInit(): void {
     this.UserService.getUser().subscribe((data) => {
       this.users = data;
     });
-    setTimeout(() => {
-      console.log(this.users);
-    }, 2000);
+
+    this.chatService.getChannels().subscribe((data) => {
+      this.channels = data;
+    })
+  }
+
+  swapChannel(id: any) {
+    this.chatService.setCurrentChat(id);
   }
 
   toggleDirectMessages() {

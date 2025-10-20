@@ -5,6 +5,7 @@ import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { StopPropagationDirective } from "../../stop-propagation.directive";
 import {addDoc, collection, Firestore, getDocs} from "@angular/fire/firestore";
+import {distinctUntilChanged, filter, map, switchMap} from "rxjs";
 
 
 @Component({
@@ -26,6 +27,7 @@ export class ChatComponent implements OnInit {
 
   messages: any[] = [];
   messageText: string = '';
+  currentChat: string = '';
   today = new Date();
   overlayActivated: boolean = false;
   channelOverlay: boolean = false;
@@ -39,8 +41,14 @@ export class ChatComponent implements OnInit {
   constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private firestore: Firestore) {}
 
   ngOnInit(): void {
-    this.chatService.getMessages(this.chatService.currentChat).subscribe(messages => {
-      this.messages = messages.sort((a, b) => a.timestamp - b.timestamp);
+    this.chatService.currentChat$.pipe(
+      distinctUntilChanged(),
+      filter(chat => !!chat && chat.trim() !== ''),
+      switchMap(chat => this.chatService.getMessages(chat)),
+      map(messages => messages.sort((a, b) => a.timestamp - b.timestamp))
+    ).subscribe(sortedMessages => {
+      this.messages = sortedMessages;
+      this.currentChat = this.chatService.currentChat;
     });
   }
 
