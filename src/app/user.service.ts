@@ -4,9 +4,11 @@ import {
   Firestore,
   collection,
   collectionData,
+  docData,
   orderBy,
   query,
 } from '@angular/fire/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -19,4 +21,19 @@ export class UserService {
     const userRef = collection(this.firestore, `users`);
     return collectionData(userRef, { idField: 'id' }) as Observable<any[]>;
   }
+
+  getUserByUid(uid: string): Observable<any> {
+    const userRef = doc(this.firestore, `users/${uid}`);
+    return docData(userRef, { idField: 'id' }) as Observable<any>;
+  }
+
+  async updateUserStatus(uid: string, isActive: boolean): Promise<void> {
+    const userRef = doc(this.firestore, `users/${uid}`);
+    await setDoc(userRef, { status: isActive }, { merge: true });
+  }
+
+  async updateUserName(uid: string, newName: string): Promise<void> {
+  const userRef = doc(this.firestore, `users/${uid}`);
+  await setDoc(userRef, { name: newName }, { merge: true });
+}
 }

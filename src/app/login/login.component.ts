@@ -77,6 +77,7 @@ ngOnInit(): void {
         console.log('Eingeloggt:', userCredential.user);
         this.errorMessage = null;
         this.router.navigate(['/dashboard']);
+        this.saveSessionStorage(userCredential.user.uid);
       } catch (error: any) {
         this.errorMessage = this.getErrorMessage(error.code);
         console.error('Fehler beim Login:', error);
@@ -142,5 +143,9 @@ ngOnInit(): void {
       default:
         return 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.';
     }
+  }
+
+  saveSessionStorage(uid: string) {
+    sessionStorage.setItem('sessionData', uid);
   }
 }

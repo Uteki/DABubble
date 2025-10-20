@@ -1,4 +1,8 @@
-<section (click)="toggleProfile()" class="toggle-menu no-display" id="profile-menu">
+<section
+  (click)="toggleProfile()"
+  class="toggle-menu no-display"
+  id="profile-menu"
+>
   <div (click)="stopPropagation($event)" class="toggle-item">
     <div>
       @if (edit) {
@@ -7,9 +11,8 @@
       <h2>Profil</h2>
       }
 
-      <button  (click)="toggleProfile()">
+      <button (click)="toggleProfile()">
         <svg
-        
           width="24"
           height="24"
           viewBox="0 0 24 24"
@@ -45,12 +48,12 @@
           <h3>Vollständiger Name</h3>
         </div>
         <div>
-          <input type="text" placeholder="{{ username }}" />
+          <input id="input-name" type="text" placeholder="{{ username }}" />
         </div>
       </div>
       <div>
         <button (click)="toggleProfile()">Abbrechen</button>
-        <button>Speichern</button>
+        <button (click)="changeUserName()">Speichern</button>
       </div>
     </div>
     } @else {
@@ -95,7 +98,7 @@
   </div>
   <div class="search-wrapper">
     <input
-    (input)="onInputChange($any($event.target).value)"
+      (input)="onInputChange($any($event.target).value)"
       type="text"
       placeholder="Devspace durchsuchen"
       class="search-input"
@@ -106,18 +109,18 @@
       alt="Search"
       class="search-icon"
     />
-    <div class="no-display" id="search-results-contacts">
-
-    </div>
-     <div class="no-display" id="search-results-channels">
-
-    </div>
+    <div class="no-display" id="search-results-contacts"></div>
+    <div class="no-display" id="search-results-channels"></div>
   </div>
   <div class="profile-wrapper">
     <h2>{{ username }}</h2>
     <div class="profile-pic">
       <img src="./../../../assets/avatars/avatarSmall2.png" alt="" />
+      @if (userStatus) {
       <img src="./../../../assets/img/online.png" alt="" />
+      } @else {
+      <img src="./../../../assets/img/offline.svg" alt="" />
+      }
     </div>
     <svg
       (click)="toggleDropdown()"

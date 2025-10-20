@@ -76,6 +76,7 @@ export class AvatarComponent implements OnInit {
           { merge: true }
         );
         console.log('Avatar gespeichert:', this.selectedAvatar);
+          console.log('Avatar gespeichert:', this.auth.currentUser.uid);
         this.router.navigate(['/login']);
       } catch (error) {
         console.error('Fehler beim Speichern des Avatars:', error);
@@ -84,4 +85,14 @@ export class AvatarComponent implements OnInit {
       this.showError = true;
     }
   }
+
+
+
+  sessionStorageSave(uid: string) {
+    sessionStorage.setItem('sessionData', uid);
+
+  }
+
+
+  
 }
