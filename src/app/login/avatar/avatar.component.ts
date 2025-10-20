@@ -9,7 +9,7 @@ import { Firestore, doc, setDoc } from '@angular/fire/firestore';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './avatar.component.html',
-  styleUrls: ['./avatar.component.scss'],
+  styleUrls: ['./avatar.component.scss', './avatar.component.responsive.scss'],
 })
 export class AvatarComponent implements OnInit {
   userName: string = 'Frederik Beck';
@@ -47,7 +47,7 @@ export class AvatarComponent implements OnInit {
     this.router.navigate(['/register']);
   }
 
-    goTolegalNotice(): void {
+  goTolegalNotice(): void {
     this.router.navigate(['/legal-notice'], { state: { skipAnimation: true } });
   }
 
@@ -76,7 +76,7 @@ export class AvatarComponent implements OnInit {
           { merge: true }
         );
         console.log('Avatar gespeichert:', this.selectedAvatar);
-          console.log('Avatar gespeichert:', this.auth.currentUser.uid);
+        console.log('Avatar gespeichert:', this.auth.currentUser.uid);
         this.router.navigate(['/login']);
       } catch (error) {
         console.error('Fehler beim Speichern des Avatars:', error);
@@ -86,13 +86,7 @@ export class AvatarComponent implements OnInit {
     }
   }
 
-
-
   sessionStorageSave(uid: string) {
     sessionStorage.setItem('sessionData', uid);
-
   }
-
-
-  
 }

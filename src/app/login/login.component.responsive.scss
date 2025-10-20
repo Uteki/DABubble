@@ -1,0 +1,244 @@
+@media (min-width: 1300px) {
+  // Desktop-Variante: Logo slided nach mittig oben über der Form
+  .logo-wrapper {
+    left: 50% !important; // Mittig positionieren
+    transform: translate(-50%, 0) !important; // Horizontal zentriert
+    animation: slideToTopCenter 1s ease-in-out forwards; // Animation nach mittig oben
+  }
+
+  @keyframes slideToTopCenter {
+    0% {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    100% {
+      top: 20px;
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+  }
+
+  .login-form-wrapper {
+    top: calc(
+      50% + 50px
+    ); // Form etwas nach unten verschieben, damit Logo darüber ist
+  }
+}
+
+@media (max-width: 1024px) {
+  // iPad/Tablet-Variante (z.B. iPad Pro landscape)
+  .login-card {
+    padding: 40px 30px;
+    border-radius: 25px;
+    width: 80vw;
+  }
+
+  h2 {
+    font-size: 36px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+  }
+
+  .form-group {
+    margin-bottom: 30px;
+  }
+
+  .input-wrapper {
+    padding: 14px 18px;
+    gap: 25px;
+  }
+
+  .form-input {
+    font-size: 15px;
+  }
+
+  .button-group {
+    gap: 15px;
+  }
+
+  .signup-hint {
+    top: 30px;
+    right: 30px;
+    gap: 6px;
+
+    .signup-text,
+    .signup-link {
+      font-size: 17px;
+    }
+  }
+
+  .footer-links {
+    bottom: 30px;
+    gap: 15px;
+
+    .footer-link {
+      font-size: 16px;
+      padding: 9px 13px;
+    }
+  }
+
+  .logo-wrapper {
+    .logo {
+      padding: 20px 40px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  // Mobile-Variante (z.B. iPad portrait oder größere Phones)
+  .login-card {
+    padding: 30px 20px;
+    border-radius: 20px;
+    width: 90vw;
+  }
+
+  h2 {
+    font-size: 28px !important;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  .input-wrapper {
+    padding: 12px 16px;
+    gap: 20px;
+  }
+
+  .form-input {
+    font-size: 14px;
+  }
+
+  .forgot-password {
+    font-size: 14px;
+  }
+
+  .divider {
+    font-size: 12px;
+    margin: 16px 0;
+  }
+
+  .google-login {
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 12px;
+
+    button {
+      padding: 10px;
+      font-size: 16px;
+    }
+  }
+
+  .signup-hint {
+    top: 20px;
+    right: 20px;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-end;
+
+    .signup-text,
+    .signup-link {
+      font-size: 16px;
+    }
+  }
+
+  .footer-links {
+    display: none; // Footer-Links (Impressum, Datenschutz) ab Mobile unsichtbar
+  }
+
+  .error-text {
+    margin-left: 40px;
+    font-size: 11px;
+  }
+
+  // Mobile-spezifische Intro-Animation: Logo bewegt sich nach mittig oben
+  .logo-wrapper {
+    &.step-1 {
+      animation: slideToTopCenterMobile 1s ease-in-out forwards;
+    }
+
+    &.logo-moved {
+      animation: none;
+      top: 20px;
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+  }
+
+  @keyframes slideToTopCenterMobile {
+    0% {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    100% {
+      top: 20px;
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  // Kleine Mobile (z.B. iPhone SE oder ältere Modelle)
+  .login-card {
+    padding: 20px 10px;
+    border-radius: 15px;
+  }
+
+  h2 {
+    font-size: 20px !important;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .input-wrapper {
+    padding: 10px 12px;
+    gap: 15px;
+  }
+
+  .form-input {
+    font-size: 12px;
+  }
+
+  .button-group button {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .signup-hint {
+    top: 10px;
+    right: 10px;
+
+    .signup-text,
+    .signup-link {
+      font-size: 14px;
+    }
+  }
+
+  .error-text {
+    font-size: 10px;
+    margin-left: 30px;
+  }
+
+  .logo-wrapper {
+    .logo {
+      padding: 10px 20px;
+    }
+  }
+}

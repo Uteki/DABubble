@@ -1,0 +1,128 @@
+@media (min-width: 1300px) {
+  // Desktop-Variante: Logo wandert nach oben über der Form
+  .logo-wrapper {
+    top: 20px !important; // Positioniere oben, wie auf den Bildern
+    left: 20px !important;
+    transform: translate(0, 0) !important;
+    animation: slideToTop 1s ease-in-out forwards; // Animation zum "Wandern" nach oben
+  }
+
+  @keyframes slideToTop {
+    0% {
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    100% {
+      top: 20px;
+      transform: translate(0, 0);
+    }
+  }
+
+  .impressum-container {
+    top: calc(
+      50% + 50px
+    ); // Container etwas nach unten verschieben, damit Logo darüber ist
+  }
+}
+
+@media (max-width: 1024px) {
+  // iPad/Tablet-Variante
+  .impressum-container {
+    padding: 40px 30px;
+    border-radius: 25px;
+    max-width: 80vw;
+    margin: 12px auto;
+  }
+
+  h1 {
+    font-size: 36px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  p {
+    font-size: 15px;
+  }
+
+  .back-button {
+    top: 50px;
+    left: 25px;
+  }
+
+  .logo-wrapper {
+    .logo {
+      padding: 20px 40px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  // Mobile-Variante
+  .logo-wrapper {
+    top: 20px;
+    left: 20px;
+
+    .logo {
+      padding: 15px 30px;
+    }
+  }
+
+  .impressum-container {
+    padding: 30px 20px;
+    border-radius: 20px;
+    max-width: 90vw;
+    margin: 10px auto;
+
+    h1 {
+      font-size: 32px;
+    }
+
+    h2 {
+      font-size: 20px;
+    }
+
+    p {
+      font-size: 14px;
+    }
+
+    .back-button {
+      top: 30px;
+      left: 20px;
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  // Kleine Mobile
+  .logo-wrapper {
+    .logo {
+      padding: 10px 20px;
+    }
+  }
+
+  .impressum-container {
+    padding: 20px 10px;
+    border-radius: 15px;
+
+    h1 {
+      font-size: 28px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    p {
+      font-size: 12px;
+    }
+
+    .back-button {
+      top: 20px;
+      left: 10px;
+      width: 30px;
+      height: 30px;
+    }
+  }
+}

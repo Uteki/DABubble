@@ -21,7 +21,7 @@ import { IntroService } from '../intro.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  styleUrls: ['./login.component.scss', './login.component.responsive.scss'],
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-ngOnInit(): void {
+  ngOnInit(): void {
     console.log('Intro shown status:', this.introService.getIntroShown());
     if (this.introService.getIntroShown()) {
       this.showIntroStep = true;
@@ -74,13 +74,11 @@ ngOnInit(): void {
           email,
           password
         );
-        console.log('Eingeloggt:', userCredential.user);
         this.errorMessage = null;
         this.router.navigate(['/dashboard']);
         this.saveSessionStorage(userCredential.user.uid);
       } catch (error: any) {
         this.errorMessage = this.getErrorMessage(error.code);
-        console.error('Fehler beim Login:', error);
       }
     } else {
       Object.keys(this.loginForm.controls).forEach((key) => {
@@ -93,24 +91,20 @@ ngOnInit(): void {
     try {
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(this.auth, provider);
-      console.log('Google-Login erfolgreich:', userCredential.user);
       this.errorMessage = null;
       this.router.navigate(['/dashboard']);
     } catch (error: any) {
       this.errorMessage = this.getErrorMessage(error.code);
-      console.error('Fehler beim Google-Login:', error);
     }
   }
 
   async guestLogin(): Promise<void> {
     try {
       const userCredential = await signInAnonymously(this.auth);
-      console.log('Gäste-Login erfolgreich:', userCredential.user);
       this.errorMessage = null;
       this.router.navigate(['/dashboard']);
     } catch (error: any) {
       this.errorMessage = this.getErrorMessage(error.code);
-      console.error('Fehler beim Gäste-Login:', error);
     }
   }
 

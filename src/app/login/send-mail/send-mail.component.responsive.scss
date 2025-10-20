@@ -1,0 +1,187 @@
+@media (min-width: 1300px) {
+  // Desktop-Variante: Logo wandert nach oben über der Form
+  .logo-wrapper {
+    top: 20px !important; // Positioniere oben, wie auf den Bildern
+    left: 20px !important;
+    transform: translate(0, 0) !important;
+    animation: slideToTop 1s ease-in-out forwards; // Animation zum "Wandern" nach oben
+  }
+
+  @keyframes slideToTop {
+    0% {
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    100% {
+      top: 20px;
+      transform: translate(0, 0);
+    }
+  }
+
+  .send-mail-form-wrapper {
+    top: calc(
+      50% + 50px
+    ); // Form etwas nach unten verschieben, damit Logo darüber ist
+  }
+}
+
+@media (max-width: 1024px) {
+  // iPad/Tablet-Variante
+  .send-mail-card {
+    padding: 40px 30px;
+    border-radius: 25px;
+    width: 80vw;
+
+    h2 {
+      font-size: 36px;
+      padding-left: 6px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+    }
+
+    .info-text {
+      font-size: 15px;
+    }
+  }
+
+  .input-wrapper {
+    padding: 14px 18px;
+    gap: 25px;
+    max-width: 80%;
+  }
+
+  .btn-submit {
+    max-width: 80%;
+    font-size: 17px;
+  }
+
+  .footer-links {
+    bottom: 30px;
+    gap: 15px;
+
+    .footer-link {
+      font-size: 16px;
+      padding: 9px 13px;
+    }
+  }
+
+  .logo-wrapper.logo-moved {
+    .logo {
+      padding: 20px 40px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  // Mobile-Variante
+  .send-mail-card {
+    padding: 30px 20px;
+    border-radius: 20px;
+    width: 90vw;
+
+    .back-button {
+      top: 30px;
+      left: 20px;
+    }
+
+    h2 {
+      font-size: 24px !important;
+      padding-left: 40px;
+    }
+
+    .subtitle {
+      font-size: 16px;
+    }
+
+    .info-text {
+      font-size: 14px;
+      max-width: 100%;
+    }
+  }
+
+  .logo-wrapper.logo-moved {
+    top: 20px;
+    left: 20px;
+
+    .logo {
+      padding: 15px 30px;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  .input-wrapper {
+    padding: 12px 16px;
+    gap: 20px;
+    max-width: 100%;
+  }
+
+  .form-input {
+    font-size: 14px;
+  }
+
+  .btn-submit {
+    max-width: 100%;
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  .footer-links {
+    display: none; // Footer-Links (Impressum, Datenschutz) ab Mobile unsichtbar
+  }
+
+  .error-text {
+    margin-left: 40px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 320px) {
+  // Kleine Mobile
+  .send-mail-card {
+    padding: 20px 10px;
+    border-radius: 15px;
+  }
+
+  .logo-wrapper.logo-moved {
+    .logo {
+      padding: 10px 20px;
+    }
+  }
+
+  h2 {
+    font-size: 20px !important;
+    padding-left: 30px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .info-text {
+    font-size: 12px;
+  }
+
+  .input-wrapper {
+    padding: 10px 12px;
+    gap: 15px;
+  }
+
+  .form-input {
+    font-size: 12px;
+  }
+
+  .btn-submit {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .error-text {
+    font-size: 10px;
+    margin-left: 30px;
+  }
+}

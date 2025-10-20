@@ -18,7 +18,7 @@ import {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss'],
+  styleUrls: ['./register.component.scss', './register.component.responsive.scss'],
 })
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
@@ -50,14 +50,12 @@ export class RegisterComponent implements OnInit {
           password
         );
         await updateProfile(userCredential.user, { displayName: fullName });
-        console.log('Registriert:', userCredential.user);
         this.errorMessage = null;
         this.router.navigate(['/avatar'], {
           state: { userName: fullName },
         });
       } catch (error: any) {
         this.errorMessage = this.getErrorMessage(error.code);
-        console.error('Fehler bei der Registrierung:', error);
       }
     } else {
       Object.keys(this.registerForm.controls).forEach((key) => {

@@ -19,7 +19,7 @@ import { IntroService } from '../../intro.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './reset.component.html',
-  styleUrls: ['./reset.component.scss'],
+  styleUrls: ['./reset.component.scss', './reset.component.responsive.scss'],
 })
 export class ResetComponent implements OnInit {
   resetForm: FormGroup;

@@ -6,7 +6,10 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [],
   templateUrl: './legal-notice.component.html',
-  styleUrl: './legal-notice.component.scss',
+  styleUrls: [
+    './legal-notice.component.scss',
+    './legal-notice.component.responsive.scss',
+  ],
 })
 export class LegalNoticeComponent {
   constructor(private router: Router) {}

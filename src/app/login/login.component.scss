@@ -294,11 +294,10 @@
 
 @keyframes slideLeft {
   0% {
-
     transform: translate(-50%, -50%);
   }
   100% {
-left: 40%;
+    left: 40%;
     transform: translate(-30%, -50%);
   }
 }
@@ -415,81 +414,6 @@ left: 40%;
       color: #444df2;
       border: 1px solid #797ef3;
       text-decoration: none;
-    }
-  }
-}
-
-@media (max-width: 600px) {
-  .login-card {
-    padding: 30px 20px;
-  }
-
-  .logo-wrapper {
-    &.step-1 {
-      animation: slideLeftMobile 1s ease-in-out forwards;
-    }
-
-    &.logo-moved {
-      animation: slideUpLeftMobile 1s ease-in-out forwards;
-      top: 20px;
-      left: 20px;
-    }
-  }
-
-  h2 {
-    font-size: 24px !important;
-  }
-
-  .button-group {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .signup-hint {
-    top: 20px;
-    right: 20px;
-    flex-direction: column;
-    gap: 5px;
-    align-items: flex-end;
-
-    .signup-text,
-    .signup-link {
-      font-size: 16px;
-    }
-  }
-
-  .footer-links {
-    bottom: 20px;
-    gap: 20px;
-
-    .footer-link {
-      font-size: 14px;
-    }
-  }
-
-  @keyframes slideLeftMobile {
-    0% {
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    100% {
-      top: 50%;
-      left: 10%;
-      transform: translate(0, -50%);
-    }
-  }
-
-  @keyframes slideUpLeftMobile {
-    0% {
-      top: 50%;
-      left: 10%;
-      transform: translate(0, -50%);
-    }
-    100% {
-      top: 20px;
-      left: 20px;
-      transform: translate(0, 0);
     }
   }
 }

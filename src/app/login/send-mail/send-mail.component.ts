@@ -15,7 +15,7 @@ import { IntroService } from '../../intro.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './send-mail.component.html',
-  styleUrls: ['./send-mail.component.scss'],
+  styleUrls: ['./send-mail.component.scss', './send-mail.component.responsive.scss'],
 })
 export class SendMailComponent implements OnInit {
   forgotForm: FormGroup;

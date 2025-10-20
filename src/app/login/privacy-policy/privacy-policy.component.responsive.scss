@@ -1,0 +1,154 @@
+@media (min-width: 1300px) {
+  // Desktop-Variante: Logo wandert nach oben über der Form
+  .logo-wrapper {
+    top: 20px !important; // Positioniere oben, wie auf den Bildern
+    left: 20px !important;
+    transform: translate(0, 0) !important;
+    animation: slideToTop 1s ease-in-out forwards; // Animation zum "Wandern" nach oben
+  }
+
+  @keyframes slideToTop {
+    0% {
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    100% {
+      top: 20px;
+      transform: translate(0, 0);
+    }
+  }
+
+  .datenschutz-container {
+    top: calc(
+      50% + 50px
+    ); // Container etwas nach unten verschieben, damit Logo darüber ist
+  }
+}
+
+@media (max-width: 1024px) {
+  // iPad/Tablet-Variante
+  .datenschutz-container {
+    padding: 40px 30px;
+    border-radius: 25px;
+    max-width: 80vw;
+    margin: 12px auto;
+    max-height: 96vh;
+
+    h1 {
+      font-size: 36px;
+    }
+
+    h2 {
+      font-size: 22px;
+      margin: 25px 0 9px 0;
+    }
+
+    p,
+    ul {
+      font-size: 15px;
+    }
+
+    ul {
+      margin-left: 18px;
+    }
+
+    &::-webkit-scrollbar {
+      width: 7px;
+    }
+  }
+
+  .logo-wrapper {
+    .logo {
+      padding: 20px 40px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  // Mobile-Variante
+  .logo-wrapper {
+    top: 20px;
+    left: 20px;
+
+    .logo {
+      padding: 15px 30px;
+    }
+  }
+
+  .datenschutz-container {
+    padding: 30px 20px;
+    border-radius: 20px;
+    max-width: 90vw;
+    margin: 10px auto;
+    max-height: 95vh;
+
+    h1 {
+      font-size: 32px;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin: 20px 0 8px 0;
+    }
+
+    p,
+    ul {
+      font-size: 14px;
+    }
+
+    ul {
+      margin-left: 15px;
+    }
+
+    .back-button {
+      top: 30px;
+      left: 20px;
+    }
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  // Kleine Mobile
+  .logo-wrapper {
+    .logo {
+      padding: 10px 20px;
+    }
+  }
+
+  .datenschutz-container {
+    padding: 20px 10px;
+    border-radius: 15px;
+
+    h1 {
+      font-size: 28px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    p,
+    ul {
+      font-size: 12px;
+    }
+
+    ul {
+      margin-left: 10px;
+    }
+
+    .back-button {
+      top: 20px;
+      left: 10px;
+      width: 30px;
+      height: 30px;
+    }
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+  }
+}

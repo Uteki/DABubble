@@ -1,0 +1,200 @@
+@media (min-width: 1300px) {
+  // Desktop-Variante: Logo wandert nach oben über der Form
+  .logo-wrapper {
+    top: 20px !important; // Positioniere oben, wie auf den Bildern
+    left: 20px !important;
+    transform: translate(0, 0) !important;
+    animation: slideToTop 1s ease-in-out forwards; // Animation zum "Wandern" nach oben
+  }
+
+  @keyframes slideToTop {
+    0% {
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    100% {
+      top: 20px;
+      transform: translate(0, 0);
+    }
+  }
+
+  .avatar-form-wrapper {
+    top: calc(
+      50% + 50px
+    ); // Form etwas nach unten verschieben, damit Logo darüber ist
+  }
+}
+
+@media (max-width: 1024px) {
+  // iPad/Tablet-Variante
+  .avatar-card {
+    padding: 40px 30px;
+    border-radius: 25px;
+    width: 80vw;
+
+    h2 {
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+  }
+
+  .selected-avatar {
+    width: 130px;
+    height: 130px;
+  }
+
+  .user-name {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 17px;
+  }
+
+  .avatar-options {
+    gap: 12px;
+  }
+
+  .avatar-option {
+    width: 65px;
+    height: 65px;
+  }
+
+  .btn-continue {
+    font-size: 17px;
+  }
+
+  .footer-links {
+    bottom: 30px;
+    gap: 15px;
+
+    .footer-link {
+      font-size: 16px;
+      padding: 9px 13px;
+    }
+  }
+
+  .logo-wrapper {
+    .logo {
+      padding: 20px 40px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  // Mobile-Variante
+  .avatar-card {
+    padding: 30px 20px;
+    border-radius: 20px;
+    width: 90vw;
+
+    .back-button {
+      top: 30px;
+      left: 20px;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+  }
+
+  .logo-wrapper {
+    top: 20px;
+    left: 20px;
+
+    .logo {
+      padding: 15px 30px;
+    }
+  }
+
+  .selected-avatar {
+    width: 120px;
+    height: 120px;
+
+    svg {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  .user-name {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .avatar-options {
+    gap: 10px;
+    justify-content: space-around;
+  }
+
+  .avatar-option {
+    width: 60px;
+    height: 60px;
+  }
+
+  .btn-continue {
+    width: 100%;
+    margin: 20px auto 0;
+    font-size: 16px;
+    padding: 10px 0;
+    height: auto;
+  }
+
+  .footer-links {
+    display: none; // Footer-Links (Impressum, Datenschutz) ab Mobile unsichtbar
+  }
+}
+
+@media (max-width: 320px) {
+  // Kleine Mobile
+  .avatar-card {
+    padding: 20px 10px;
+    border-radius: 15px;
+  }
+
+  .logo-wrapper {
+    .logo {
+      padding: 10px 20px;
+    }
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  .selected-avatar {
+    width: 100px;
+    height: 100px;
+
+    svg {
+      width: 50px;
+      height: 50px;
+    }
+  }
+
+  .user-name {
+    font-size: 18px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .avatar-options {
+    gap: 5px;
+  }
+
+  .avatar-option {
+    width: 50px;
+    height: 50px;
+  }
+
+  .btn-continue {
+    font-size: 14px;
+  }
+}
