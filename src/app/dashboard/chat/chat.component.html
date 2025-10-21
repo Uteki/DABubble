@@ -44,7 +44,7 @@
       [ngClass]="{ 'no-display': !this.channelOverlay }"
     >
       <div>
-        <h3># Entwicklerteam</h3>
+        <h3># {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}</h3>
         <div>
           <svg
             click-stop-propagation
@@ -86,11 +86,11 @@
         @if (editOne) {
         <div>
           <h2>#</h2>
-          <input type="text" placeholder="Entwicklerteam" />
+          <input type="text" placeholder="{{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}" />
         </div>
 
         } @else {
-        <h3># Entwicklerteam</h3>
+        <h3># {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}</h3>
         }
       </div>
       <div>
@@ -99,9 +99,8 @@
           <h3>Bearbeiten</h3>
         </div>
         <p>
-          Dieser Channel ist für alles rund um #dfsdf vorgesehen. Hier kannst du
-          zusammen mit deinem Team Meetings abhalten, Dokumente teilen und
-          Entscheidungen treffen.
+        <!--TODO-->
+        <!--{{  }}-->
         </p>
         <div></div>
         <h3>Erstellt von:</h3>
@@ -298,7 +297,7 @@
   <textarea
     id="message"
     name="message"
-    placeholder="Nachricht an #Entwicklerteam"
+    placeholder="Nachricht an #{{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}"
     rows="2"
     [(ngModel)]="messageText"
   ></textarea>

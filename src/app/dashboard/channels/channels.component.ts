@@ -29,8 +29,8 @@ export class ChannelsComponent implements OnInit {
     })
   }
 
-  swapChannel(id: any) {
-    this.chatService.setCurrentChat(id);
+  swapChannel(id: any, name: string) {
+    this.chatService.setCurrentChat(id, name);
   }
 
   toggleDirectMessages() {

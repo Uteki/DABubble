@@ -167,8 +167,8 @@
   </div>
 
   <output>
-    <div *ngFor="let channel of channels" (click)="swapChannel(channel.id)">
-      # {{ channel.id.charAt(0).toUpperCase() + channel.id.slice(1) }}
+    <div *ngFor="let channel of channels" (click)="swapChannel(channel.id, channel.name)">
+      # {{ channel.name.charAt(0).toUpperCase() + channel.name.slice(1) }}
     </div>
   </output>
 </nav>

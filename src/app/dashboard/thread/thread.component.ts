@@ -21,6 +21,7 @@ export class ThreadComponent implements OnChanges {
 
   today = new Date();
   currentThread: string = '';
+  stableThread: string = '';
   messageText: string = '';
   messages: any[] = [];
 
@@ -41,9 +42,10 @@ export class ThreadComponent implements OnChanges {
 
   ngOnChanges() {
     if (this.messageId) {
-      this.currentThread = this.chatService.currentChat;
+      this.currentThread = this.chatService.currentChannel;
+      this.stableThread = this.chatService.currentChat;
 
-      this.chatService.getThreadMessage(`${this.chatService.currentChat}`, this.messageId).subscribe(messages => {
+      this.chatService.getThreadMessage(`${this.chatService.currentChannel}`, this.messageId).subscribe(messages => {
         this.messages = messages.sort((a:any, b:any) => a.timestamp - b.timestamp);
       });
     }

@@ -36,7 +36,7 @@ export class ChatComponent implements OnInit {
   switchAddMemberOverlay: boolean = false;
   editOne: boolean = false;
   editTwo: boolean = false
-  channelFounder: string = "Noah Braun";
+  channelFounder: string = "";
 
   constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private firestore: Firestore) {}
 
@@ -55,7 +55,7 @@ export class ChatComponent implements OnInit {
   async sendMessage() {
     if (!this.messageText.trim()) return;
 
-    await this.chatService.sendMessage(this.chatService.currentChat, {
+    await this.chatService.sendMessage(this.chatService.currentChannel, {
       text: this.messageText,
       //TODO: bind it with user logger
       user: 'Daniel Tran',
@@ -69,7 +69,7 @@ export class ChatComponent implements OnInit {
     this.threadSelected.emit(threadId);
 
     const threadRef = collection(
-      this.firestore, `channels/${this.chatService.currentChat}/messages/${threadId}/thread`
+      this.firestore, `channels/${this.chatService.currentChannel}/messages/${threadId}/thread`
     );
 
     const snapshot = await getDocs(threadRef);
