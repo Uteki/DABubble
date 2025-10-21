@@ -1,11 +1,12 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {ChatService} from "../../chat.service";
 import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { StopPropagationDirective } from "../../stop-propagation.directive";
-import {addDoc, collection, Firestore, getDocs} from "@angular/fire/firestore";
+import {addDoc, collection, Firestore, getDocs, updateDoc} from "@angular/fire/firestore";
 import {distinctUntilChanged, filter, map, switchMap} from "rxjs";
+import {doc} from "firebase/firestore";
 
 
 @Component({
@@ -24,6 +25,7 @@ import {distinctUntilChanged, filter, map, switchMap} from "rxjs";
 })
 export class ChatComponent implements OnInit {
   @Output() threadSelected = new EventEmitter<string>();
+  @ViewChild('channelEdit') channelEdit!: ElementRef;
 
   messages: any[] = [];
   messageText: string = '';
@@ -36,7 +38,10 @@ export class ChatComponent implements OnInit {
   switchAddMemberOverlay: boolean = false;
   editOne: boolean = false;
   editTwo: boolean = false
-  channelFounder: string = "";
+
+  channelFounder: string = 'user[0]';
+  channelName: string = '';
+  channelDesc: string = '';
 
   constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private firestore: Firestore) {}
 
@@ -77,13 +82,38 @@ export class ChatComponent implements OnInit {
     return addDoc(threadRef, { ...message, timestamp: message.timestamp || Date.now() });
   }
 
+  async updateChannelName(channelId: string, newName: string) {
+    const channelRef = doc(this.firestore, `channels/${channelId}`);
+    this.currentChat = newName;
+    await updateDoc(channelRef, { name: newName });
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    if (this.editOne && this.channelEdit && !this.channelEdit.nativeElement.contains(event.target)) {
+      //TODO for desc
+      this.editOne = false;
+    }
+  }
+
+  saveEditedName() {
+    if (this.editOne) {
+      const newName = this.channelName.trim();
+      if (!newName) return;
+
+      this.updateChannelName(this.chatService.currentChannel, newName).then(() => {})
+    } else {
+      this.channelName = this.currentChat;
+    }
+
+    this.editOne = !this.editOne;
+  }
+
   overlayFunction(darkOverlay: boolean, overlay: string, overlayBoolean: boolean ) {
     this.overlayActivated = darkOverlay;
     this.cd.detectChanges();
     if (overlay == "Entwicklung") {
       this.channelOverlay = overlayBoolean;
-      console.log(this.channelOverlay);
-
     } else if (overlay == "Mitglieder") {
       this.viewMemberOverlay = overlayBoolean;
     } else if (overlay == "Hinzufügen") {

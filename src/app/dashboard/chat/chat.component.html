@@ -40,6 +40,7 @@
     </div>
 
     <div
+      #channelEdit
       class="channel-infos"
       [ngClass]="{ 'no-display': !this.channelOverlay }"
     >
@@ -79,16 +80,15 @@
         <div>
           <h3>Channel-Name</h3>
 
-          <h3 (click)="editOne = !editOne">
-            @if (editOne) { Speichern } @else {Bearbeiten}
+          <h3 (click)="saveEditedName()">
+            @if (editOne) { Speichern } @else { Bearbeiten }
           </h3>
         </div>
         @if (editOne) {
         <div>
           <h2>#</h2>
-          <input type="text" placeholder="{{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}" />
+          <input [(ngModel)]="channelName" type="text" placeholder="{{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}" />
         </div>
-
         } @else {
         <h3># {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}</h3>
         }
