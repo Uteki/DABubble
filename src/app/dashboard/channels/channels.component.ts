@@ -29,6 +29,11 @@ export class ChannelsComponent implements OnInit {
     })
   }
 
+  test(a: any) {
+    //TODO
+    console.log(a);
+  }
+
   swapChannel(id: any, name: string) {
     this.chatService.setCurrentChat(id, name);
   }

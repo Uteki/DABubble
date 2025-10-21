@@ -203,15 +203,17 @@
       class="direct-messages-list"
     >
       <div *ngFor="let user of users">
-        <div class="user-avatar">
-          <img [src]="user.avatar" [alt]="user.name" />
-          @if (user.status) {
-          <img src="./../../../assets/img/online.png" alt="" />
-          } @else {
-          <img src="./../../../assets/img/offline.svg" alt="" />
-          }
-        </div>
-        <p>{{ user.name }}</p>
+        <article (click)="test(user.id)">
+          <figure class="user-avatar">
+            <img [src]="user.avatar" [alt]="user.name" />
+            @if (user.status) {
+            <img src="./../../../assets/img/online.png" alt="" />
+            } @else {
+            <img src="./../../../assets/img/offline.svg" alt="" />
+            }
+          </figure>
+          <p>{{ user.name }}</p>
+        </article>
       </div>
     </div>
   </output>
