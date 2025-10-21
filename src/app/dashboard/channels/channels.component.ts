@@ -15,6 +15,7 @@ export class ChannelsComponent implements OnInit {
   channels: any[] = [];
   directMessagesShown: boolean = true;
   directMessagesNone: boolean = false;
+  overlayActivated: boolean = false;
 
   constructor(private UserService: UserService, private chatService: ChatService) {}
 
@@ -43,6 +44,6 @@ export class ChannelsComponent implements OnInit {
   }
 
   toggleOverlay() {
-    
+
   }
 }

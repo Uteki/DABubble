@@ -1,4 +1,4 @@
-<section (click)="toggleOverlay()" class="overlay">
+<section (click)="toggleOverlay()" class="overlay" [ngClass]="{ 'd-none': !overlayActivated }">
   <div class="create-channel">
     <div>
       <h3>Channel erstellen</h3>
