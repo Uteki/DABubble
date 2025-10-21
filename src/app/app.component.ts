@@ -15,9 +15,9 @@ export class AppComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  ngOnInit(): void {
+/*   ngOnInit(): void {
     this.checkSessionStorage();
-  }
+  } */
     checkSessionStorage(): void {
     const sessionData = sessionStorage.getItem('sessionData');
     if (sessionData) {

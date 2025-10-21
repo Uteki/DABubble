@@ -1,5 +1,110 @@
 @use "../../../assets/styles/colors" as *;
 
+.overlay {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.274);
+  top: 0;
+  left: 0;
+  z-index: 200;
+
+  .create-channel {
+    width: 750px;
+    height: 430px;
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: 0px 6px 10px 0px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    > div:nth-child(1) {
+      display: flex;
+      justify-content: space-between;
+      > h3 {
+        margin-block-end: 1rem;
+      }
+    }
+
+    > h4 {
+      display: flex;
+      gap: 5px;
+      margin-block-start: 1rem;
+      margin-block-end: 1rem;
+      > h4 {
+        font-weight: 300;
+        color: $text-gray;
+      }
+    }
+    .channel-name {
+      display: flex;
+      justify-content: start !important;
+      border: 1px solid $light-purple !important;
+      padding: 10px;
+      height: 55px;
+      border-radius: 25px;
+      gap: 10px;
+      > input {
+        width: 100%;
+        transition: all 0.3s ease-in-out;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+        &::placeholder {
+          font-family: "Nunito";
+          font-weight: 400;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .channel-description {
+      display: flex;
+      justify-content: start !important;
+      border: 1px solid $light-purple !important;
+      padding: 10px;
+      height: 55px;
+      border-radius: 25px;
+      > input {
+        width: 100%;
+        transition: all 0.3s ease-in-out;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+        &::placeholder {
+          font-family: "Nunito";
+          font-weight: 400;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .channel-create-one {
+      display: flex;
+      justify-content: end;
+      padding: 20px 0;
+      > button {
+        width: 100px;
+        height: 35px;
+        border-radius: 30px;
+        border: none;
+        background-color: $purple-button;
+        color: white;
+        font-family: "Nunito";
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        &:hover {
+          background-color: $purple-font;
+        }
+      }
+    }
+  }
+}
+
 :host {
   gap: 25px;
   opacity: 1;
@@ -65,11 +170,10 @@
           content: url("../../../assets/icons/svgs/arrow_drop_down.svg");
           margin-right: 25px;
         }
-        
       }
-      >h3.deactive::before {
-         content: url("../../../assets/icons/svgs/arrow_drop_down_close.svg") !important;
-         width: 10px;
+      > h3.deactive::before {
+        content: url("../../../assets/icons/svgs/arrow_drop_down_close.svg") !important;
+        width: 10px;
       }
 
       > svg {
@@ -110,11 +214,10 @@
       position: relative;
       height: 55px;
       border-radius: 50px;
-      >img:nth-child(1) {
+      > img:nth-child(1) {
         width: 50px;
         height: 50px;
-        
-      } 
+      }
       > img:nth-child(2) {
         position: absolute;
         bottom: 10%;

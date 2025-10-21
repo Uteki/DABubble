@@ -41,4 +41,8 @@ export class ChannelsComponent implements OnInit {
       }, 300);
     }
   }
+
+  toggleOverlay() {
+    
+  }
 }
