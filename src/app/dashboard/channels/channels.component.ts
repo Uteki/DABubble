@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../user.service';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import { NgForOf, NgClass } from '@angular/common';
-import {ChatService} from "../../chat.service";
+import { UserService } from '../../user.service';
+import { ChatService } from '../../chat.service';
+import { User } from '../../core/interfaces/user';
 
 @Component({
   selector: 'app-channels',
@@ -11,6 +12,8 @@ import {ChatService} from "../../chat.service";
   styleUrl: './channels.component.scss',
 })
 export class ChannelsComponent implements OnInit {
+  @Output() partnerSelected = new EventEmitter<User>();
+
   users: any[] = [];
   channels: any[] = [];
   directMessagesShown: boolean = true;
@@ -29,9 +32,9 @@ export class ChannelsComponent implements OnInit {
     })
   }
 
-  test(a: any) {
-    //TODO
-    console.log(a);
+  async emitPartner(partnerUid: string) {
+    const partnerObj: User = this.users.find(user => user.uid === partnerUid);
+    this.partnerSelected.emit(partnerObj);
   }
 
   swapChannel(id: any, name: string) {

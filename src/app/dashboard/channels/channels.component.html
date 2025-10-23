@@ -203,7 +203,7 @@
       class="direct-messages-list"
     >
       <div *ngFor="let user of users">
-        <article (click)="test(user.id)">
+        <article (click)="emitPartner(user.id)">
           <figure class="user-avatar">
             <img [src]="user.avatar" [alt]="user.name" />
             @if (user.status) {
