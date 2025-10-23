@@ -49,7 +49,7 @@ export class MessageComponent implements OnChanges {
   }
 
   async sendMessage() {
-    if (!this.messageText.trim()) return;
+    if (!this.messageText.trim() || this.currentPartnerChat === null) return;
 
     await this.chatService.sendWhisperMessage(this.currentPartnerChat, {
       text: this.messageText,
