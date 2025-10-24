@@ -23,6 +23,11 @@ export class ChatService {
     return addDoc(messagesRef, message);
   }
 
+  sendWhisperMessage(channelId: string, message: { text: string; user: string; timestamp: number }) {
+    const messagesRef = collection(this.firestore, `whispers/${channelId}/messages`);
+    return addDoc(messagesRef, message);
+  }
+
   sendThreadMessage(channelId: string, threadId: string, message: { text: string; user: string; timestamp: number }) {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages/${threadId}/thread`);
     return addDoc(messagesRef, message);
@@ -47,6 +52,12 @@ export class ChatService {
 
   getThreadMessage(channelId: string, threadId: string): Observable<any> {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages/${threadId}/thread`);
+    const q  = query(messagesRef, orderBy('timestamp', 'asc'));
+    return collectionData(q, { idField: 'id' }) as Observable<any[]>;
+  }
+
+  getWhisperMessage(channelId: string): Observable<any> {
+    const messagesRef = collection(this.firestore, `whispers/${channelId}/messages`);
     const q  = query(messagesRef, orderBy('timestamp', 'asc'));
     return collectionData(q, { idField: 'id' }) as Observable<any[]>;
   }

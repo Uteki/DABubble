@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../user.service';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import { NgForOf, NgClass } from '@angular/common';
+import { UserService } from '../../user.service';
 import { ChatService } from '../../chat.service';
+import { User } from '../../core/interfaces/user';
 import { StopPropagationDirective } from '../../stop-propagation.directive';
-
 @Component({
   selector: 'app-channels',
   standalone: true,
@@ -12,13 +12,16 @@ import { StopPropagationDirective } from '../../stop-propagation.directive';
   styleUrl: './channels.component.scss',
 })
 export class ChannelsComponent implements OnInit {
+  @Output() partnerSelected = new EventEmitter<User>();
+
   users: any[] = [];
   channels: any[] = [];
   directMessagesShown: boolean = true;
   directMessagesNone: boolean = false;
   overlayActivated: boolean = false;
-  switchOverlay: boolean = true;
+  switchOverlay: boolean = false;
   selectedValue:string = 'all-members';
+  nameInputValue:boolean = false;
 
   constructor(
     private UserService: UserService,
@@ -35,9 +38,9 @@ export class ChannelsComponent implements OnInit {
     });
   }
 
-  test(a: any) {
-    //TODO
-    console.log(a);
+  async emitPartner(partnerUid: string) {
+    const partnerObj: User = this.users.find(user => user.uid === partnerUid);
+    this.partnerSelected.emit(partnerObj);
   }
 
   swapChannel(id: any, name: string) {
