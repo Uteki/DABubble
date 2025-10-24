@@ -36,8 +36,8 @@ export class ChatComponent implements OnInit {
   viewMemberOverlay: boolean = false;
   addMemberOverlay: boolean = false;
   switchAddMemberOverlay: boolean = false;
-  editOne: boolean = false;
-  editTwo: boolean = false
+  editChannelName: boolean = false;
+  editDescription: boolean = false
 
   channelFounder: string = 'user[0]';
   channelName: string = '';
@@ -90,14 +90,14 @@ export class ChatComponent implements OnInit {
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
-    if (this.editOne && this.channelEdit && !this.channelEdit.nativeElement.contains(event.target)) {
+    if (this.editChannelName && this.channelEdit && !this.channelEdit.nativeElement.contains(event.target)) {
       //TODO for desc
-      this.editOne = false;
+      this.editChannelName = false;
     }
   }
 
   saveEditedName() {
-    if (this.editOne) {
+    if (this.editChannelName) {
       const newName = this.channelName.trim();
       if (!newName) return;
 
@@ -106,7 +106,7 @@ export class ChatComponent implements OnInit {
       this.channelName = this.currentChat;
     }
 
-    this.editOne = !this.editOne;
+    this.editChannelName = !this.editChannelName;
   }
 
   overlayFunction(darkOverlay: boolean, overlay: string, overlayBoolean: boolean ) {
@@ -119,5 +119,9 @@ export class ChatComponent implements OnInit {
     } else if (overlay == "Hinzufügen") {
       this.addMemberOverlay = overlayBoolean;
     }
+  }
+
+  saveEditedComment(){
+    this.editDescription = !this.editDescription;
   }
 }

@@ -1,7 +1,7 @@
 <section
   (click)="toggleOverlay()"
   class="overlay"
-  [ngClass]="{ 'd-one': !overlayActivated }"
+  [ngClass]="{ 'd-none': !overlayActivated }"
 >
   <div
     [ngClass]="{ 'd-none': switchOverlay }"
@@ -99,7 +99,13 @@
     </div>
     <div>
       <div>
-        <input type="radio" id="all-members" value="all-members" name="add-members" (change)="onChange($event)" />
+        <input
+          type="radio"
+          id="all-members"
+          value="all-members"
+          name="add-members"
+          (change)="onChange($event)"
+        />
         <label for="all-members"
           >Alle Mitglieder von
           <h3>Entwicklerteam</h3>
@@ -107,15 +113,30 @@
         ><br />
       </div>
       <div>
-        <input type="radio" id="select-members" value="specific-members" name="add-members" (change)="onChange($event)"/>
+        <input
+          type="radio"
+          id="select-members"
+          value="specific-members"
+          name="add-members"
+          (change)="onChange($event)"
+        />
         <label for="specific-members">Bestimmte Leute hinzufügen</label><br />
       </div>
-      <div [ngClass]="{'d-none': selectedValue === 'all-members' }" class="members-list">
-      <input type="text" placeholder="Name eingeben" />
-      <div></div>
-    </div>
+      <div
+        [ngClass]="{ 'd-none': selectedValue === 'all-members' }"
+        class="members-list"
+      >
+        <input
+          (input)="onInputChange($any($event.target).value)"
+          type="text"
+          placeholder="Name eingeben"
+        />
+        <div [ngClass]="{ 'd-none': !nameInputValue }"></div>
+      </div>
       <div>
-        <button (click)="switchOverlay = false">Erstellen</button>
+        <button (click)="switchOverlay = false; overlayActivated = false">
+          Erstellen
+        </button>
       </div>
     </div>
   </div>

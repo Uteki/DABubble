@@ -76,15 +76,15 @@
           </svg>
         </div>
       </div>
-      <div [ngClass]="{ 'edit-one': editOne }">
+      <div [ngClass]="{ 'edit-one': editChannelName }">
         <div>
           <h3>Channel-Name</h3>
 
           <h3 (click)="saveEditedName()">
-            @if (editOne) { Speichern } @else { Bearbeiten }
+            @if (editChannelName) { Speichern } @else { Bearbeiten }
           </h3>
         </div>
-        @if (editOne) {
+        @if (editChannelName) {
         <div>
           <h2>#</h2>
           <input [(ngModel)]="channelName" type="text" placeholder="{{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}" />
@@ -96,13 +96,19 @@
       <div>
         <div>
           <h3>Beschreibung</h3>
-          <h3>Bearbeiten</h3>
+          <h3 (click)="saveEditedComment()"> @if (editDescription) { Speichern } @else { Bearbeiten }</h3>
         </div>
+         @if(editDescription) {
+          <div class="editDescription">
+            <input type="text" placeholder="Dein Text hier">
+          </div>
+        }
         <p>
         <!--TODO-->
         <!--{{  }}-->
+       
         </p>
-        <div></div>
+        <div class="line"></div>
         <h3>Erstellt von:</h3>
         <h3>{{ channelFounder }}</h3>
       </div>

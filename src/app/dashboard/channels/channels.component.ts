@@ -72,4 +72,12 @@ export class ChannelsComponent implements OnInit {
           this.selectedValue = 'specific-members';     
     }
   }
+
+  onInputChange(value: string) {
+  if (value.length > 0) {
+    this.nameInputValue= true;
+  } else {
+      this.nameInputValue= false;
+  }
+}
 }
