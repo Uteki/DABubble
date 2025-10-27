@@ -90,20 +90,20 @@
                 resetForm.get('newPassword')?.invalid
               "
             />
-            <div
-              *ngIf="
-                resetForm.get('newPassword')?.touched &&
-                resetForm.get('newPassword')?.invalid
-              "
-              class="error-text"
-            >
-              <span *ngIf="resetForm.get('newPassword')?.errors?.['required']">
-                Neues Passwort ist erforderlich.
-              </span>
-              <span *ngIf="resetForm.get('newPassword')?.errors?.['minlength']">
-                Passwort muss mindestens 6 Zeichen lang sein.
-              </span>
-            </div>
+          </div>
+          <div
+            *ngIf="
+              resetForm.get('newPassword')?.touched &&
+              resetForm.get('newPassword')?.invalid
+            "
+            class="error-text"
+          >
+            <span *ngIf="resetForm.get('newPassword')?.errors?.['required']">
+              Neues Passwort ist erforderlich.
+            </span>
+            <span *ngIf="resetForm.get('newPassword')?.errors?.['minlength']">
+              Passwort muss mindestens 6 Zeichen lang sein.
+            </span>
           </div>
         </div>
         <div class="form-group">
@@ -137,28 +137,30 @@
                 (resetForm.get('confirmPassword')?.invalid || resetForm.errors?.['notMatching'])
               "
             />
-            <div
-              *ngIf="
-                resetForm.get('confirmPassword')?.touched &&
-                resetForm.get('confirmPassword')?.invalid
-              "
-              class="error-text"
+          </div>
+          <div
+            *ngIf="
+              resetForm.get('confirmPassword')?.touched &&
+              resetForm.get('confirmPassword')?.invalid
+            "
+            class="error-text"
+          >
+            <span
+              *ngIf="resetForm.get('confirmPassword')?.errors?.['required']"
             >
-              <span
-                *ngIf="resetForm.get('confirmPassword')?.errors?.['required']"
-              >
-                Bestätigung ist erforderlich.
-              </span>
-            </div>
-            <div
-              *ngIf="resetForm.errors?.['notMatching'] && resetForm.get('confirmPassword')?.touched"
-              class="error-text"
-            >
-              Passwörter stimmen nicht überein.
-            </div>
+              Bestätigung ist erforderlich.
+            </span>
+          </div>
+          <div
+            *ngIf="resetForm.errors?.['notMatching'] && resetForm.get('confirmPassword')?.touched"
+            class="error-text"
+          >
+            Passwörter stimmen nicht überein.
           </div>
         </div>
-        <button type="submit" class="btn-primary">Passwort ändern</button>
+        <button type="submit" class="btn-primary" [disabled]="!resetForm.valid">
+          Passwort ändern
+        </button>
       </form>
     </div>
   </div>

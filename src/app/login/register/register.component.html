@@ -44,7 +44,6 @@
       <div *ngIf="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
-
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <div class="input-wrapper">
@@ -75,20 +74,21 @@
                 registerForm.get('fullName')?.invalid
               "
             />
-            <div
-              *ngIf="
-                registerForm.get('fullName')?.touched &&
-                registerForm.get('fullName')?.invalid
-              "
-              class="error-text"
-            >
-              <span *ngIf="registerForm.get('fullName')?.errors?.['required']">
-                Name ist erforderlich.
-              </span>
-              <span *ngIf="registerForm.get('fullName')?.errors?.['minlength']">
-                Name muss mindestens 3 Zeichen lang sein.
-              </span>
-            </div>
+          </div>
+          <!-- Error unter dem input-wrapper -->
+          <div
+            *ngIf="
+              registerForm.get('fullName')?.touched &&
+              registerForm.get('fullName')?.invalid
+            "
+            class="error-text"
+          >
+            <span *ngIf="registerForm.get('fullName')?.errors?.['required']">
+              Name ist erforderlich.
+            </span>
+            <span *ngIf="registerForm.get('fullName')?.errors?.['minlength']">
+              Name muss mindestens 3 Zeichen lang sein.
+            </span>
           </div>
         </div>
 
@@ -119,20 +119,21 @@
                 registerForm.get('email')?.invalid
               "
             />
-            <div
-              *ngIf="
-                registerForm.get('email')?.touched &&
-                registerForm.get('email')?.invalid
-              "
-              class="error-text"
-            >
-              <span *ngIf="registerForm.get('email')?.errors?.['required']">
-                E-Mail ist erforderlich.
-              </span>
-              <span *ngIf="registerForm.get('email')?.errors?.['email']">
-                Ungültige E-Mail-Adresse.
-              </span>
-            </div>
+          </div>
+          <!-- Error unter dem input-wrapper -->
+          <div
+            *ngIf="
+              registerForm.get('email')?.touched &&
+              registerForm.get('email')?.invalid
+            "
+            class="error-text"
+          >
+            <span *ngIf="registerForm.get('email')?.errors?.['required']">
+              E-Mail ist erforderlich.
+            </span>
+            <span *ngIf="registerForm.get('email')?.errors?.['email']">
+              Ungültige E-Mail-Adresse.
+            </span>
           </div>
         </div>
 
@@ -167,20 +168,21 @@
                 registerForm.get('password')?.invalid
               "
             />
-            <div
-              *ngIf="
-                registerForm.get('password')?.touched &&
-                registerForm.get('password')?.invalid
-              "
-              class="error-text"
-            >
-              <span *ngIf="registerForm.get('password')?.errors?.['required']">
-                Passwort ist erforderlich.
-              </span>
-              <span *ngIf="registerForm.get('password')?.errors?.['minlength']">
-                Passwort muss mindestens 6 Zeichen lang sein.
-              </span>
-            </div>
+          </div>
+          <!-- Error unter dem input-wrapper -->
+          <div
+            *ngIf="
+              registerForm.get('password')?.touched &&
+              registerForm.get('password')?.invalid
+            "
+            class="error-text"
+          >
+            <span *ngIf="registerForm.get('password')?.errors?.['required']">
+              Passwort ist erforderlich.
+            </span>
+            <span *ngIf="registerForm.get('password')?.errors?.['minlength']">
+              Passwort muss mindestens 6 Zeichen lang sein.
+            </span>
           </div>
         </div>
 
@@ -202,6 +204,7 @@
             >
             zu.
           </label>
+          <!-- Error unter dem Checkbox-Group -->
           <div
             *ngIf="
               registerForm.get('privacyAccepted')?.touched &&

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet } from '@angular/router';
-import { AuthService } from './auth.service';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -12,18 +11,4 @@ import { AuthService } from './auth.service';
 })
 export class AppComponent {
   title = 'DABubble';
-
-  constructor(private authService: AuthService, private router: Router) {}
-
-  ngOnInit(): void {
-    this.checkSessionStorage();
-  }
-    checkSessionStorage(): void {
-    const sessionData = sessionStorage.getItem('sessionData');
-    if (sessionData) {
-     
-    } else {
-      this.router.navigate(['/login']);
-    }
-  }
 }

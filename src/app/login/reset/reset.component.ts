@@ -50,6 +50,7 @@ export class ResetComponent implements OnInit {
 
     if (skipAnimation) {
       this.showForm = true;
+      this.showLogin = true;
     }
   }
 
@@ -65,6 +66,7 @@ export class ResetComponent implements OnInit {
         if (!this.showForm) {
           setTimeout(() => {
             this.showForm = true;
+            this.showLogin = true;
           }, 2500);
         }
       })
@@ -72,10 +74,17 @@ export class ResetComponent implements OnInit {
         this.errorMessage = 'Der Reset-Link ist ungültig oder abgelaufen.';
         console.error('Fehler bei der Code-Verifizierung:', error);
       });
+    console.log('Initial form valid:', this.resetForm.valid);
   }
 
   async onSubmit(): Promise<void> {
-    if (this.resetForm.valid && this.actionCode) {
+    console.log('Form submitted, valid:', this.resetForm.valid);
+    if (this.resetForm.invalid) {
+      this.resetForm.markAllAsTouched();
+      return;
+    }
+
+    if (this.actionCode) {
       const { newPassword } = this.resetForm.value;
       try {
         await confirmPasswordReset(this.auth, this.actionCode, newPassword);
@@ -89,10 +98,6 @@ export class ResetComponent implements OnInit {
         this.successMessage = null;
         console.error('Fehler beim Zurücksetzen des Passworts:', error);
       }
-    } else {
-      Object.keys(this.resetForm.controls).forEach((key) => {
-        this.resetForm.get(key)?.markAsTouched();
-      });
     }
   }
 

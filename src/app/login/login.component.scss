@@ -1,4 +1,8 @@
 .login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   position: relative;
   width: 100vw;
   height: 100vh;
@@ -34,7 +38,7 @@
     padding: 25px 50px;
 
     &.logo-intro-step {
-      clip-path: inset(0 70% 0 0);
+      clip-path: inset(0 68% 0 0);
     }
   }
 }

@@ -45,9 +45,11 @@ export class SendMailComponent implements OnInit {
     if (this.introService.getIntroShown()) {
       this.showForm = true;
       this.noAnimation = true;
+      this.showLogin = true;
     } else {
       setTimeout(() => {
         this.showForm = true;
+        this.showLogin = true;
         this.introService.setIntroShown(true);
         console.log('SendMail animation completed, status set to true');
       }, 2500);
@@ -55,7 +57,6 @@ export class SendMailComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
-    // Unverändert
     if (this.forgotForm.valid) {
       const { email } = this.forgotForm.value;
       try {
