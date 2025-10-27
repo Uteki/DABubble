@@ -7,17 +7,24 @@ import {BehaviorSubject, Observable, tap} from 'rxjs';
 })
 export class ChatService {
   currentChat: any = '';
+  currentChannel: any = '';
   currentChat$ = new BehaviorSubject(this.currentChat);
 
   constructor(private firestore: Firestore) {}
 
-  setCurrentChat(chat: any) {
-    this.currentChat = chat;
+  setCurrentChat(chat: any, name: string) {
+    this.currentChat = name;
     this.currentChat$.next(chat);
+    this.currentChannel = chat;
   }
 
   sendMessage(channelId: string, message: { text: string; user: string; timestamp: number }) {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages`);
+    return addDoc(messagesRef, message);
+  }
+
+  sendWhisperMessage(channelId: string, message: { text: string; user: string; timestamp: number }) {
+    const messagesRef = collection(this.firestore, `whispers/${channelId}/messages`);
     return addDoc(messagesRef, message);
   }
 
@@ -30,8 +37,8 @@ export class ChatService {
     const channelsRef = collection(this.firestore, 'channels');
     return collectionData(channelsRef, { idField: 'id' }).pipe(
       tap(channels => {
-        if (!this.currentChat && channels.length > 0) {
-          this.setCurrentChat(channels[0].id);
+        if (!this.currentChannel && channels.length > 0) {
+          this.setCurrentChat(channels[0].id, channels[0]['name']);
         }
       })
     ) as Observable<any[]>;
@@ -45,6 +52,12 @@ export class ChatService {
 
   getThreadMessage(channelId: string, threadId: string): Observable<any> {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages/${threadId}/thread`);
+    const q  = query(messagesRef, orderBy('timestamp', 'asc'));
+    return collectionData(q, { idField: 'id' }) as Observable<any[]>;
+  }
+
+  getWhisperMessage(channelId: string): Observable<any> {
+    const messagesRef = collection(this.firestore, `whispers/${channelId}/messages`);
     const q  = query(messagesRef, orderBy('timestamp', 'asc'));
     return collectionData(q, { idField: 'id' }) as Observable<any[]>;
   }

@@ -1,5 +1,260 @@
 @use "../../../assets/styles/colors" as *;
 
+.overlay {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.274);
+  top: 0;
+  left: 0;
+  z-index: 200;
+
+  .create-channel {
+    width: 750px;
+    height: 430px;
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: 0px 6px 10px 0px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    > div:nth-child(1) {
+      display: flex;
+      justify-content: space-between;
+      > h3 {
+        margin-block-end: 1rem;
+        
+      }
+      > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 30px;
+        > svg {
+          &:hover {
+            cursor: pointer;
+          }
+        }
+        &:hover {
+          background-color: $main-accent;
+          > h2 {
+            color: $purple-font;
+          }
+          > svg path {
+            fill: $purple-font !important;
+          }
+        }
+      }
+    }
+
+    > h4 {
+      display: flex;
+      gap: 5px;
+      margin-block-start: 1rem;
+      margin-block-end: 1rem;
+      > h4 {
+        font-weight: 300;
+        color: $text-gray;
+      }
+    }
+    .channel-name {
+      display: flex;
+      justify-content: start !important;
+      border: 1px solid $light-purple !important;
+      padding: 10px;
+      height: 55px;
+      border-radius: 25px;
+      gap: 10px;
+      > input {
+        width: 100%;
+        transition: all 0.3s ease-in-out;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+        &::placeholder {
+          font-family: "Nunito";
+          font-weight: 400;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .channel-description {
+      display: flex;
+      justify-content: start !important;
+      border: 1px solid $light-purple !important;
+      padding: 10px;
+      height: 55px;
+      border-radius: 25px;
+      > input {
+        width: 100%;
+        transition: all 0.3s ease-in-out;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+        &::placeholder {
+          font-family: "Nunito";
+          font-weight: 400;
+          font-size: 14px;
+        }
+      }
+    }
+
+    .channel-create-one {
+      display: flex;
+      justify-content: end;
+      padding: 20px 0;
+      > button {
+        width: 100px;
+        height: 35px;
+        border-radius: 30px;
+        border: none;
+        background-color: $purple-button;
+        color: white;
+        font-family: "Nunito";
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        &:hover {
+          background-color: $purple-font;
+        }
+      }
+    }
+  }
+
+  .add-channel-member {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 500px;
+
+    background-color: white;
+    border-radius: 30px;
+    padding: 30px;
+    > div:nth-child(1) {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 30px;
+        > svg {
+          &:hover {
+            cursor: pointer;
+          }
+        }
+        &:hover {
+          background-color: $main-accent;
+          > h2 {
+            color: $purple-font;
+          }
+          > svg path {
+            fill: $purple-font !important;
+          }
+        }
+      }
+    }
+
+    > div:nth-child(2) {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-left: 20px;
+      > div:nth-child(1) {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        > label {
+          display: flex;
+          align-items: center;
+          gap: 3px;
+          font-size: 14px;
+          font-weight: 500;
+          > h3 {
+            font-weight: 500;
+            font-size: 14px;
+            color: $purple-font;
+          }
+        }
+      }
+      > div:nth-child(2) {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        > label {
+          font-size: 14px;
+          font-weight: 500;
+        }
+      }
+      > .members-list {
+        position: relative;
+        display: flex;
+        justify-content: start !important;
+        border: 1px solid $light-purple !important;
+        padding: 10px;
+        height: 35px;
+        border-radius: 25px;
+        transition: all 3s;
+        > input {
+          width: 100%;
+          transition: all 0.3s ease-in-out;
+          border: none;
+          &:focus {
+            outline: none;
+          }
+          &::placeholder {
+            font-family: "Nunito";
+            font-weight: 400;
+            font-size: 14px;
+          }
+        }
+        > div {
+          position: absolute;
+          top: 23px;
+         
+          width: 200px;
+          height: 120px;
+          border: 1px solid $light-purple;
+          border-radius: 0 30px 30px 30px;
+          background-color: white;
+          z-index: 200;
+        }
+      }
+      > div:last-child {
+        display: flex;
+        justify-content: end;
+        padding: 20px 0;
+        > button {
+          width: 100px;
+          height: 35px;
+          border-radius: 30px;
+          border: none;
+          background-color: $purple-button;
+          color: white;
+          font-family: "Nunito";
+          font-weight: 600;
+          font-size: 14px;
+          cursor: pointer;
+          &:hover {
+            background-color: $purple-font;
+          }
+        }
+      }
+    }
+  }
+}
+
 :host {
   gap: 25px;
   opacity: 1;
@@ -65,11 +320,10 @@
           content: url("../../../assets/icons/svgs/arrow_drop_down.svg");
           margin-right: 25px;
         }
-        
       }
-      >h3.deactive::before {
-         content: url("../../../assets/icons/svgs/arrow_drop_down_close.svg") !important;
-         width: 10px;
+      > h3.deactive::before {
+        content: url("../../../assets/icons/svgs/arrow_drop_down_close.svg") !important;
+        width: 10px;
       }
 
       > svg {
@@ -98,7 +352,7 @@
     opacity: 0;
     transition: all 0.2s ease-in-out;
   }
-  > div {
+  > div > article {
     position: relative;
     display: flex;
     align-items: center;
@@ -106,15 +360,14 @@
     border-radius: 50px;
     padding: 0 25px;
     cursor: pointer;
-    > div {
+    > figure {
       position: relative;
       height: 55px;
       border-radius: 50px;
-      >img:nth-child(1) {
+      > img:nth-child(1) {
         width: 50px;
         height: 50px;
-        
-      } 
+      }
       > img:nth-child(2) {
         position: absolute;
         bottom: 10%;

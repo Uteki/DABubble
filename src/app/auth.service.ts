@@ -66,6 +66,10 @@ export class AuthService implements OnDestroy {
       });
   }
 
+  readCurrentUser(): string {
+    return <string>this.currentUser?.uid;
+  }
+
   signOut(): void {
     this.auth
       .signOut()

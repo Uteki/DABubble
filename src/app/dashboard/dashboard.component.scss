@@ -14,14 +14,15 @@ app-channels {
   flex: 0 0 366px;
 }
 
-app-chat {
-  margin: 0 20px;
+app-chat, app-message {
+  margin: 0 0 0 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
 app-thread {
+  margin: 0 0 0 20px;
   display: flex;
   flex: 0 0 485px;
   flex-direction: column;
