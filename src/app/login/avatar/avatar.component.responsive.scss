@@ -1,10 +1,19 @@
-@media (min-width: 1300px) {
-  // Desktop-Variante: Logo wandert nach oben über der Form
+@media (max-width: 1300px) {
   .logo-wrapper {
-    top: 20px !important; // Positioniere oben, wie auf den Bildern
-    left: 20px !important;
-    transform: translate(0, 0) !important;
-    animation: slideToTop 1s ease-in-out forwards; // Animation zum "Wandern" nach oben
+    position: absolute;
+    top: 4vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img.logo-small,
+    img.logo-intro-step {
+      width: 180px;
+      height: auto;
+      transform: none;
+    }
   }
 
   @keyframes slideToTop {
@@ -19,18 +28,14 @@
   }
 
   .avatar-form-wrapper {
-    top: calc(
-      50% + 50px
-    ); // Form etwas nach unten verschieben, damit Logo darüber ist
+    top: calc(50% + 50px);
   }
 }
 
 @media (max-width: 1024px) {
-  // iPad/Tablet-Variante
   .avatar-card {
     padding: 40px 30px;
     border-radius: 25px;
-    width: 80vw;
 
     h2 {
       font-size: 28px;
@@ -82,20 +87,20 @@
 }
 
 @media (max-width: 768px) {
-  // Mobile-Variante
   .avatar-card {
     padding: 30px 20px;
     border-radius: 20px;
-    width: 90vw;
 
     .back-button {
-      top: 30px;
+      top: 16px;
       left: 20px;
     }
 
     h2 {
       font-size: 24px;
       margin-bottom: 20px;
+      padding: 0 25px;
+      word-wrap: break-word;
     }
   }
 
@@ -129,7 +134,6 @@
 
   .avatar-options {
     gap: 10px;
-    justify-content: space-around;
   }
 
   .avatar-option {
@@ -138,20 +142,17 @@
   }
 
   .btn-continue {
-    width: 100%;
-    margin: 20px auto 0;
     font-size: 16px;
     padding: 10px 0;
     height: auto;
   }
 
   .footer-links {
-    display: none; // Footer-Links (Impressum, Datenschutz) ab Mobile unsichtbar
+    display: none;
   }
 }
 
 @media (max-width: 320px) {
-  // Kleine Mobile
   .avatar-card {
     padding: 20px 10px;
     border-radius: 15px;

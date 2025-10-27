@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -15,13 +16,9 @@ export class AppComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-/*   ngOnInit(): void {
-    this.checkSessionStorage();
-  } */
-    checkSessionStorage(): void {
+  checkSessionStorage(): void {
     const sessionData = sessionStorage.getItem('sessionData');
     if (sessionData) {
-     
     } else {
       this.router.navigate(['/login']);
     }

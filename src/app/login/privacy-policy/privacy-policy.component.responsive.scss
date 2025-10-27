@@ -1,32 +1,40 @@
-@media (min-width: 1300px) {
-  // Desktop-Variante: Logo wandert nach oben über der Form
+@media (max-width: 1400px) {
   .logo-wrapper {
-    top: 20px !important; // Positioniere oben, wie auf den Bildern
-    left: 20px !important;
-    transform: translate(0, 0) !important;
-    animation: slideToTop 1s ease-in-out forwards; // Animation zum "Wandern" nach oben
+    top: 20px !important;
+    left: 50% !important;
+    transform: translate(-50%, 0) !important;
+    animation: slideToTopCenter 1s ease-in-out forwards;
   }
 
-  @keyframes slideToTop {
+  @keyframes slideToTopCenter {
     0% {
       top: 50%;
       transform: translate(-50%, -50%);
     }
     100% {
       top: 20px;
-      transform: translate(0, 0);
+      transform: translate(-50%, 0);
     }
   }
 
   .datenschutz-container {
-    top: calc(
-      50% + 50px
-    ); // Container etwas nach unten verschieben, damit Logo darüber ist
+    position: absolute;
+    top: calc(10% + 50px);
+    left: 50%;
+    transform: translateX(-50%);
+
+    .back-button {
+      top: 50px;
+      left: 40px;
+    }
+
+    h1 {
+      margin-left: 50px;
+    }
   }
 }
 
 @media (max-width: 1024px) {
-  // iPad/Tablet-Variante
   .datenschutz-container {
     padding: 40px 30px;
     border-radius: 25px;
@@ -36,6 +44,7 @@
 
     h1 {
       font-size: 36px;
+      margin-left: 50px;
     }
 
     h2 {
@@ -55,6 +64,11 @@
     &::-webkit-scrollbar {
       width: 7px;
     }
+
+    .back-button {
+      top: 40px;
+      left: 30px;
+    }
   }
 
   .logo-wrapper {
@@ -65,7 +79,6 @@
 }
 
 @media (max-width: 768px) {
-  // Mobile-Variante
   .logo-wrapper {
     top: 20px;
     left: 20px;
@@ -83,11 +96,11 @@
     max-height: 95vh;
 
     h1 {
-      font-size: 32px;
+      font-size: 20px;
     }
 
     h2 {
-      font-size: 20px;
+      font-size: 18px;
       margin: 20px 0 8px 0;
     }
 
@@ -112,7 +125,6 @@
 }
 
 @media (max-width: 320px) {
-  // Kleine Mobile
   .logo-wrapper {
     .logo {
       padding: 10px 20px;
@@ -124,7 +136,7 @@
     border-radius: 15px;
 
     h1 {
-      font-size: 28px;
+      font-size: 20px;
     }
 
     h2 {

@@ -1,48 +1,35 @@
-@media (min-width: 1300px) {
-  // Desktop-Variante: Logo wandert nach oben über der Form
+@media (max-width: 1300px) {
   .logo-wrapper {
-    top: 20px !important; // Positioniere oben, wie auf den Bildern
-    left: 20px !important;
-    transform: translate(0, 0) !important;
-    animation: slideToTop 1s ease-in-out forwards; // Animation zum "Wandern" nach oben
+    top: 20px !important;
+    left: 50% !important;
+    transform: translate(-50%, 0) !important;
+    animation: slideToTopCenter 1s ease-in-out forwards;
   }
 
-  @keyframes slideToTop {
+  @keyframes slideToTopCenter {
     0% {
       top: 50%;
       transform: translate(-50%, -50%);
     }
     100% {
       top: 20px;
-      transform: translate(0, 0);
+      transform: translate(-50%, 0);
     }
   }
 
-  .send-mail-form-wrapper {
-    top: calc(
-      50% + 50px
-    ); // Form etwas nach unten verschieben, damit Logo darüber ist
+  .reset-form-wrapper {
+    top: calc(50% + 50px);
   }
 }
 
 @media (max-width: 1024px) {
-  // iPad/Tablet-Variante
-  .send-mail-card {
+  .reset-card {
     padding: 40px 30px;
     border-radius: 25px;
-    width: 80vw;
 
     h2 {
       font-size: 36px;
       padding-left: 6px;
-    }
-
-    .subtitle {
-      font-size: 18px;
-    }
-
-    .info-text {
-      font-size: 15px;
     }
   }
 
@@ -75,11 +62,11 @@
 }
 
 @media (max-width: 768px) {
-  // Mobile-Variante
-  .send-mail-card {
+.send-mail-card {
     padding: 30px 20px;
     border-radius: 20px;
     width: 90vw;
+    max-width: 100%;
 
     .back-button {
       top: 30px;
@@ -88,16 +75,8 @@
 
     h2 {
       font-size: 24px !important;
-      padding-left: 40px;
-    }
-
-    .subtitle {
-      font-size: 16px;
-    }
-
-    .info-text {
-      font-size: 14px;
-      max-width: 100%;
+      padding: 0px 30px;
+      word-wrap: break-word;
     }
   }
 
@@ -131,18 +110,20 @@
   }
 
   .footer-links {
-    display: none; // Footer-Links (Impressum, Datenschutz) ab Mobile unsichtbar
+    display: none;
   }
 
-  .error-text {
-    margin-left: 40px;
+.error-text {
+    margin-left: 20px;
     font-size: 11px;
+    max-width: calc(100% - 20px);
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 }
 
 @media (max-width: 320px) {
-  // Kleine Mobile
-  .send-mail-card {
+  .reset-card {
     padding: 20px 10px;
     border-radius: 15px;
   }
@@ -156,14 +137,6 @@
   h2 {
     font-size: 20px !important;
     padding-left: 30px;
-  }
-
-  .subtitle {
-    font-size: 14px;
-  }
-
-  .info-text {
-    font-size: 12px;
   }
 
   .input-wrapper {
@@ -180,8 +153,11 @@
     padding: 8px;
   }
 
-  .error-text {
+ .error-text {
+    margin-left: 10px;
     font-size: 10px;
-    margin-left: 30px;
+    max-width: calc(100% - 10px);
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 }

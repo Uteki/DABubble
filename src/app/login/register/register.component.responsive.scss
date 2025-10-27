@@ -1,36 +1,26 @@
-@media (min-width: 1300px) {
-  // Desktop-Variante: Logo wandert nach oben über der Form
+@media (max-width: 1300px) {
   .logo-wrapper {
-    top: 20px !important; // Positioniere oben, wie auf den Bildern
-    left: 20px !important;
-    transform: translate(0, 0) !important;
-    animation: slideToTop 1s ease-in-out forwards; // Animation zum "Wandern" nach oben
-  }
+    position: absolute;
+    top: 4vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  @keyframes slideToTop {
-    0% {
-      top: 50%;
-      transform: translate(-50%, -50%);
+    img.logo-small,
+    img.logo-intro-step {
+      width: 180px;
+      height: auto;
+      transform: none;
     }
-    100% {
-      top: 20px;
-      transform: translate(0, 0);
-    }
-  }
-
-  .register-form-wrapper {
-    top: calc(
-      50% + 50px
-    ); // Form etwas nach unten verschieben, damit Logo darüber ist
   }
 }
 
 @media (max-width: 1024px) {
-  // iPad/Tablet-Variante
   .register-card {
     padding: 40px 30px;
     border-radius: 25px;
-    width: 80vw;
   }
 
   h2 {
@@ -71,33 +61,15 @@
       padding: 9px 13px;
     }
   }
-
-  .logo-wrapper {
-    .logo {
-      padding: 20px 40px;
-    }
-  }
 }
 
 @media (max-width: 768px) {
-  // Mobile-Variante
   .register-card {
     padding: 30px 20px;
     border-radius: 20px;
-    width: 90vw;
 
     .back-button {
-      top: 30px;
-      left: 20px;
-    }
-  }
-
-  .logo-wrapper {
-    top: 20px;
-    left: 20px;
-
-    .logo {
-      padding: 15px 30px;
+      top: 25px;
     }
   }
 
@@ -136,14 +108,12 @@
   }
 
   .btn-continue {
-    width: 100%;
-    margin: 20px auto 0;
     font-size: 16px;
     padding: 10px;
   }
 
   .footer-links {
-    display: none; // Footer-Links (Impressum, Datenschutz) ab Mobile unsichtbar
+    display: none;
   }
 
   .error-text {
@@ -153,16 +123,9 @@
 }
 
 @media (max-width: 320px) {
-  // Kleine Mobile
   .register-card {
     padding: 20px 10px;
     border-radius: 15px;
-  }
-
-  .logo-wrapper {
-    .logo {
-      padding: 10px 20px;
-    }
   }
 
   h2 {

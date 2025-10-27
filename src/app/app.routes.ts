@@ -8,13 +8,14 @@ import { SendMailComponent } from './login/send-mail/send-mail.component';
 import { ResetComponent } from './login/reset/reset.component';
 import { LegalNoticeComponent } from './login/legal-notice/legal-notice.component';
 import { PrivacyPolicyComponent } from './login/privacy-policy/privacy-policy.component';
+import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'avatar', component: AvatarComponent },
-  { path: 'dashboard', component: DashboardComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'header', component: HeaderComponent },
   { path: 'send-mail', component: SendMailComponent },
   { path: 'reset', component: ResetComponent },

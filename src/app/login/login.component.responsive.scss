@@ -1,37 +1,36 @@
-@media (min-width: 1300px) {
-  // Desktop-Variante: Logo slided nach mittig oben über der Form
-  .logo-wrapper {
-    left: 50% !important; // Mittig positionieren
-    transform: translate(-50%, 0) !important; // Horizontal zentriert
-    animation: slideToTopCenter 1s ease-in-out forwards; // Animation nach mittig oben
+@media (max-width: 1300px) {
+  .class.reveal-text {
+    transform: translate(-50%, -40%) !important;
+    animation: slideToTopCenter 1s ease-in-out forwards;
   }
 
-  @keyframes slideToTopCenter {
-    0% {
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    100% {
-      top: 20px;
-      left: 50%;
-      transform: translate(-50%, 0);
-    }
+  .logo-wrapper {
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .logo-moved {
+    top: 60px !important;
+    left: 50% !important;
   }
 
   .login-form-wrapper {
-    top: calc(
-      50% + 50px
-    ); // Form etwas nach unten verschieben, damit Logo darüber ist
+    top: calc(50% + 50px);
+  }
+
+  .footer-links {
+    bottom: 1%;
   }
 }
 
 @media (max-width: 1024px) {
-  // iPad/Tablet-Variante (z.B. iPad Pro landscape)
+  .google-login {
+    margin: auto;
+    margin-bottom: 20px;
+  }
+
   .login-card {
     padding: 40px 30px;
     border-radius: 25px;
-    width: 80vw;
   }
 
   h2 {
@@ -81,14 +80,29 @@
   }
 
   .logo-wrapper {
+    transform: translate(-40%, -50%) !important;
     .logo {
       padding: 20px 40px;
+    }
+
+    &.logo-moved {
+      transform: translate(-50%, 0) !important;
+    }
+  }
+
+  @keyframes slideLeftLight {
+    0% {
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    100% {
+      left: 40%;
+      transform: translate(0, -50%);
     }
   }
 }
 
 @media (max-width: 768px) {
-  // Mobile-Variante (z.B. iPad portrait oder größere Phones)
   .login-card {
     padding: 30px 20px;
     border-radius: 20px;
@@ -129,10 +143,10 @@
     padding: 10px;
     font-size: 14px;
     margin-bottom: 16px;
+    width: 100%;
   }
 
   .button-group {
-    flex-direction: column;
     gap: 12px;
 
     button {
@@ -142,20 +156,33 @@
   }
 
   .signup-hint {
-    top: 20px;
-    right: 20px;
-    flex-direction: column;
-    gap: 5px;
-    align-items: flex-end;
+    position: absolute;
+    top: auto;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 14px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    text-align: center;
 
     .signup-text,
     .signup-link {
       font-size: 16px;
     }
+
+    .signup-link {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #444df2;
+      text-decoration: none;
+      border: 1px solid;
+    }
   }
 
   .footer-links {
-    display: none; // Footer-Links (Impressum, Datenschutz) ab Mobile unsichtbar
+    display: none;
   }
 
   .error-text {
@@ -163,36 +190,18 @@
     font-size: 11px;
   }
 
-  // Mobile-spezifische Intro-Animation: Logo bewegt sich nach mittig oben
-  .logo-wrapper {
-    &.step-1 {
-      animation: slideToTopCenterMobile 1s ease-in-out forwards;
-    }
-
-    &.logo-moved {
-      animation: none;
-      top: 20px;
-      left: 50%;
-      transform: translate(-50%, 0);
-    }
+  .logo-wrapper img.logo-intro-step {
+    width: clamp(550px, 45vw, 250px);
   }
+}
 
-  @keyframes slideToTopCenterMobile {
-    0% {
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    100% {
-      top: 20px;
-      left: 50%;
-      transform: translate(-50%, 0);
-    }
+@media (max-width: 480px) {
+  .logo-wrapper img.logo-intro-step {
+    width: clamp(350px, 50vw, 160px);
   }
 }
 
 @media (max-width: 320px) {
-  // Kleine Mobile (z.B. iPhone SE oder ältere Modelle)
   .login-card {
     padding: 20px 10px;
     border-radius: 15px;
@@ -221,24 +230,13 @@
     padding: 8px;
   }
 
-  .signup-hint {
-    top: 10px;
-    right: 10px;
-
-    .signup-text,
-    .signup-link {
-      font-size: 14px;
-    }
-  }
-
   .error-text {
     font-size: 10px;
     margin-left: 30px;
   }
 
-  .logo-wrapper {
-    .logo {
-      padding: 10px 20px;
-    }
+  .logo-wrapper img.logo-intro-step {
+    width: clamp(850px, 55vw, 130px);
+    max-width: 120vw;
   }
 }
