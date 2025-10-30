@@ -22,8 +22,12 @@ app-chat, app-message {
 }
 
 app-thread {
-  margin: 0 0 0 20px;
   display: flex;
   flex: 0 0 485px;
+  margin: 0 0 0 20px;
   flex-direction: column;
+}
+
+.is-hidden {
+  display: none;
 }

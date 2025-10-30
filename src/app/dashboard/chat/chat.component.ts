@@ -26,6 +26,7 @@ import {User} from "../../core/interfaces/user";
 })
 export class ChatComponent implements OnInit {
   @Output() threadSelected = new EventEmitter<string>();
+  @Output() toggleRequest = new EventEmitter<boolean>();
   @ViewChild('channelEdit') channelEdit!: ElementRef;
   @Input() users: any[] = [];
 
@@ -74,6 +75,7 @@ export class ChatComponent implements OnInit {
   }
 
   async openThread(threadId: string, message: any) {
+    this.toggleRequest.emit(true);
     this.threadSelected.emit(threadId);
 
     const threadRef = collection(

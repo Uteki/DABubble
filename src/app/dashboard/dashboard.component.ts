@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from '../shared/header/header.component';
 import { ThreadComponent } from './thread/thread.component';
 import { ChannelsComponent } from './channels/channels.component';
@@ -23,6 +23,9 @@ import { User } from '../core/interfaces/user';
 export class DashboardComponent implements OnInit {
   userList: any[] = [];
 
+  thread = true;
+  direct = true;
+
   selectedThreadId: string | null = null;
   selectedPartner: User | null = null;
 
@@ -40,5 +43,9 @@ export class DashboardComponent implements OnInit {
 
   onPartnerSelected(obj: User) {
     this.selectedPartner = obj;
+  }
+
+  toggleThread($event: boolean) {
+    this.thread = !$event;
   }
 }
