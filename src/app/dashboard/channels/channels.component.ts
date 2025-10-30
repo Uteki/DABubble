@@ -8,7 +8,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import { NgForOf, NgClass } from '@angular/common';
-import { UserService } from '../../user.service';
 import { ChatService } from '../../chat.service';
 import { User } from '../../core/interfaces/user';
 import { StopPropagationDirective } from '../../stop-propagation.directive';
@@ -66,7 +65,7 @@ export class ChannelsComponent implements OnInit {
   toggleDirectMessages() {
     this.directMessagesShown = !this.directMessagesShown;
     this.directMessagesNone = false;
-    if (this.directMessagesShown == false) {
+    if (!this.directMessagesShown) {
       setTimeout(() => {
         this.directMessagesNone = true;
       }, 300);
