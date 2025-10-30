@@ -230,7 +230,7 @@
             > p {
               font-size: 14px;
               white-space: nowrap;
-              overflow: hidden; 
+              overflow: hidden;
               text-overflow: ellipsis;
             }
             > div:last-child {
@@ -266,65 +266,62 @@
             }
           }
         }
-
-      
       }
-      >div:nth-child(4) {
-          position: absolute;
+      > div:nth-child(4) {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        top: 90px;
+        left: 10px;
+        overflow-y: auto;
+        width: 250px;
+        height: 150px;
+        border: 1px solid $light-purple;
+        border-radius: 0 30px 30px 30px;
+        background-color: white;
+        z-index: 200;
+        padding: 10px;
+
+        transition: all 0.3s ease-in-out;
+        &.deactive {
+          opacity: 0;
+          transition: all 0.2s ease-in-out;
+        }
+        > div > article {
+          position: relative;
           display: flex;
-          flex-direction: column;
+          align-items: center;
           gap: 10px;
-          top: 90px;
-          left: 10px;
-          overflow-y: auto;
-          width: 250px;
-          height: 150px;
-          border: 1px solid $light-purple;
-          border-radius: 0 30px 30px 30px;
-          background-color: white;
-          z-index: 200;
-          padding: 10px;
-
-          transition: all 0.3s ease-in-out;
-          &.deactive {
-            opacity: 0;
-            transition: all 0.2s ease-in-out;
-          }
-          > div > article {
+          border-radius: 50px;
+          padding: 0 10px;
+          cursor: pointer;
+          > figure {
             position: relative;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            height: 55px;
             border-radius: 50px;
-            padding: 0 10px;
-            cursor: pointer;
-            > figure {
-              position: relative;
-              height: 55px;
-              border-radius: 50px;
-              > img:nth-child(1) {
-                width: 50px;
-                height: 50px;
-              }
-              > img:nth-child(2) {
-                position: absolute;
-                bottom: 10%;
-                right: 10%;
-              }
+            > img:nth-child(1) {
+              width: 50px;
+              height: 50px;
             }
-
-            > p {
-              font-size: 14px;
-            }
-
-            &:hover {
-              cursor: pointer;
-              background-color: $main-accent;
-              border-radius: 30px;
-              transform: translateX(-1px);
+            > img:nth-child(2) {
+              position: absolute;
+              bottom: 10%;
+              right: 10%;
             }
           }
-        
+
+          > p {
+            font-size: 14px;
+          }
+
+          &:hover {
+            cursor: pointer;
+            background-color: $main-accent;
+            border-radius: 30px;
+            transform: translateX(-1px);
+          }
+        }
       }
       > div:last-child {
         display: flex;
@@ -434,6 +431,7 @@
 }
 
 .direct-messages-list {
+  scrollbar-width: none;
   display: flex;
   flex-direction: column;
   align-items: start;
