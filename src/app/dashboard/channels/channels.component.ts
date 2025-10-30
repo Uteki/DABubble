@@ -16,15 +16,17 @@ import { StopPropagationDirective } from '../../stop-propagation.directive';
 @Component({
   selector: 'app-channels',
   standalone: true,
-  imports: [NgForOf, NgClass, StopPropagationDirective, NgIf],
+  imports: [NgForOf, NgClass, StopPropagationDirective],
   templateUrl: './channels.component.html',
   styleUrl: './channels.component.scss',
 })
 export class ChannelsComponent implements OnInit {
   @Output() partnerSelected = new EventEmitter<User>();
+  @Output() toggleRequest = new EventEmitter<boolean>();
+
   @ViewChild('inputEl')
   inputEl!: ElementRef<HTMLInputElement>;  @Input() users: any[] = [];
- 
+
   channels: any[] = [];
   directMessagesShown: boolean = true;
   directMessagesNone: boolean = false;
@@ -61,10 +63,12 @@ export class ChannelsComponent implements OnInit {
   async emitPartner(partnerUid: string) {
     const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
     this.partnerSelected.emit(partnerObj);
+    this.toggleRequest.emit(true);
   }
 
   swapChannel(id: any, name: string) {
     this.chatService.setCurrentChat(id, name);
+    this.toggleRequest.emit(false);
   }
 
   toggleDirectMessages() {
@@ -130,8 +134,6 @@ export class ChannelsComponent implements OnInit {
     this.userAtIndex = this.selectedChannelUsers[index];
     this.channelUsers.push(this.userAtIndex);
     this.selectedChannelUsers.splice(index, 1);
- 
-    
   }
 
   onFocus() {

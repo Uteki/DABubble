@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnChanges} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "../../auth.service";
@@ -19,6 +19,8 @@ import { User } from "../../core/interfaces/user";
   styleUrl: './message.component.scss'
 })
 export class MessageComponent implements OnChanges {
+  @Output() toggleRequest = new EventEmitter<boolean>();
+
   @Input() partner!: User | null;
   @Input() users: any[] = [];
 

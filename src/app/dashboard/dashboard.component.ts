@@ -23,6 +23,7 @@ import { User } from '../core/interfaces/user';
 export class DashboardComponent implements OnInit {
   userList: any[] = [];
 
+  chat = false;
   thread = true;
   direct = true;
 
@@ -47,5 +48,11 @@ export class DashboardComponent implements OnInit {
 
   toggleThread($event: boolean) {
     this.thread = !$event;
+  }
+
+  toggleDirect($event: boolean) {
+    this.chat = $event;
+    this.thread = true;
+    this.direct = !$event;
   }
 }

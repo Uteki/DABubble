@@ -1,8 +1,8 @@
 <app-header></app-header>
 
 <section>
-  <app-channels [users]="userList" (partnerSelected)="onPartnerSelected($event)"></app-channels>
-  <app-chat #chat [users]="userList" (threadSelected)="onThreadSelected($event)" (toggleRequest)="toggleThread($event)"></app-chat>
-  <app-message #directChat [users]="userList" [partner]="selectedPartner" [class.is-hidden]="direct"></app-message>
-  <app-thread #threadChat [users]="userList" [messageId]="selectedThreadId" [class.is-hidden]="thread" (toggleRequest)="toggleThread($event)"></app-thread>
+  <app-channels [users]="userList" (partnerSelected)="onPartnerSelected($event)" (toggleRequest)="toggleDirect($event)"></app-channels>
+  <app-chat [users]="userList" [class.is-hidden]="chat" (threadSelected)="onThreadSelected($event)" (toggleRequest)="toggleThread($event)"></app-chat>
+  <app-message [users]="userList" [partner]="selectedPartner" [class.is-hidden]="direct"></app-message>
+  <app-thread [users]="userList" [messageId]="selectedThreadId" [class.is-hidden]="thread" (toggleRequest)="toggleThread($event)"></app-thread>
 </section>

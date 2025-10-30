@@ -27,6 +27,7 @@ import {User} from "../../core/interfaces/user";
 export class ChatComponent implements OnInit {
   @Output() threadSelected = new EventEmitter<string>();
   @Output() toggleRequest = new EventEmitter<boolean>();
+
   @ViewChild('channelEdit') channelEdit!: ElementRef;
   @Input() users: any[] = [];
 
