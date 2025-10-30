@@ -22,8 +22,9 @@ import { StopPropagationDirective } from '../../stop-propagation.directive';
 })
 export class ChannelsComponent implements OnInit {
   @Output() partnerSelected = new EventEmitter<User>();
-  @ViewChild('inputEl') inputEl!: ElementRef<HTMLInputElement>; /*  @Input() users: any[] = []; */
-users: any[] = [];
+  @ViewChild('inputEl')
+  inputEl!: ElementRef<HTMLInputElement>;  @Input() users: any[] = [];
+ 
   channels: any[] = [];
   directMessagesShown: boolean = true;
   directMessagesNone: boolean = false;
@@ -55,9 +56,8 @@ users: any[] = [];
 
   getUsers() {
     console.log(this.users);
-    
-   this.channelUsers = this.users.map(user => ({ ...user }));
-    
+
+    this.channelUsers = this.users.map((user) => ({ ...user }));
   }
 
   async emitPartner(partnerUid: string) {
@@ -110,14 +110,15 @@ users: any[] = [];
   }
 
   addUserToChannel(index: number) {
-    let memberInputREF = (document.getElementById("member-input") as HTMLInputElement);
+    let memberInputREF = document.getElementById(
+      'member-input'
+    ) as HTMLInputElement;
     this.userAtIndex = this.channelUsers[index];
     this.selectedChannelUsers.push(this.userAtIndex);
     this.channelUsers.splice(index, 1);
     this.nameInputValue = false;
-    memberInputREF.value = "";
+    memberInputREF.value = '';
     console.log(this.users);
-    
   }
 
   onDivClick(event: MouseEvent) {
