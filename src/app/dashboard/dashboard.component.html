@@ -1,8 +1,8 @@
 <app-header></app-header>
 
 <section>
-  <app-channels (partnerSelected)="onPartnerSelected($event)"></app-channels>
-  <app-chat (threadSelected)="onThreadSelected($event)"></app-chat>
-  <app-message [partner]="selectedPartner"></app-message>
-  <app-thread [messageId]="selectedThreadId"></app-thread>
+  <app-channels [users]="userList" (partnerSelected)="onPartnerSelected($event)"></app-channels>
+  <app-chat [users]="userList" (threadSelected)="onThreadSelected($event)"></app-chat>
+  <app-message [users]="userList" [partner]="selectedPartner"></app-message>
+  <app-thread [users]="userList" [messageId]="selectedThreadId"></app-thread>
 </section>

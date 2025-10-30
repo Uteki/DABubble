@@ -1,9 +1,10 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { NgForOf, NgClass } from '@angular/common';
 import { UserService } from '../../user.service';
 import { ChatService } from '../../chat.service';
 import { User } from '../../core/interfaces/user';
 import { StopPropagationDirective } from '../../stop-propagation.directive';
+
 @Component({
   selector: 'app-channels',
   standalone: true,
@@ -13,8 +14,8 @@ import { StopPropagationDirective } from '../../stop-propagation.directive';
 })
 export class ChannelsComponent implements OnInit {
   @Output() partnerSelected = new EventEmitter<User>();
+  @Input() users: any[] = [];
 
-  users: any[] = [];
   channels: any[] = [];
   directMessagesShown: boolean = true;
   directMessagesNone: boolean = false;
@@ -29,10 +30,6 @@ export class ChannelsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.UserService.getUser().subscribe((data) => {
-      this.users = data;
-    });
-
     this.chatService.getChannels().subscribe((data) => {
       this.channels = data;
     });
@@ -63,13 +60,13 @@ export class ChannelsComponent implements OnInit {
 
   onChange(event: Event) {
     let target = event.target as HTMLInputElement;
-  
+
 
     if (target.value == 'all-members') {
       this.selectedValue = 'all-members'
        console.log(this.selectedValue);
     } else if (target.value == 'specific-members') {
-          this.selectedValue = 'specific-members';     
+          this.selectedValue = 'specific-members';
     }
   }
 

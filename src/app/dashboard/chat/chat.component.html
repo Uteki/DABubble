@@ -106,7 +106,7 @@
         <p>
         <!--TODO-->
         <!--{{  }}-->
-       
+
         </p>
         <div class="line"></div>
         <h3>Erstellt von:</h3>
@@ -280,7 +280,7 @@
       </div>
 
       <div class="message-container">
-        <img src="assets/avatars/avatarSmall1.png" alt="{{ msg.user }}" />
+        <img src="{{ getProfilePic(msg.uid) }}" alt="{{ msg.user }}" />
         <div>
           <div>
             <strong>{{ msg.user }}</strong>
@@ -288,7 +288,7 @@
               >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
             >
           </div>
-          <div class="message-text" (click)="openThread(msg.id, { text: msg.text, user: msg.user, timestamp: msg.timestamp })">{{ msg.text }}</div>
+          <div class="message-text" (click)="openThread(msg.id, { uid:  msg.uid, text: msg.text, user: msg.user, timestamp: msg.timestamp })">{{ msg.text }}</div>
         </div>
       </div>
     </div>

@@ -18,17 +18,17 @@ export class ChatService {
     this.currentChannel = chat;
   }
 
-  sendMessage(channelId: string, message: { text: string; user: string; timestamp: number }) {
+  sendMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number }) {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages`);
     return addDoc(messagesRef, message);
   }
 
-  sendWhisperMessage(channelId: string, message: { text: string; user: string; timestamp: number }) {
+  sendWhisperMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number }) {
     const messagesRef = collection(this.firestore, `whispers/${channelId}/messages`);
     return addDoc(messagesRef, message);
   }
 
-  sendThreadMessage(channelId: string, threadId: string, message: { text: string; user: string; timestamp: number }) {
+  sendThreadMessage(channelId: string, threadId: string, message: {uid: string, text: string; user: string; timestamp: number }) {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages/${threadId}/thread`);
     return addDoc(messagesRef, message);
   }
