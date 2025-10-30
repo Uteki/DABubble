@@ -100,7 +100,7 @@ export class ChatComponent implements OnInit {
   }
 
   getProfilePic(uid: string) {
-    return this.users.find(user => user.uid === uid).avatar;
+    return this.users.find(user => user.uid === uid).avatar || 'assets/avatars/profile.png';
   }
 
   saveEditedName() {
