@@ -7,7 +7,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { NgForOf, NgClass, NgIf } from '@angular/common';
+import { NgForOf, NgClass } from '@angular/common';
 import { UserService } from '../../user.service';
 import { ChatService } from '../../chat.service';
 import { User } from '../../core/interfaces/user';
@@ -24,8 +24,10 @@ export class ChannelsComponent implements OnInit {
   @Output() partnerSelected = new EventEmitter<User>();
   @Output() toggleRequest = new EventEmitter<boolean>();
 
+  @Input() users: any[] = [];
+
   @ViewChild('inputEl')
-  inputEl!: ElementRef<HTMLInputElement>;  @Input() users: any[] = [];
+  inputEl!: ElementRef<HTMLInputElement>;
 
   channels: any[] = [];
   directMessagesShown: boolean = true;
@@ -41,23 +43,13 @@ export class ChannelsComponent implements OnInit {
   inputFocused: boolean = false;
 
   constructor(
-    private UserService: UserService,
     private chatService: ChatService
   ) {}
 
   ngOnInit(): void {
-    this.UserService.getUser().subscribe((data) => {
-      this.users = data;
-      this.getUsers();
-    });
-
     this.chatService.getChannels().subscribe((data) => {
       this.channels = data;
     });
-  }
-
-  getUsers() {
-    this.channelUsers = this.users.map((user) => ({ ...user }));
   }
 
   async emitPartner(partnerUid: string) {
