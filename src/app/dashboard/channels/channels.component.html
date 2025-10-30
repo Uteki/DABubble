@@ -128,7 +128,7 @@
         class="members-list no-scrollbar"
       >
         <div >
-          <div [ngClass]="{'d-none': inputFocused}" *ngFor="let channelUser of selectedChannelUsers; let i = index">
+          <div  [ngClass]="{'d-none': inputFocused}" *ngFor="let channelUser of selectedChannelUsers; let i = index">
             <img [src]="channelUser.avatar" [alt]="channelUser.name" />
             <p>{{ channelUser.name }}</p>
             <div>
@@ -174,21 +174,21 @@
       </div>
        <div class="member-wrapper no-scrollbar" [ngClass]="{ 'd-none': !nameInputValue }">
           <div
-            *ngFor="let user of users; let i = index"
-            [id]="'channel-user-' + user.uid"
+            *ngFor="let channelUser of channelUsers; let i = index"
+            [id]="'channel-user-' + channelUser.uid"
             [class.d-none]="!foundIndexes.includes(i)"
             (click)="addUserToChannel(i)"
           >
             <article>
               <figure class="user-avatar">
-                <img [src]="user.avatar" [alt]="user.name" />
-                @if (user.status) {
+                <img [src]="channelUser.avatar" [alt]="channelUser.name" />
+                @if (channelUser.status) {
                 <img src="./../../../assets/img/online.png" alt="" />
                 } @else {
                 <img src="./../../../assets/img/offline.svg" alt="" />
                 }
               </figure>
-              <p>{{ user.name }}</p>
+              <p>{{ channelUser.name }}</p>
             </article>
           </div>
         </div>

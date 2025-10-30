@@ -55,8 +55,6 @@ export class ChannelsComponent implements OnInit {
   }
 
   getUsers() {
-    console.log(this.users);
-
     this.channelUsers = this.users.map((user) => ({ ...user }));
   }
 
@@ -88,7 +86,7 @@ export class ChannelsComponent implements OnInit {
 
     if (target.value == 'all-members') {
       this.selectedValue = 'all-members';
-      console.log(this.selectedValue);
+
     } else if (target.value == 'specific-members') {
       this.selectedValue = 'specific-members';
     }
@@ -96,7 +94,7 @@ export class ChannelsComponent implements OnInit {
 
   onInputChange(value: string) {
     if (value.length > 0) {
-      this.foundIndexes = this.users
+      this.foundIndexes = this.channelUsers
         .map((user, index) =>
           user.name.toLowerCase().includes(value.toLowerCase()) ? index : -1
         )
@@ -118,7 +116,7 @@ export class ChannelsComponent implements OnInit {
     this.channelUsers.splice(index, 1);
     this.nameInputValue = false;
     memberInputREF.value = '';
-    console.log(this.users);
+
   }
 
   onDivClick(event: MouseEvent) {
@@ -132,6 +130,8 @@ export class ChannelsComponent implements OnInit {
     this.userAtIndex = this.selectedChannelUsers[index];
     this.channelUsers.push(this.userAtIndex);
     this.selectedChannelUsers.splice(index, 1);
+ 
+    
   }
 
   onFocus() {
