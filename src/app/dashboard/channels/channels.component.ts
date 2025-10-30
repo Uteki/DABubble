@@ -7,7 +7,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { NgForOf, NgClass } from '@angular/common';
+import {NgForOf, NgClass, NgIf} from '@angular/common';
 import { ChatService } from '../../chat.service';
 import { User } from '../../core/interfaces/user';
 import { StopPropagationDirective } from '../../stop-propagation.directive';
@@ -15,7 +15,7 @@ import { StopPropagationDirective } from '../../stop-propagation.directive';
 @Component({
   selector: 'app-channels',
   standalone: true,
-  imports: [NgForOf, NgClass, StopPropagationDirective],
+  imports: [NgForOf, NgClass, StopPropagationDirective, NgIf],
   templateUrl: './channels.component.html',
   styleUrl: './channels.component.scss',
 })
