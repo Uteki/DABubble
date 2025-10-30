@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {ChatService} from "../../chat.service";
 import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
@@ -7,7 +7,8 @@ import { StopPropagationDirective } from "../../stop-propagation.directive";
 import {addDoc, collection, Firestore, getDocs, updateDoc} from "@angular/fire/firestore";
 import {distinctUntilChanged, filter, map, switchMap} from "rxjs";
 import {doc} from "firebase/firestore";
-
+import {AuthService} from "../../auth.service";
+import {User} from "../../core/interfaces/user";
 
 @Component({
   selector: 'app-chat',
@@ -26,6 +27,7 @@ import {doc} from "firebase/firestore";
 export class ChatComponent implements OnInit {
   @Output() threadSelected = new EventEmitter<string>();
   @ViewChild('channelEdit') channelEdit!: ElementRef;
+  @Input() users: any[] = [];
 
   messages: any[] = [];
   messageText: string = '';
@@ -43,7 +45,7 @@ export class ChatComponent implements OnInit {
   channelName: string = '';
   channelDesc: string = '';
 
-  constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private firestore: Firestore) {}
+  constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private firestore: Firestore, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.chatService.currentChat$.pipe(
@@ -58,12 +60,13 @@ export class ChatComponent implements OnInit {
   }
 
   async sendMessage() {
+    const logger: User = this.users.find(user => user.uid === this.authService.readCurrentUser());
     if (!this.messageText.trim()) return;
 
     await this.chatService.sendMessage(this.chatService.currentChannel, {
+      uid: logger.uid,
       text: this.messageText,
-      //TODO: bind it with user logger
-      user: 'Daniel Tran',
+      user: logger.name,
       timestamp: Date.now(),
     });
 
@@ -94,6 +97,14 @@ export class ChatComponent implements OnInit {
       //TODO for desc
       this.editChannelName = false;
     }
+  }
+
+  getProfilePic(uid: string) {
+    return this.users.find(user => user.uid === uid).avatar || 'assets/avatars/profile.png';
+  }
+
+  getUserId() {
+    return this.authService.readCurrentUser();
   }
 
   saveEditedName() {

@@ -13,7 +13,7 @@
 
 <output>
   <div *ngIf="messages.length > 0">
-    <div *ngFor="let msg of messages; let i = index" class="message" [ngClass]="{ 'own-message': msg.user === 'Daniel Tran' }">
+    <div *ngFor="let msg of messages; let i = index" class="message" [ngClass]="{ 'own-message': msg.uid === getUserId() }">
       <div class="message-event" *ngIf="i === 0 || (msg.timestamp | date:'yyyy-MM-dd') !== (messages[i-1].timestamp | date:'yyyy-MM-dd')">
         <div></div>
         <span class="timestamp">
@@ -23,7 +23,7 @@
       </div>
 
       <div class="message-container">
-        <img src="assets/avatars/avatarSmall1.png" alt="{{ msg.user }}">
+        <img src="{{ getProfilePic(msg.uid) }}" alt="{{ msg.user }}">
         <div>
           <div>
             <strong>{{ msg.user }}</strong>

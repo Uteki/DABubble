@@ -3,6 +3,7 @@ import {
   ElementRef,
   EventEmitter,
   OnInit,
+  Input,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -11,6 +12,7 @@ import { UserService } from '../../user.service';
 import { ChatService } from '../../chat.service';
 import { User } from '../../core/interfaces/user';
 import { StopPropagationDirective } from '../../stop-propagation.directive';
+
 @Component({
   selector: 'app-channels',
   standalone: true,
@@ -20,8 +22,8 @@ import { StopPropagationDirective } from '../../stop-propagation.directive';
 })
 export class ChannelsComponent implements OnInit {
   @Output() partnerSelected = new EventEmitter<User>();
-  @ViewChild('inputEl') inputEl!: ElementRef<HTMLInputElement>;
-  users: any[] = [];
+  @ViewChild('inputEl') inputEl!: ElementRef<HTMLInputElement>; /*  @Input() users: any[] = []; */
+users: any[] = [];
   channels: any[] = [];
   directMessagesShown: boolean = true;
   directMessagesNone: boolean = false;

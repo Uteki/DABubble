@@ -20,6 +20,7 @@ import { User } from "../../core/interfaces/user";
 })
 export class MessageComponent implements OnChanges {
   @Input() partner!: User | null;
+  @Input() users: any[] = [];
 
   messages: any[] = [];
   messageText: string = '';
@@ -49,16 +50,25 @@ export class MessageComponent implements OnChanges {
   }
 
   async sendMessage() {
+    const logger: User = this.users.find(user => user.uid === this.authService.readCurrentUser());
     if (!this.messageText.trim() || this.currentPartnerChat === null) return;
 
     await this.chatService.sendWhisperMessage(this.currentPartnerChat, {
+      uid: logger.uid,
       text: this.messageText,
-      //TODO: bind it with user logger
-      user: 'Daniel Tran',
+      user: logger.name,
       timestamp: Date.now(),
     });
 
     this.messageText = '';
+  }
+
+  getProfilePic(uid: string) {
+    return this.users.find(user => user.uid === uid).avatar || 'assets/avatars/profile.png';
+  }
+
+  getUserId() {
+    return this.authService.readCurrentUser();
   }
 
   //TODO: Emre

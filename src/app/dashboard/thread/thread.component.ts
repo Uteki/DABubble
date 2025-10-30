@@ -2,6 +2,8 @@ import {Component, Input, OnChanges} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {ChatService} from "../../chat.service";
 import {DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
+import {User} from "../../core/interfaces/user";
+import {AuthService} from "../../auth.service";
 
 @Component({
   selector: 'app-thread',
@@ -18,6 +20,7 @@ import {DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
 })
 export class ThreadComponent implements OnChanges {
   @Input() messageId!: string | null;
+  @Input() users: any[] = [];
 
   today = new Date();
   currentThread: string = '';
@@ -25,15 +28,16 @@ export class ThreadComponent implements OnChanges {
   messageText: string = '';
   messages: any[] = [];
 
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService, private authService: AuthService) {}
 
   async sendMessage() {
+    const logger: User = this.users.find(user => user.uid === this.authService.readCurrentUser());
     if (!this.messageText.trim() || this.messageId === null) return;
 
     await this.chatService.sendThreadMessage(`${this.currentThread}`, `${this.messageId}`, {
+      uid: logger.uid,
       text: this.messageText,
-      //TODO: bind it with user logger
-      user: 'Daniel Tran',
+      user: logger.name,
       timestamp: Date.now(),
     });
 
@@ -49,5 +53,13 @@ export class ThreadComponent implements OnChanges {
         this.messages = messages.sort((a:any, b:any) => a.timestamp - b.timestamp);
       });
     }
+  }
+
+  getProfilePic(uid: string) {
+    return this.users.find(user => user.uid === uid).avatar || 'assets/avatars/profile.png'
+  }
+
+  getUserId() {
+    return this.authService.readCurrentUser();
   }
 }

@@ -40,7 +40,7 @@
     <div
       *ngFor="let msg of messages; let i = index"
       class="message"
-      [ngClass]="{ 'own-message': msg.user === 'Daniel Tran' }"
+      [ngClass]="{ 'own-message': msg.uid === getUserId() }"
     >
       <div
         class="message-event"
@@ -63,7 +63,7 @@
       </div>
 
       <div class="message-container">
-        <img src="assets/avatars/avatarSmall1.png" alt="{{ msg.user }}" />
+        <img src="{{ getProfilePic(msg.uid) }}" alt="{{ msg.user }}" />
         <div>
           <div>
             <strong>{{ msg.user }}</strong>
