@@ -103,6 +103,10 @@ export class ChatComponent implements OnInit {
     return this.users.find(user => user.uid === uid).avatar || 'assets/avatars/profile.png';
   }
 
+  getUserId() {
+    return this.authService.readCurrentUser();
+  }
+
   saveEditedName() {
     if (this.editChannelName) {
       const newName = this.channelName.trim();

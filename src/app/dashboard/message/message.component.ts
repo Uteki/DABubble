@@ -67,6 +67,10 @@ export class MessageComponent implements OnChanges {
     return this.users.find(user => user.uid === uid).avatar || 'assets/avatars/profile.png';
   }
 
+  getUserId() {
+    return this.authService.readCurrentUser();
+  }
+
   //TODO: Emre
   overlayFunction(darkOverlay: boolean, overlay: string, overlayBoolean: boolean ) {
     this.overlayActivated = darkOverlay;
