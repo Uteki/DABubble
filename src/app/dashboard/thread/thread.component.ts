@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {ChatService} from "../../chat.service";
 import {DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
@@ -19,6 +19,8 @@ import {AuthService} from "../../auth.service";
   styleUrl: './thread.component.scss'
 })
 export class ThreadComponent implements OnChanges {
+  @Output() toggleRequest = new EventEmitter<boolean>();
+
   @Input() messageId!: string | null;
   @Input() users: any[] = [];
 
@@ -61,5 +63,9 @@ export class ThreadComponent implements OnChanges {
 
   getUserId() {
     return this.authService.readCurrentUser();
+  }
+
+  closeThread() {
+    this.toggleRequest.emit(false);
   }
 }
