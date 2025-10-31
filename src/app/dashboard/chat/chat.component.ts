@@ -8,12 +8,11 @@ import {
   Output,
   ViewChild,
   HostBinding,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ChatService } from '../../chat.service';
 import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
-import { ChangeDetectorRef } from '@angular/core';
-import { StopPropagationDirective } from '../../stop-propagation.directive';
+import { ChatService } from '../../chat.service';
 import {
   addDoc,
   collection,
@@ -25,6 +24,7 @@ import { distinctUntilChanged, filter, map, switchMap } from 'rxjs';
 import { doc } from 'firebase/firestore';
 import { AuthService } from '../../auth.service';
 import { User } from '../../core/interfaces/user';
+import { StopPropagationDirective } from '../../stop-propagation.directive';
 import { SidebarService } from './../../sidebar.service';
 
 @Component({
@@ -42,30 +42,31 @@ import { SidebarService } from './../../sidebar.service';
   styleUrl: './chat.component.scss',
 })
 export class ChatComponent implements OnInit {
+
+  @Output() toggleRequest = new EventEmitter<boolean>();
   @Output() threadSelected = new EventEmitter<string>();
   @ViewChild('channelEdit') channelEdit!: ElementRef;
   @Input() users: any[] = [];
 
   messages: any[] = [];
-  messageText: string = '';
-  currentChat: string = '';
+  messageText = '';
+  currentChat = '';
   today = new Date();
 
-  overlayActivated: boolean = false;
-  channelOverlay: boolean = false;
-  viewMemberOverlay: boolean = false;
-  addMemberOverlay: boolean = false;
-  switchAddMemberOverlay: boolean = false;
-  editChannelName: boolean = false;
-  editDescription: boolean = false;
-  sidebarOpen = true;
+  overlayActivated = false;
+  channelOverlay = false;
+  viewMemberOverlay = false;
+  addMemberOverlay = false;
+  switchAddMemberOverlay = false;
+  editChannelName = false;
+  editDescription = false;
 
-  channelFounder: string = 'user[0]';
-  channelName: string = '';
-  channelDesc: string = '';
+  channelFounder = 'user[0]';
+  channelName = '';
+  channelDesc = '';
 
   @HostBinding('class.sidebar-closed')
-  get sidebarClosed() {
+  get sidebarClosed(): boolean {
     return !this.sidebarService.isOpen();
   }
 
@@ -88,19 +89,19 @@ export class ChatComponent implements OnInit {
       .subscribe((sortedMessages) => {
         this.messages = sortedMessages;
         this.currentChat = this.chatService.currentChat;
+        this.cd.detectChanges();
       });
+  }
 
-    this.sidebarService.sidebarOpen$.subscribe((isOpen) => {
-      this.sidebarOpen = isOpen;
-      this.cd.detectChanges();
-    });
+  requestToggleThread(open: boolean) {
+    this.toggleRequest.emit(open);
   }
 
   async sendMessage() {
-    const logger: User = this.users.find(
+    const logger: User | undefined = this.users.find(
       (user) => user.uid === this.authService.readCurrentUser()
     );
-    if (!this.messageText.trim()) return;
+    if (!logger || !this.messageText.trim()) return;
 
     await this.chatService.sendMessage(this.chatService.currentChannel, {
       uid: logger.uid,
@@ -141,7 +142,6 @@ export class ChatComponent implements OnInit {
       this.channelEdit &&
       !this.channelEdit.nativeElement.contains(event.target)
     ) {
-      // TODO: Gleiches Handling für Description wenn nötig
       this.editChannelName = false;
     }
   }
@@ -162,9 +162,7 @@ export class ChatComponent implements OnInit {
       const newName = this.channelName.trim();
       if (!newName) return;
 
-      this.updateChannelName(this.chatService.currentChannel, newName).then(
-        () => {}
-      );
+      this.updateChannelName(this.chatService.currentChannel, newName);
     } else {
       this.channelName = this.currentChat;
     }
@@ -179,11 +177,11 @@ export class ChatComponent implements OnInit {
   ) {
     this.overlayActivated = darkOverlay;
     this.cd.detectChanges();
-    if (overlay == 'Entwicklung') {
+    if (overlay === 'Entwicklung') {
       this.channelOverlay = overlayBoolean;
-    } else if (overlay == 'Mitglieder') {
+    } else if (overlay === 'Mitglieder') {
       this.viewMemberOverlay = overlayBoolean;
-    } else if (overlay == 'Hinzufügen') {
+    } else if (overlay === 'Hinzufügen') {
       this.addMemberOverlay = overlayBoolean;
     }
   }

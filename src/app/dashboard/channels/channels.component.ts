@@ -26,24 +26,23 @@ export class ChannelsComponent implements OnInit {
   @Output() partnerSelected = new EventEmitter<User>();
   @ViewChild('inputEl') inputEl!: ElementRef<HTMLInputElement>;
   @Input() users: any[] = [];
+  @Output() toggleRequest = new EventEmitter<boolean>();
 
   channels: any[] = [];
-  directMessagesShown: boolean = true;
-  directMessagesNone: boolean = false;
-  overlayActivated: boolean = false;
-  switchOverlay: boolean = false;
-  selectedValue: string = 'all-members';
-  nameInputValue: boolean = false;
+  directMessagesShown = true;
+  directMessagesNone = false;
+  overlayActivated = false;
+  switchOverlay = false;
+  selectedValue = 'all-members';
+  nameInputValue = false;
   foundIndexes: number[] = [];
   channelUsers: any[] = [];
   selectedChannelUsers: any[] = [];
   userAtIndex: any = {};
-  inputFocused: boolean = false;
+  inputFocused = false;
 
-  // Zustand der Sidebar (aus Service gespiegelt)
-  sidebarOpen: boolean = true;
+  sidebarOpen = true;
 
-  // Optional: Host-Klasse wenn geschlossen
   @HostBinding('class.closed')
   get closed() {
     return !this.sidebarOpen;
@@ -65,30 +64,29 @@ export class ChannelsComponent implements OnInit {
       this.channels = data;
     });
 
-    // Sidebar-State abonnieren (der Button steuert diesen State)
     if ((this.sidebarService as any).sidebarOpen$) {
-      // Variante mit Observable
       (this.sidebarService as any).sidebarOpen$.subscribe((open: boolean) => {
         this.sidebarOpen = open;
       });
+    } else if ((this.sidebarService as any).isOpen instanceof Function) {
+      this.sidebarOpen = (this.sidebarService as any).isOpen();
     } else if ((this.sidebarService as any).menuOpen !== undefined) {
-      // Fallback: direktes Flag
       this.sidebarOpen = (this.sidebarService as any).menuOpen;
     }
   }
 
-  /** Button klick -> Sidebar ein/aus */
   toggleMenu() {
     if (typeof (this.sidebarService as any).toggleSidebar === 'function') {
       (this.sidebarService as any).toggleSidebar();
+      if (typeof (this.sidebarService as any).isOpen === 'function') {
+        this.sidebarOpen = (this.sidebarService as any).isOpen();
+      }
     } else if ((this.sidebarService as any).menuOpen !== undefined) {
-      (this.sidebarService as any).menuOpen = !(this.sidebarService as any)
-        .menuOpen;
+      (this.sidebarService as any).menuOpen = !(this.sidebarService as any).menuOpen;
       this.sidebarOpen = (this.sidebarService as any).menuOpen;
     } else {
-      // Lokaler Fallback, falls Service noch nicht verdrahtet
       this.sidebarOpen = !this.sidebarOpen;
-    }
+    };
   }
 
   toggleOverlay() {
@@ -118,9 +116,9 @@ export class ChannelsComponent implements OnInit {
 
   onChange(event: Event) {
     const target = event.target as HTMLInputElement;
-    if (target.value == 'all-members') {
+    if (target.value === 'all-members') {
       this.selectedValue = 'all-members';
-    } else if (target.value == 'specific-members') {
+    } else if (target.value === 'specific-members') {
       this.selectedValue = 'specific-members';
     }
   }
@@ -141,9 +139,7 @@ export class ChannelsComponent implements OnInit {
   }
 
   addUserToChannel(index: number) {
-    const memberInputREF = document.getElementById(
-      'member-input'
-    ) as HTMLInputElement;
+    const memberInputREF = document.getElementById('member-input') as HTMLInputElement;
     this.userAtIndex = this.channelUsers[index];
     this.selectedChannelUsers.push(this.userAtIndex);
     this.channelUsers.splice(index, 1);

@@ -4,7 +4,7 @@ import { ThreadComponent } from './thread/thread.component';
 import { ChannelsComponent } from './channels/channels.component';
 import { ChatComponent } from './chat/chat.component';
 import { MessageComponent } from './message/message.component';
-import { UserService } from "../user.service";
+import { UserService } from '../user.service';
 import { User } from '../core/interfaces/user';
 
 @Component({
@@ -15,17 +15,17 @@ import { User } from '../core/interfaces/user';
     ThreadComponent,
     ChannelsComponent,
     ChatComponent,
-    MessageComponent
+    MessageComponent,
   ],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
   userList: any[] = [];
 
   chat = false;
-  thread = true;
-  direct = true;
+  thread = false;
+  direct = false;
 
   selectedThreadId: string | null = null;
   selectedPartner: User | null = null;
@@ -46,13 +46,7 @@ export class DashboardComponent implements OnInit {
     this.selectedPartner = obj;
   }
 
-  toggleThread($event: boolean) {
-    this.thread = !$event;
-  }
+  toggleThread(_open: boolean) {}
 
-  toggleDirect($event: boolean) {
-    this.chat = $event;
-    this.thread = true;
-    this.direct = !$event;
-  }
+  toggleDirect(_open: boolean) {}
 }
