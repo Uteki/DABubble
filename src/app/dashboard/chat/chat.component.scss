@@ -11,12 +11,28 @@
 }
 
 :host {
+  --channels-open-width: 300px;
+
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-width: 0;
+
   opacity: 1;
   height: auto;
-  width: 989px;
   background: white;
   border-radius: 30px;
   justify-content: space-between;
+  margin-left: var(--channels-open-width);
+  width: calc(100% - var(--channels-open-width));
+  transition:
+    margin-left 300ms ease,
+    width 300ms ease;
+
+  &.sidebar-closed {
+    margin-left: 0;
+    width: 100%;
+  }
 
   > header {
     border-top-left-radius: 30px;
@@ -377,7 +393,7 @@
         font-weight: 600;
         color: $purple-font;
         font-size: 16px;
-            cursor: pointer;
+        cursor: pointer;
       }
     }
     .editDescription {
@@ -498,6 +514,7 @@
   }
 }
 
+
 .add-member-button {
   display: flex;
   align-items: center;
@@ -588,6 +605,7 @@
     }
   }
 }
+
 
 .own-message {
   > .message-container {

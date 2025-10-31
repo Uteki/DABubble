@@ -1,14 +1,31 @@
-import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {FormsModule} from "@angular/forms";
-import {ChatService} from "../../chat.service";
-import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  HostBinding,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ChatService } from '../../chat.service';
+import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
-import { StopPropagationDirective } from "../../stop-propagation.directive";
-import {addDoc, collection, Firestore, getDocs, updateDoc} from "@angular/fire/firestore";
-import {distinctUntilChanged, filter, map, switchMap} from "rxjs";
-import {doc} from "firebase/firestore";
-import {AuthService} from "../../auth.service";
-import {User} from "../../core/interfaces/user";
+import { StopPropagationDirective } from '../../stop-propagation.directive';
+import {
+  addDoc,
+  collection,
+  Firestore,
+  getDocs,
+  updateDoc,
+} from '@angular/fire/firestore';
+import { distinctUntilChanged, filter, map, switchMap } from 'rxjs';
+import { doc } from 'firebase/firestore';
+import { AuthService } from '../../auth.service';
+import { User } from '../../core/interfaces/user';
+import { SidebarService } from './../../sidebar.service';
 
 @Component({
   selector: 'app-chat',
@@ -19,10 +36,10 @@ import {User} from "../../core/interfaces/user";
     StopPropagationDirective,
     NgForOf,
     NgIf,
-    DatePipe
+    DatePipe,
   ],
   templateUrl: './chat.component.html',
-  styleUrl: './chat.component.scss'
+  styleUrl: './chat.component.scss',
 })
 export class ChatComponent implements OnInit {
   @Output() threadSelected = new EventEmitter<string>();
@@ -33,34 +50,56 @@ export class ChatComponent implements OnInit {
   messageText: string = '';
   currentChat: string = '';
   today = new Date();
+
   overlayActivated: boolean = false;
   channelOverlay: boolean = false;
   viewMemberOverlay: boolean = false;
   addMemberOverlay: boolean = false;
   switchAddMemberOverlay: boolean = false;
   editChannelName: boolean = false;
-  editDescription: boolean = false
+  editDescription: boolean = false;
+  sidebarOpen = true;
 
   channelFounder: string = 'user[0]';
   channelName: string = '';
   channelDesc: string = '';
 
-  constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private firestore: Firestore, private authService: AuthService) {}
+  @HostBinding('class.sidebar-closed')
+  get sidebarClosed() {
+    return !this.sidebarService.isOpen();
+  }
+
+  constructor(
+    private chatService: ChatService,
+    private cd: ChangeDetectorRef,
+    private firestore: Firestore,
+    private authService: AuthService,
+    private sidebarService: SidebarService
+  ) {}
 
   ngOnInit(): void {
-    this.chatService.currentChat$.pipe(
-      distinctUntilChanged(),
-      filter(chat => !!chat && chat.trim() !== ''),
-      switchMap(chat => this.chatService.getMessages(chat)),
-      map(messages => messages.sort((a, b) => a.timestamp - b.timestamp))
-    ).subscribe(sortedMessages => {
-      this.messages = sortedMessages;
-      this.currentChat = this.chatService.currentChat;
+    this.chatService.currentChat$
+      .pipe(
+        distinctUntilChanged(),
+        filter((chat) => !!chat && chat.trim() !== ''),
+        switchMap((chat) => this.chatService.getMessages(chat)),
+        map((messages) => messages.sort((a, b) => a.timestamp - b.timestamp))
+      )
+      .subscribe((sortedMessages) => {
+        this.messages = sortedMessages;
+        this.currentChat = this.chatService.currentChat;
+      });
+
+    this.sidebarService.sidebarOpen$.subscribe((isOpen) => {
+      this.sidebarOpen = isOpen;
+      this.cd.detectChanges();
     });
   }
 
   async sendMessage() {
-    const logger: User = this.users.find(user => user.uid === this.authService.readCurrentUser());
+    const logger: User = this.users.find(
+      (user) => user.uid === this.authService.readCurrentUser()
+    );
     if (!this.messageText.trim()) return;
 
     await this.chatService.sendMessage(this.chatService.currentChannel, {
@@ -77,12 +116,16 @@ export class ChatComponent implements OnInit {
     this.threadSelected.emit(threadId);
 
     const threadRef = collection(
-      this.firestore, `channels/${this.chatService.currentChannel}/messages/${threadId}/thread`
+      this.firestore,
+      `channels/${this.chatService.currentChannel}/messages/${threadId}/thread`
     );
 
     const snapshot = await getDocs(threadRef);
     if (!snapshot.empty) return;
-    return addDoc(threadRef, { ...message, timestamp: message.timestamp || Date.now() });
+    return addDoc(threadRef, {
+      ...message,
+      timestamp: message.timestamp || Date.now(),
+    });
   }
 
   async updateChannelName(channelId: string, newName: string) {
@@ -93,14 +136,21 @@ export class ChatComponent implements OnInit {
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
-    if (this.editChannelName && this.channelEdit && !this.channelEdit.nativeElement.contains(event.target)) {
-      //TODO for desc
+    if (
+      this.editChannelName &&
+      this.channelEdit &&
+      !this.channelEdit.nativeElement.contains(event.target)
+    ) {
+      // TODO: Gleiches Handling für Description wenn nötig
       this.editChannelName = false;
     }
   }
 
   getProfilePic(uid: string) {
-    return this.users.find(user => user.uid === uid).avatar || 'assets/avatars/profile.png';
+    return (
+      this.users.find((user) => user.uid === uid)?.avatar ||
+      'assets/avatars/profile.png'
+    );
   }
 
   getUserId() {
@@ -112,7 +162,9 @@ export class ChatComponent implements OnInit {
       const newName = this.channelName.trim();
       if (!newName) return;
 
-      this.updateChannelName(this.chatService.currentChannel, newName).then(() => {})
+      this.updateChannelName(this.chatService.currentChannel, newName).then(
+        () => {}
+      );
     } else {
       this.channelName = this.currentChat;
     }
@@ -120,19 +172,23 @@ export class ChatComponent implements OnInit {
     this.editChannelName = !this.editChannelName;
   }
 
-  overlayFunction(darkOverlay: boolean, overlay: string, overlayBoolean: boolean ) {
+  overlayFunction(
+    darkOverlay: boolean,
+    overlay: string,
+    overlayBoolean: boolean
+  ) {
     this.overlayActivated = darkOverlay;
     this.cd.detectChanges();
-    if (overlay == "Entwicklung") {
+    if (overlay == 'Entwicklung') {
       this.channelOverlay = overlayBoolean;
-    } else if (overlay == "Mitglieder") {
+    } else if (overlay == 'Mitglieder') {
       this.viewMemberOverlay = overlayBoolean;
-    } else if (overlay == "Hinzufügen") {
+    } else if (overlay == 'Hinzufügen') {
       this.addMemberOverlay = overlayBoolean;
     }
   }
 
-  saveEditedComment(){
+  saveEditedComment() {
     this.editDescription = !this.editDescription;
   }
 }

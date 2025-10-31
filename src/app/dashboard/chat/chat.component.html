@@ -45,7 +45,9 @@
       [ngClass]="{ 'no-display': !this.channelOverlay }"
     >
       <div>
-        <h3># {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}</h3>
+        <h3>
+          # {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}
+        </h3>
         <div>
           <svg
             click-stop-propagation
@@ -87,27 +89,33 @@
         @if (editChannelName) {
         <div>
           <h2>#</h2>
-          <input [(ngModel)]="channelName" type="text" placeholder="{{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}" />
+          <input
+            [(ngModel)]="channelName"
+            type="text"
+            placeholder="{{
+              currentChat.charAt(0).toUpperCase() + currentChat.slice(1)
+            }}"
+          />
         </div>
         } @else {
-        <h3># {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}</h3>
+        <h3>
+          # {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}
+        </h3>
         }
       </div>
       <div>
         <div>
           <h3>Beschreibung</h3>
-          <h3 (click)="saveEditedComment()"> @if (editDescription) { Speichern } @else { Bearbeiten }</h3>
+          <h3 (click)="saveEditedComment()">
+            @if (editDescription) { Speichern } @else { Bearbeiten }
+          </h3>
         </div>
-         @if(editDescription) {
-          <div class="editDescription">
-            <input type="text" placeholder="Dein Text hier">
-          </div>
+        @if(editDescription) {
+        <div class="editDescription">
+          <input type="text" placeholder="Dein Text hier" />
+        </div>
         }
-        <p>
-        <!--TODO-->
-        <!--{{  }}-->
-
-        </p>
+        <p></p>
         <div class="line"></div>
         <h3>Erstellt von:</h3>
         <h3>{{ channelFounder }}</h3>
@@ -124,14 +132,13 @@
   </h2>
   <div>
     <output (click)="overlayActivated = true; viewMemberOverlay = true">
-      <!--Example-->
       <div>
         <img src="./assets/avatars/avatarSmall1.png" alt="Name1" />
         <img src="./assets/avatars/avatarSmall2.png" alt="Name2" />
         <img src="./assets/avatars/avatarSmall3.png" alt="Name3" />
       </div>
       <b>3</b>
-      <!--Example-->
+
       <div
         class="view-members"
         [ngClass]="{ 'no-display': !viewMemberOverlay }"
@@ -252,7 +259,6 @@
 </header>
 
 <output>
-  <!-- TODO ng if own messages when user -->
   <div *ngIf="messages.length > 0">
     <div
       *ngFor="let msg of messages; let i = index"
@@ -288,7 +294,19 @@
               >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
             >
           </div>
-          <div class="message-text" (click)="openThread(msg.id, { uid:  msg.uid, text: msg.text, user: msg.user, timestamp: msg.timestamp })">{{ msg.text }}</div>
+          <div
+            class="message-text"
+            (click)="
+              openThread(msg.id, {
+                uid: msg.uid,
+                text: msg.text,
+                user: msg.user,
+                timestamp: msg.timestamp
+              })
+            "
+          >
+            {{ msg.text }}
+          </div>
         </div>
       </div>
     </div>
@@ -303,7 +321,9 @@
   <textarea
     id="message"
     name="message"
-    placeholder="Nachricht an #{{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}"
+    placeholder="Nachricht an #{{
+      currentChat.charAt(0).toUpperCase() + currentChat.slice(1)
+    }}"
     rows="2"
     [(ngModel)]="messageText"
   ></textarea>
