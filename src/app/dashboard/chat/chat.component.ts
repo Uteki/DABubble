@@ -35,17 +35,18 @@ export class ChatComponent implements OnInit {
   messageText: string = '';
   currentChat: string = '';
   today = new Date();
+
   overlayActivated: boolean = false;
   channelOverlay: boolean = false;
   viewMemberOverlay: boolean = false;
   addMemberOverlay: boolean = false;
   switchAddMemberOverlay: boolean = false;
   editChannelName: boolean = false;
-  editDescription: boolean = false
+  editDescription: boolean = false;
 
-  channelFounder: string = 'user[0]';
+  channelDescription: string = '';
+  channelFounder: string = '';
   channelName: string = '';
-  channelDesc: string = '';
 
   constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private firestore: Firestore, private authService: AuthService) {}
 
@@ -58,6 +59,9 @@ export class ChatComponent implements OnInit {
     ).subscribe(sortedMessages => {
       this.messages = sortedMessages;
       this.currentChat = this.chatService.currentChat;
+
+      this.channelDescription = this.chatService.currentDescription;
+      this.channelFounder = this.chatService.currentCreator;
     });
   }
 
@@ -94,11 +98,18 @@ export class ChatComponent implements OnInit {
     await updateDoc(channelRef, { name: newName });
   }
 
+  async updateChannelDescription(channelId: string, newDescription: string) {
+    const channelRef = doc(this.firestore, `channels/${channelId}`);
+    await updateDoc(channelRef, { description: newDescription })
+  }
+
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
     if (this.editChannelName && this.channelEdit && !this.channelEdit.nativeElement.contains(event.target)) {
-      //TODO for desc
       this.editChannelName = false;
+    } else if (this.editDescription && this.channelEdit && !this.channelEdit.nativeElement.contains(event.target)) {
+      this.editDescription = false;
+      //TODO ?
     }
   }
 
@@ -123,6 +134,17 @@ export class ChatComponent implements OnInit {
     this.editChannelName = !this.editChannelName;
   }
 
+  saveEditedComment(){
+    if (this.editDescription) {
+      const newDesc = this.channelDescription.trim();
+      if (!newDesc) return;
+
+      this.updateChannelDescription(this.chatService.currentChannel, newDesc).then(() => {})
+    }
+
+    this.editDescription = !this.editDescription;
+  }
+
   overlayFunction(darkOverlay: boolean, overlay: string, overlayBoolean: boolean ) {
     this.overlayActivated = darkOverlay;
     this.cd.detectChanges();
@@ -133,9 +155,5 @@ export class ChatComponent implements OnInit {
     } else if (overlay == "Hinzufügen") {
       this.addMemberOverlay = overlayBoolean;
     }
-  }
-
-  saveEditedComment(){
-    this.editDescription = !this.editDescription;
   }
 }

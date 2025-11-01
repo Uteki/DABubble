@@ -96,18 +96,20 @@
       <div>
         <div>
           <h3>Beschreibung</h3>
-          <h3 (click)="saveEditedComment()"> @if (editDescription) { Speichern } @else { Bearbeiten }</h3>
+
+          <h3 (click)="saveEditedComment()">
+            @if (editDescription) { Speichern } @else { Bearbeiten }
+          </h3>
         </div>
          @if(editDescription) {
           <div class="editDescription">
-            <input type="text" placeholder="Dein Text hier">
+            <input [(ngModel)]="channelDescription" type="text" placeholder="Dein Text hier">
           </div>
+        } @else {
+          <p>
+            {{ channelDescription }}
+          </p>
         }
-        <p>
-        <!--TODO-->
-        <!--{{  }}-->
-
-        </p>
         <div class="line"></div>
         <h3>Erstellt von:</h3>
         <h3>{{ channelFounder }}</h3>

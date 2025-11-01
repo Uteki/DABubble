@@ -8,14 +8,19 @@ import {BehaviorSubject, Observable, tap} from 'rxjs';
 export class ChatService {
   currentChat: any = '';
   currentChannel: any = '';
+  currentCreator: string = '';
+  currentDescription: string = '';
   currentChat$ = new BehaviorSubject(this.currentChat);
 
   constructor(private firestore: Firestore) {}
 
-  setCurrentChat(chat: any, name: string) {
+  setCurrentChat(chat: any, name: string, description: string, creator: string) {
     this.currentChat = name;
     this.currentChat$.next(chat);
     this.currentChannel = chat;
+
+    this.currentCreator = creator;
+    this.currentDescription = description;
   }
 
   sendMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number }) {
@@ -33,12 +38,17 @@ export class ChatService {
     return addDoc(messagesRef, message);
   }
 
+  createChannel(fields: {creator: string, description: string, name: string }) {
+    const messagesRef = collection(this.firestore, `channels`);
+    return addDoc(messagesRef, fields)
+  }
+
   getChannels(): Observable<any[]> {
     const channelsRef = collection(this.firestore, 'channels');
     return collectionData(channelsRef, { idField: 'id' }).pipe(
       tap(channels => {
         if (!this.currentChannel && channels.length > 0) {
-          this.setCurrentChat(channels[0].id, channels[0]['name']);
+          this.setCurrentChat(channels[0].id, channels[0]['name'], channels[0]['description'], channels[0]['creator']);
         }
       })
     ) as Observable<any[]>;

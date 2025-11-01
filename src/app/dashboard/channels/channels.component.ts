@@ -11,11 +11,13 @@ import {NgForOf, NgClass, NgIf} from '@angular/common';
 import { ChatService } from '../../chat.service';
 import { User } from '../../core/interfaces/user';
 import { StopPropagationDirective } from '../../stop-propagation.directive';
+import { AuthService } from "../../auth.service";
+import { FormsModule } from "@angular/forms";
 
 @Component({
   selector: 'app-channels',
   standalone: true,
-  imports: [NgForOf, NgClass, StopPropagationDirective, NgIf],
+  imports: [NgForOf, NgClass, StopPropagationDirective, NgIf, FormsModule],
   templateUrl: './channels.component.html',
   styleUrl: './channels.component.scss',
 })
@@ -28,21 +30,26 @@ export class ChannelsComponent implements OnInit {
   @ViewChild('inputEl')
   inputEl!: ElementRef<HTMLInputElement>;
 
+  selectedChannelUsers: any[] = [];
+  foundIndexes: number[] = [];
+  channelUsers: any[] = [];
+  userAtIndex: any = {};
   channels: any[] = [];
+
   directMessagesShown: boolean = true;
   directMessagesNone: boolean = false;
   overlayActivated: boolean = false;
   switchOverlay: boolean = false;
-  selectedValue: string = 'all-members';
   nameInputValue: boolean = false;
-  foundIndexes: number[] = [];
-  channelUsers: any[] = [];
-  selectedChannelUsers: any[] = [];
-  userAtIndex: any = {};
   inputFocused: boolean = false;
 
+  newChannel: string = "";
+  newChannelDescription: string = "";
+  selectedValue: string = 'all-members';
+
   constructor(
-    private chatService: ChatService
+    private chatService: ChatService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -57,8 +64,8 @@ export class ChannelsComponent implements OnInit {
     this.toggleRequest.emit(true);
   }
 
-  swapChannel(id: any, name: string) {
-    this.chatService.setCurrentChat(id, name);
+  swapChannel(id: any, name: string, description: string, creator: string) {
+    this.chatService.setCurrentChat(id, name, description, creator);
     this.toggleRequest.emit(false);
   }
 
@@ -133,5 +140,13 @@ export class ChannelsComponent implements OnInit {
 
   onBlur() {
     this.inputFocused = false;
+  }
+
+  createNewChannel() {
+    if (this.newChannel.length > 0) {
+      this.chatService.createChannel({creator: this.users.find(user => user.uid === this.authService.readCurrentUser()).name, description: this.newChannelDescription, name: this.newChannel }).then()
+      this.newChannelDescription = "";
+      this.newChannel = "";
+    }
   }
 }

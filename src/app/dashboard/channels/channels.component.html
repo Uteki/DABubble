@@ -47,17 +47,17 @@
     <h4>Channel-Name</h4>
     <div class="channel-name">
       <h2>#</h2>
-      <input type="text" placeholder="z.B. Kooperationsprojekte" />
+      <input [(ngModel)]="newChannel" type="text" placeholder="z.B. Kooperationsprojekte" />
     </div>
     <h4>
       Beschreibung
       <h4>(optional)</h4>
     </h4>
     <div class="channel-description">
-      <input type="text" placeholder="Dein Text hier" />
+      <input [(ngModel)]="newChannelDescription" type="text" placeholder="Dein Text hier" />
     </div>
     <div class="channel-create-one">
-      <button (click)="switchOverlay = true">Erstellen</button>
+      <button (click)="switchOverlay = true; createNewChannel()">Erstellen</button>
     </div>
   </div>
 
@@ -115,7 +115,7 @@
       <div>
         <input
           type="radio"
-          id="select-members"
+          id="specific-members"
           value="specific-members"
           name="add-members"
           (change)="onChange($event)"
@@ -324,7 +324,7 @@
   <output>
     <div
       *ngFor="let channel of channels"
-      (click)="swapChannel(channel.id, channel.name)"
+      (click)="swapChannel(channel.id, channel.name, channel.description, channel.creator)"
     >
       # {{ channel.name.charAt(0).toUpperCase() + channel.name.slice(1) }}
     </div>
