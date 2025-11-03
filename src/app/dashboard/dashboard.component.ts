@@ -4,7 +4,7 @@ import { ThreadComponent } from './thread/thread.component';
 import { ChannelsComponent } from './channels/channels.component';
 import { ChatComponent } from './chat/chat.component';
 import { MessageComponent } from './message/message.component';
-import { UserService } from "../user.service";
+import { UserService } from '../user.service';
 import { User } from '../core/interfaces/user';
 
 @Component({
@@ -15,10 +15,10 @@ import { User } from '../core/interfaces/user';
     ThreadComponent,
     ChannelsComponent,
     ChatComponent,
-    MessageComponent
+    MessageComponent,
   ],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
   userList: any[] = [];
@@ -29,6 +29,8 @@ export class DashboardComponent implements OnInit {
 
   selectedThreadId: string | null = null;
   selectedPartner: User | null = null;
+
+  channelsHidden = false;
 
   constructor(private userService: UserService) {}
 
@@ -54,5 +56,9 @@ export class DashboardComponent implements OnInit {
     this.chat = $event;
     this.thread = true;
     this.direct = !$event;
+  }
+
+    toggleChannels() {
+    this.channelsHidden = !this.channelsHidden;
   }
 }

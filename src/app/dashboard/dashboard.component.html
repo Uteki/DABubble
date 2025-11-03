@@ -1,8 +1,40 @@
 <app-header></app-header>
 
-<section>
-  <app-channels [users]="userList" (partnerSelected)="onPartnerSelected($event)" (toggleRequest)="toggleDirect($event)"></app-channels>
-  <app-chat [users]="userList" [class.is-hidden]="chat" (threadSelected)="onThreadSelected($event)" (toggleRequest)="toggleThread($event)"></app-chat>
-  <app-message [users]="userList" [partner]="selectedPartner" [class.is-hidden]="direct"></app-message>
-  <app-thread [users]="userList" [messageId]="selectedThreadId" [class.is-hidden]="thread" (toggleRequest)="toggleThread($event)"></app-thread>
+<section class="dashboard" [class.channels-closed]="channelsHidden">
+<button
+  type="button"
+  class="workspace-toggle"
+  (click)="toggleChannels()"
+  [attr.aria-label]="channelsHidden ? 'Workspace-Menü öffnen' : 'Workspace-Menü schließen'"
+  [class.is-open]="!channelsHidden">
+
+  <span class="icon" [class.icon--close]="!channelsHidden"></span>
+
+  <span class="label">
+    {{ channelsHidden ? 'Workspace-Menü öffnen' : 'Workspace-Menü schließen' }}
+  </span>
+</button>
+  <app-channels
+    [users]="userList"
+    (partnerSelected)="onPartnerSelected($event)"
+    (toggleRequest)="toggleDirect($event)"
+    [class.is-hidden]="channelsHidden">
+  </app-channels>
+  <app-chat
+    [users]="userList"
+    [class.is-hidden]="chat"
+    (threadSelected)="onThreadSelected($event)"
+    (toggleRequest)="toggleThread($event)"
+  ></app-chat>
+  <app-message
+    [users]="userList"
+    [partner]="selectedPartner"
+    [class.is-hidden]="direct"
+  ></app-message>
+  <app-thread
+    [users]="userList"
+    [messageId]="selectedThreadId"
+    [class.is-hidden]="thread"
+    (toggleRequest)="toggleThread($event)"
+  ></app-thread>
 </section>

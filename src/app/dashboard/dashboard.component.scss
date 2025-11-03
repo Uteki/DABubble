@@ -14,7 +14,8 @@ app-channels {
   flex: 0 0 366px;
 }
 
-app-chat, app-message {
+app-chat,
+app-message {
   margin: 0 0 0 20px;
   flex: 1;
   display: flex;
@@ -30,4 +31,79 @@ app-thread {
 
 .is-hidden {
   display: none;
+}
+
+.workspace-toggle {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  width: 56px;
+  height: 339px;
+  padding: 20px 12px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0 30px 30px 0;
+  box-shadow: 4px 4px 7px rgba(0, 0, 0, 0.2);
+  color: #0b0b0b;
+  cursor: pointer;
+  transition: color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+  margin-left: -6px;
+}
+
+.workspace-toggle .icon {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+
+  -webkit-mask: url("./../../assets/icons/svgs/openDefault.svg") no-repeat center / contain;
+  mask: url("./../../assets/icons/svgs/openDefault.svg") no-repeat center / contain;
+
+  background-color: currentColor;
+  transition: transform 120ms ease;
+}
+
+.workspace-toggle .icon.icon--close {
+  -webkit-mask-image: url('./../../assets/icons/svgs/closeDefault.svg');
+  mask-image: url('./../../assets/icons/svgs/closeDefault.svg');
+  transform: none;
+}
+
+
+.workspace-toggle .label {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: 'Nunito';
+  font-weight: 500;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.workspace-toggle:hover,
+.workspace-toggle:focus-visible {
+  color: #3d4af8;
+  box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.22);
+  outline: none;
+}
+
+.workspace-toggle.is-open {
+  transform: translateY(-50%) translateX(0);
+}
+
+section {
+  position: relative;
 }
