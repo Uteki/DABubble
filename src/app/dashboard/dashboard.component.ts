@@ -58,7 +58,7 @@ export class DashboardComponent implements OnInit {
     this.direct = !$event;
   }
 
-    toggleChannels() {
+  toggleChannels() {
     this.channelsHidden = !this.channelsHidden;
   }
 }
