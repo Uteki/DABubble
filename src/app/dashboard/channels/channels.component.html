@@ -173,7 +173,7 @@
       </div>
        <div class="member-wrapper no-scrollbar" [ngClass]="{ 'd-none': !nameInputValue }">
           <div
-            *ngFor="let channelUser of channelUsers; let i = index"
+            *ngFor="let channelUser of users; let i = index"
             [id]="'channel-user-' + channelUser.uid"
             [class.d-none]="!foundIndexes.includes(i)"
             (click)="addUserToChannel(i)"
@@ -192,7 +192,7 @@
           </div>
         </div>
       <div>
-        <button (click)="switchOverlay = false; overlayActivated = false">
+        <button (click)="switchOverlay = false; overlayActivated = false; addMembers() ">
           Erstellen
         </button>
       </div>

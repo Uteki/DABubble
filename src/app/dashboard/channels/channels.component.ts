@@ -7,12 +7,12 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import {NgForOf, NgClass, NgIf} from '@angular/common';
+import { NgForOf, NgClass, NgIf } from '@angular/common';
 import { ChatService } from '../../chat.service';
 import { User } from '../../core/interfaces/user';
 import { StopPropagationDirective } from '../../stop-propagation.directive';
-import { AuthService } from "../../auth.service";
-import { FormsModule } from "@angular/forms";
+import { AuthService } from '../../auth.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-channels',
@@ -43,8 +43,8 @@ export class ChannelsComponent implements OnInit {
   nameInputValue: boolean = false;
   inputFocused: boolean = false;
 
-  newChannel: string = "";
-  newChannelDescription: string = "";
+  newChannel: string = '';
+  newChannelDescription: string = '';
   selectedValue: string = 'all-members';
 
   constructor(
@@ -88,19 +88,22 @@ export class ChannelsComponent implements OnInit {
 
     if (target.value == 'all-members') {
       this.selectedValue = 'all-members';
-
     } else if (target.value == 'specific-members') {
       this.selectedValue = 'specific-members';
     }
   }
 
   onInputChange(value: string) {
+    this.channelUsers = this.users;
+
     if (value.length > 0) {
+      console.log(this.users);
       this.foundIndexes = this.channelUsers
         .map((user, index) =>
-          user.name.toLowerCase().includes(value.toLowerCase()) ? index : -1
+          user.name.toLowerCase().includes(value.toLowerCase()) ? index : -1 
         )
         .filter((index) => index !== -1);
+     
 
       this.nameInputValue = this.foundIndexes.length > 0;
     } else {
@@ -118,7 +121,6 @@ export class ChannelsComponent implements OnInit {
     this.channelUsers.splice(index, 1);
     this.nameInputValue = false;
     memberInputREF.value = '';
-
   }
 
   onDivClick(event: MouseEvent) {
@@ -142,11 +144,28 @@ export class ChannelsComponent implements OnInit {
     this.inputFocused = false;
   }
 
-  createNewChannel() {
-    if (this.newChannel.length > 0) {
-      this.chatService.createChannel({creator: this.users.find(user => user.uid === this.authService.readCurrentUser()).name, description: this.newChannelDescription, name: this.newChannel }).then()
+ createNewChannel() {
+  if (this.newChannel.length > 0) {
+    const currentUid = this.authService.readCurrentUser();
+    const currentUser = this.users.find(user => user.uid === currentUid);
+
+    this.chatService.createChannel({
+      creator: currentUser.name,
+      description: this.newChannelDescription,
+      name: this.newChannel,
+      users: [currentUser.uid]
+    }).then(() => {
       this.newChannelDescription = "";
       this.newChannel = "";
-    }
+    })
+  }
+}
+
+  addMembers() {
+    console.log();
+    
+    this.chatService.searchUsers(this.chatService.currentChannelID);
+    this.selectedChannelUsers;
+      
   }
 }
