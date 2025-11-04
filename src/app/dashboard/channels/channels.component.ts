@@ -163,8 +163,6 @@ export class ChannelsComponent implements OnInit {
 }
 
   addMembers() {
-    console.log();
-
     this.chatService.searchUsers(this.chatService.currentChannelID);
     this.selectedChannelUsers;
 

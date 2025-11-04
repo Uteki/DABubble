@@ -52,7 +52,6 @@ export class ChatService {
    const channelRef = doc(this.firestore, 'channels', channelId);
   const snapshot = await getDoc(channelRef);
   console.log(snapshot.data()?.['users']);
-  
   }
 
   getChannels(): Observable<any[]> {

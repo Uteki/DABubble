@@ -42,12 +42,8 @@ export class HeaderComponent {
 }
 
   getUserInformation() {
-    console.log('yooo');
-
     if (this.sessionData) {
       this.userService.getUserByUid(this.sessionData).subscribe((user) => {
-        console.log('Username:', user.name);
-        console.log('yooo');
         this.username = user.name;
         this.useremail = user.email;
         this.userStatus = user.status;
@@ -61,7 +57,6 @@ export class HeaderComponent {
     if (this.sessionData) {
       this.userService
         .updateUserStatus(this.sessionData, true)
-        .then(() => console.log('User aktiviert!'))
         .catch((err) => console.error(err));
     }
   }
@@ -115,8 +110,6 @@ export class HeaderComponent {
 
   toggleProfile() {
     this.edit = false;
-    console.log('yo');
-
     const profileMenu = document.getElementById('profile-menu');
     if (profileMenu) {
       profileMenu.classList.toggle('no-display');
@@ -136,7 +129,6 @@ export class HeaderComponent {
     if (this.sessionData) {
       this.userService
         .updateUserName(this.sessionData, inputName)
-        .then(() => console.log('User aktiviert!'))
         .catch((err) => console.error(err));
     }
     inputName = '';
