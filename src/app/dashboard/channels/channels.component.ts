@@ -54,7 +54,8 @@ export class ChannelsComponent implements OnInit {
 
   ngOnInit(): void {
     this.chatService.getChannels().subscribe((data) => {
-      this.channels = data;
+      const currentUser = this.authService.readCurrentUser();
+      this.channels = data.filter(channel => channel.users?.includes(currentUser));
     });
   }
 
@@ -100,10 +101,10 @@ export class ChannelsComponent implements OnInit {
       console.log(this.users);
       this.foundIndexes = this.channelUsers
         .map((user, index) =>
-          user.name.toLowerCase().includes(value.toLowerCase()) ? index : -1 
+          user.name.toLowerCase().includes(value.toLowerCase()) ? index : -1
         )
         .filter((index) => index !== -1);
-     
+
 
       this.nameInputValue = this.foundIndexes.length > 0;
     } else {
@@ -163,9 +164,9 @@ export class ChannelsComponent implements OnInit {
 
   addMembers() {
     console.log();
-    
+
     this.chatService.searchUsers(this.chatService.currentChannelID);
     this.selectedChannelUsers;
-      
+
   }
 }
