@@ -65,6 +65,18 @@ export class ChannelsComponent implements OnInit {
     this.toggleRequest.emit(true);
   }
 
+  async addMembers() {
+    await this.chatService.searchUsers(this.chatService.currentChannelID);
+
+    const usersToAdd = this.selectedValue !== 'all-members' ? this.selectedChannelUsers : this.users;
+    const newUids = usersToAdd.map(user => user.uid).filter(uid => !this.chatService.pendingUsers.includes(uid));
+
+    this.chatService.pendingUsers.push(...newUids);
+
+    await this.chatService.addUsers(this.chatService.currentChannelID, this.chatService.pendingUsers);
+    this.chatService.pendingUsers = [];
+  }
+
   swapChannel(id: any, name: string, description: string, creator: string) {
     this.chatService.setCurrentChat(id, name, description, creator);
     this.toggleRequest.emit(false);
@@ -98,7 +110,6 @@ export class ChannelsComponent implements OnInit {
     this.channelUsers = this.users;
 
     if (value.length > 0) {
-      console.log(this.users);
       this.foundIndexes = this.channelUsers
         .map((user, index) =>
           user.name.toLowerCase().includes(value.toLowerCase()) ? index : -1
@@ -117,9 +128,9 @@ export class ChannelsComponent implements OnInit {
     let memberInputREF = document.getElementById(
       'member-input'
     ) as HTMLInputElement;
-    this.userAtIndex = this.channelUsers[index];
+    this.userAtIndex = this.users[index];
     this.selectedChannelUsers.push(this.userAtIndex);
-    this.channelUsers.splice(index, 1);
+    this.users.splice(index, 1);
     this.nameInputValue = false;
     memberInputREF.value = '';
   }
@@ -145,28 +156,20 @@ export class ChannelsComponent implements OnInit {
     this.inputFocused = false;
   }
 
- createNewChannel() {
-  if (this.newChannel.length > 0) {
-    const currentUid = this.authService.readCurrentUser();
-    const currentUser = this.users.find(user => user.uid === currentUid);
+  createNewChannel() {
+    if (this.newChannel.length > 0) {
+      const currentUid = this.authService.readCurrentUser();
+      const currentUser = this.users.find(user => user.uid === currentUid);
 
-    this.chatService.createChannel({
-      creator: currentUser.name,
-      description: this.newChannelDescription,
-      name: this.newChannel,
-      users: [currentUser.uid]
-    }).then(() => {
-      this.newChannelDescription = "";
-      this.newChannel = "";
-    })
-  }
-}
-
-  addMembers() {
-    console.log();
-
-    this.chatService.searchUsers(this.chatService.currentChannelID);
-    this.selectedChannelUsers;
-
+      this.chatService.createChannel({
+        creator: currentUser.name,
+        description: this.newChannelDescription,
+        name: this.newChannel,
+        users: [currentUser.uid]
+      }).then(() => {
+        this.newChannelDescription = "";
+        this.newChannel = "";
+      })
+    }
   }
 }
