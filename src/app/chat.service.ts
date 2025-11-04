@@ -1,5 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, collectionData, orderBy, query, getDoc } from '@angular/fire/firestore';
+import {
+  Firestore,
+  collection,
+  addDoc,
+  collectionData,
+  orderBy,
+  query,
+  getDoc,
+  updateDoc
+} from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
 import {BehaviorSubject, Observable, tap} from 'rxjs';
 
@@ -13,6 +22,8 @@ export class ChatService {
   currentDescription: string = '';
   currentChat$ = new BehaviorSubject(this.currentChat);
   currentChannelID: string = '';
+
+  pendingUsers: any[] = [];
 
   constructor(private firestore: Firestore) {}
 
@@ -48,11 +59,19 @@ export class ChatService {
     return docRef;
   }
 
-  async searchUsers(channelId: string, ) {
-   const channelRef = doc(this.firestore, 'channels', channelId);
-  const snapshot = await getDoc(channelRef);
-  console.log(snapshot.data()?.['users']);
-  
+  async searchUsers(channelId: string ) {
+    const channelRef = doc(this.firestore, 'channels', channelId);
+    const snapshot = await getDoc(channelRef );
+
+    this.pendingUsers = [];
+    this.pendingUsers.push(...(snapshot.data()?.['users'] || []));
+  }
+
+  async addUsers(channelId: string, users: any[]) {
+    const channelRef = doc(this.firestore, 'channels', channelId);
+    await updateDoc(channelRef, {
+      users: users
+    });
   }
 
   getChannels(): Observable<any[]> {
