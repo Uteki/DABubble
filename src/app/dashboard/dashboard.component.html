@@ -1,6 +1,10 @@
 <app-header></app-header>
 
-<section class="dashboard" [class.channels-closed]="channelsHidden">
+<section
+  class="dashboard"
+  [class.channels-closed]="channelsHidden"
+  [class.thread-closed]="threadHidden"
+>
   <button
     type="button"
     class="workspace-toggle"
@@ -21,8 +25,11 @@
     [users]="userList"
     (partnerSelected)="onPartnerSelected($event)"
     (toggleRequest)="toggleDirect($event)"
-    [class.is-hidden]="channelsHidden"
+    [class.is-hidden-final]="channelsHidden"
+    [class.is-closing]="isClosing"
+    [class.is-opening]="isOpening"
   >
+    >
   </app-channels>
   <app-chat
     [users]="userList"
@@ -38,7 +45,11 @@
   <app-thread
     [users]="userList"
     [messageId]="selectedThreadId"
-    [class.is-hidden]="thread"
     (toggleRequest)="toggleThread($event)"
-  ></app-thread>
+    [class.is-thread-opening]="isThreadOpening"
+    [class.is-thread-closing]="isThreadClosing"
+    [class.is-thread-hidden-final]="threadHidden && !isThreadClosing"
+  >
+    ></app-thread
+  >
 </section>

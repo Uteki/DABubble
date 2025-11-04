@@ -31,6 +31,12 @@ export class DashboardComponent implements OnInit {
   selectedPartner: User | null = null;
 
   channelsHidden = false;
+  isClosing = false;
+  isOpening = false;
+
+  threadHidden = true;
+  isThreadOpening = false;
+  isThreadClosing = false;
 
   constructor(private userService: UserService) {}
 
@@ -50,6 +56,17 @@ export class DashboardComponent implements OnInit {
 
   toggleThread($event: boolean) {
     this.thread = !$event;
+    if (this.threadHidden) {
+      this.isThreadOpening = true;
+      this.isThreadClosing = false;
+      this.threadHidden = false;
+      setTimeout(() => (this.isThreadOpening = false), 420);
+    } else {
+      this.isThreadClosing = true;
+      this.isThreadOpening = false;
+      this.threadHidden = true;
+      setTimeout(() => (this.isThreadClosing = false), 420);
+    }
   }
 
   toggleDirect($event: boolean) {
@@ -59,6 +76,20 @@ export class DashboardComponent implements OnInit {
   }
 
   toggleChannels() {
-    this.channelsHidden = !this.channelsHidden;
+    if (this.channelsHidden) {
+      this.isOpening = true;
+      this.isClosing = false;
+      this.channelsHidden = false;
+      setTimeout(() => {
+        this.isOpening = false;
+      }, 420);
+    } else {
+      this.isClosing = true;
+      this.isOpening = false;
+      this.channelsHidden = true;
+      setTimeout(() => {
+        this.isClosing = false;
+      }, 420);
+    }
   }
 }
