@@ -102,6 +102,11 @@ app-message {
   transition: margin-right 240ms cubic-bezier(0.22, 0.65, 0.18, 1);
 }
 
+app-message {
+  //TODO
+  flex: 1 !important;
+}
+
 app-thread {
   display: flex;
   flex: 0 0 485px;
