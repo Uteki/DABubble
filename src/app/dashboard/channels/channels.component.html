@@ -47,17 +47,27 @@
     <h4>Channel-Name</h4>
     <div class="channel-name">
       <h2>#</h2>
-      <input [(ngModel)]="newChannel" type="text" placeholder="z.B. Kooperationsprojekte" />
+      <input
+        [(ngModel)]="newChannel"
+        type="text"
+        placeholder="z.B. Kooperationsprojekte"
+      />
     </div>
     <h4>
       Beschreibung
       <h4>(optional)</h4>
     </h4>
     <div class="channel-description">
-      <input [(ngModel)]="newChannelDescription" type="text" placeholder="Dein Text hier" />
+      <input
+        [(ngModel)]="newChannelDescription"
+        type="text"
+        placeholder="Dein Text hier"
+      />
     </div>
     <div class="channel-create-one">
-      <button (click)="switchOverlay = true; createNewChannel()">Erstellen</button>
+      <button (click)="switchOverlay = true; createNewChannel()">
+        Erstellen
+      </button>
     </div>
   </div>
 
@@ -123,17 +133,20 @@
         <label for="specific-members">Bestimmte Leute hinzufügen</label><br />
       </div>
       <div
-      (click)="onDivClick($event)"
-      [ngClass]="{ 'd-none': selectedValue === 'all-members' }"
+        (click)="onDivClick($event)"
+        [ngClass]="{ 'd-none': selectedValue === 'all-members' }"
         class="members-list no-scrollbar"
       >
-        <div >
-          <div  [ngClass]="{'d-none': inputFocused}" *ngFor="let channelUser of selectedChannelUsers; let i = index">
+        <div>
+          <div
+            [ngClass]="{ 'd-none': inputFocused }"
+            *ngFor="let channelUser of selectedChannelUsers; let i = index"
+          >
             <img [src]="channelUser.avatar" [alt]="channelUser.name" />
             <p>{{ channelUser.name }}</p>
             <div>
               <svg
-              (click)="deleteMember(i)"
+                (click)="deleteMember(i)"
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
@@ -161,38 +174,45 @@
             </div>
           </div>
           <input
-          id ="member-input"
+            id="member-input"
             #inputEl
-            (focus)="onFocus()" (blur)="onBlur()"
+            (focus)="onFocus()"
+            (blur)="onBlur()"
             (input)="onInputChange($any($event.target).value)"
             type="text"
             placeholder="Name eingeben"
           />
         </div>
-
       </div>
-       <div class="member-wrapper no-scrollbar" [ngClass]="{ 'd-none': !nameInputValue }">
-          <div
-            *ngFor="let channelUser of users; let i = index"
-            [id]="'channel-user-' + channelUser.uid"
-            [class.d-none]="!foundIndexes.includes(i)"
-            (click)="addUserToChannel(i)"
-          >
-            <article>
-              <figure class="user-avatar">
-                <img [src]="channelUser.avatar" [alt]="channelUser.name" />
-                @if (channelUser.status) {
-                <img src="./../../../assets/img/online.png" alt="" />
-                } @else {
-                <img src="./../../../assets/img/offline.svg" alt="" />
-                }
-              </figure>
-              <p>{{ channelUser.name }}</p>
-            </article>
-          </div>
+      <div
+        class="member-wrapper no-scrollbar"
+        [ngClass]="{ 'd-none': !nameInputValue }"
+      >
+        <div
+          *ngFor="let channelUser of users; let i = index"
+          [id]="'channel-user-' + channelUser.uid"
+          [class.d-none]="!foundIndexes.includes(i)"
+          (click)="addUserToChannel(i)"
+        >
+          <article>
+            <figure class="user-avatar">
+              <img [src]="channelUser.avatar" [alt]="channelUser.name" />
+              @if (channelUser.status) {
+              <img src="./../../../assets/img/online.png" alt="" />
+              } @else {
+              <img src="./../../../assets/img/offline.svg" alt="" />
+              }
+            </figure>
+            <p>{{ channelUser.name }}</p>
+          </article>
         </div>
+      </div>
       <div>
-        <button (click)="switchOverlay = false; overlayActivated = false; addMembers() ">
+        <button
+          (click)="
+            switchOverlay = false; overlayActivated = false; addMembers()
+          "
+        >
           Erstellen
         </button>
       </div>
@@ -287,9 +307,9 @@
   </svg>
 </header>
 
-<nav>
-  <div>
-    <h3>
+<nav class="toggle-channels">
+  <div (click)="toggleChannels()">
+    <h3 [class.deactive]="!channelsShown">
       <svg
         width="20"
         height="18"
@@ -321,12 +341,24 @@
     </svg>
   </div>
 
-  <output>
+  <output class="channel-wrapper">
     <div
-      *ngFor="let channel of channels"
-      (click)="swapChannel(channel.id, channel.name, channel.description, channel.creator)"
+      [ngClass]="{ 'd-none': channelsNone }"
+      [class.deactive]="!channelsShown"
     >
-      # {{ channel.name.charAt(0).toUpperCase() + channel.name.slice(1) }}
+      <div
+        *ngFor="let channel of channels"
+        (click)="
+          swapChannel(
+            channel.id,
+            channel.name,
+            channel.description,
+            channel.creator
+          )
+        "
+      >
+        # {{ channel.name.charAt(0).toUpperCase() + channel.name.slice(1) }}
+      </div>
     </div>
   </output>
 </nav>
@@ -363,14 +395,17 @@
       <div *ngFor="let user of users">
         <article (click)="emitPartner(user.id)">
           <figure *ngIf="user?.uid" class="user-avatar">
-            <img [src]="user?.avatar || 'assets/avatars/profile.png'" [alt]="user?.name || ''" />
+            <img
+              [src]="user?.avatar || 'assets/avatars/profile.png'"
+              [alt]="user?.name || ''"
+            />
             @if (user?.status) {
             <img src="./../../../assets/img/online.png" alt="" />
             } @else {
             <img src="./../../../assets/img/offline.svg" alt="" />
             }
           </figure>
-          <p>{{ user?.name || '' }}</p>
+          <p>{{ user?.name || "" }}</p>
         </article>
       </div>
     </div>

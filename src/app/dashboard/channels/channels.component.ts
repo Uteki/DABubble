@@ -36,6 +36,8 @@ export class ChannelsComponent implements OnInit {
   userAtIndex: any = {};
   channels: any[] = [];
 
+  channelsShown: boolean = true;
+  channelsNone: boolean = false;
   directMessagesShown: boolean = true;
   directMessagesNone: boolean = false;
   overlayActivated: boolean = false;
@@ -55,7 +57,9 @@ export class ChannelsComponent implements OnInit {
   ngOnInit(): void {
     this.chatService.getChannels().subscribe((data) => {
       const currentUser = this.authService.readCurrentUser();
-      this.channels = data.filter(channel => channel.users?.includes(currentUser));
+      this.channels = data.filter((channel) =>
+        channel.users?.includes(currentUser)
+      );
     });
   }
 
@@ -68,12 +72,20 @@ export class ChannelsComponent implements OnInit {
   async addMembers() {
     await this.chatService.searchUsers(this.chatService.currentChannelID);
 
-    const usersToAdd = this.selectedValue !== 'all-members' ? this.selectedChannelUsers : this.users;
-    const newUids = usersToAdd.map(user => user.uid).filter(uid => !this.chatService.pendingUsers.includes(uid));
+    const usersToAdd =
+      this.selectedValue !== 'all-members'
+        ? this.selectedChannelUsers
+        : this.users;
+    const newUids = usersToAdd
+      .map((user) => user.uid)
+      .filter((uid) => !this.chatService.pendingUsers.includes(uid));
 
     this.chatService.pendingUsers.push(...newUids);
 
-    await this.chatService.addUsers(this.chatService.currentChannelID, this.chatService.pendingUsers);
+    await this.chatService.addUsers(
+      this.chatService.currentChannelID,
+      this.chatService.pendingUsers
+    );
     this.chatService.pendingUsers = [];
   }
 
@@ -88,6 +100,18 @@ export class ChannelsComponent implements OnInit {
     if (!this.directMessagesShown) {
       setTimeout(() => {
         this.directMessagesNone = true;
+      }, 300);
+    }
+  }
+
+  toggleChannels() {
+    console.log('yo');
+
+    this.channelsShown = !this.channelsShown;
+    this.channelsNone = false;
+    if (!this.channelsShown) {
+      setTimeout(() => {
+        this.channelsNone = true;
       }, 300);
     }
   }
@@ -115,7 +139,6 @@ export class ChannelsComponent implements OnInit {
           user.name.toLowerCase().includes(value.toLowerCase()) ? index : -1
         )
         .filter((index) => index !== -1);
-
 
       this.nameInputValue = this.foundIndexes.length > 0;
     } else {
@@ -159,17 +182,19 @@ export class ChannelsComponent implements OnInit {
   createNewChannel() {
     if (this.newChannel.length > 0) {
       const currentUid = this.authService.readCurrentUser();
-      const currentUser = this.users.find(user => user.uid === currentUid);
+      const currentUser = this.users.find((user) => user.uid === currentUid);
 
-      this.chatService.createChannel({
-        creator: currentUser.name,
-        description: this.newChannelDescription,
-        name: this.newChannel,
-        users: [currentUser.uid]
-      }).then(() => {
-        this.newChannelDescription = "";
-        this.newChannel = "";
-      })
+      this.chatService
+        .createChannel({
+          creator: currentUser.name,
+          description: this.newChannelDescription,
+          name: this.newChannel,
+          users: [currentUser.uid],
+        })
+        .then(() => {
+          this.newChannelDescription = '';
+          this.newChannel = '';
+        });
     }
   }
 }
