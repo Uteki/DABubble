@@ -102,11 +102,6 @@ app-message {
   transition: margin-right 240ms cubic-bezier(0.22, 0.65, 0.18, 1);
 }
 
-app-message {
-  //TODO
-  flex: 1 !important;
-}
-
 app-thread {
   display: flex;
   flex: 0 0 485px;
@@ -180,14 +175,13 @@ app-thread.is-thread-hidden-final {
 
 section.thread-closed app-chat,
 section.thread-closed app-message {
-  margin-right: 0px;
+  margin-right: 0;
 }
 
 section.thread-closed app-message {
-  flex: 0 0 auto;
+  flex: 1;
   width: 0;
   overflow: hidden;
-  margin-left: 0;
 }
 
 .is-hidden {
