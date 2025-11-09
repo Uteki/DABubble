@@ -175,14 +175,12 @@ app-thread.is-thread-hidden-final {
 
 section.thread-closed app-chat,
 section.thread-closed app-message {
-  margin-right: 0px;
+  margin-right: 0;
 }
 
 section.thread-closed app-message {
-  flex: 0 0 auto;
+  flex: 1;
   width: 0;
-  overflow: hidden;
-  margin-left: 0;
 }
 
 .is-hidden {
