@@ -529,7 +529,7 @@
   padding: 20px 0 0 0;
   > div {
     > div {
-      padding: 5px;
+      padding: 5px 0;
       border-radius: 30px;
       font-size: 17px;
       font-weight: 700;
@@ -540,7 +540,7 @@
       &:hover {
         background-color: $main-accent;
         > h3 {
-          color: $purple-font;
+          color: $purple-font !important;
         }
       }
     }
