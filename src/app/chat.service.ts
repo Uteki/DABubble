@@ -24,6 +24,7 @@ export class ChatService {
   currentChannelID: string = '';
 
   pendingUsers: any[] = [];
+  messageCache: Record<string, any[]> = {};
 
   constructor(private firestore: Firestore) {}
 
@@ -88,7 +89,16 @@ export class ChatService {
   getMessages(channelId: string): Observable<any[]> {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages`);
     const q = query(messagesRef, orderBy('timestamp', 'asc'));
-    return collectionData(q, { idField: 'id' }) as Observable<any[]>;
+
+    return collectionData(q, { idField: 'id' }).pipe(
+      tap(messages => {
+        this.messageCache[channelId] = messages;
+      })
+    ) as Observable<any[]>;
+  }
+
+  getCachedMessages(channelId: string): any[] {
+    return this.messageCache[channelId] || [];
   }
 
   getThreadMessage(channelId: string, threadId: string): Observable<any> {

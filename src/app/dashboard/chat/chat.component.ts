@@ -5,7 +5,7 @@ import {DatePipe, NgClass, NgForOf, NgIf} from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { StopPropagationDirective } from "../../stop-propagation.directive";
 import {addDoc, collection, Firestore, getDocs, updateDoc} from "@angular/fire/firestore";
-import {distinctUntilChanged, filter, map, switchMap} from "rxjs";
+import {distinctUntilChanged, filter, map, switchMap, tap} from "rxjs";
 import {doc} from "firebase/firestore";
 import {AuthService} from "../../auth.service";
 import {User} from "../../core/interfaces/user";
@@ -54,12 +54,17 @@ export class ChatComponent implements OnInit {
     this.chatService.currentChat$.pipe(
       distinctUntilChanged(),
       filter(chat => !!chat && chat.trim() !== ''),
-      switchMap(chat => this.chatService.getMessages(chat)),
-      map(messages => messages.sort((a, b) => a.timestamp - b.timestamp))
+      switchMap(chat => {
+        this.messages = this.chatService.getCachedMessages(chat);
+        this.currentChat = this.chatService.currentChat;
+        this.cd.detectChanges();
+        return this.chatService.getMessages(chat).pipe(
+          map(messages => messages.sort((a, b) => a.timestamp - b.timestamp))
+        );
+      })
     ).subscribe(sortedMessages => {
       this.messages = sortedMessages;
       this.currentChat = this.chatService.currentChat;
-
       this.channelDescription = this.chatService.currentDescription;
       this.channelFounder = this.chatService.currentCreator;
     });
