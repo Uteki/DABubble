@@ -528,26 +528,56 @@
   gap: 5px;
   padding: 20px 0 0 0;
   > div {
-    > div {
-      padding: 5px 0;
+    > div:first-child {
+      display: flex;
+      gap: 5px;
+      padding: 5px;
       border-radius: 30px;
       font-size: 17px;
-      font-weight: 700;
+      font-weight: 600;
 
-      > h3 {
-        margin: 0 10px;
-      }
+    
       &:hover {
+
+        cursor:pointer;
         background-color: $main-accent;
+        >svg path {
+          fill: $purple-font !important;
+        }
         > h3 {
           color: $purple-font !important;
         }
       }
     }
-        transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
     &.deactive {
       opacity: 0;
       transition: all 0.2s ease-in-out;
+    }
+
+    > div:last-child {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 10px;
+
+      padding: 5px;
+      border-radius: 30px;
+
+      > h3 {
+        font-size: 17px;
+        font-style: 400;
+      }
+
+      &:hover {
+        cursor: pointer;
+        > svg path {
+          fill: $purple-font !important;
+        }
+        > h3 {
+          color: $purple-font !important;
+        }
+      }
     }
   }
 }
