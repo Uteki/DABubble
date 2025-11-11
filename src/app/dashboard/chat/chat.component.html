@@ -45,7 +45,9 @@
       [ngClass]="{ 'no-display': !this.channelOverlay }"
     >
       <div>
-        <h3># {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}</h3>
+        <h3>
+          # {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}
+        </h3>
         <div>
           <svg
             click-stop-propagation
@@ -87,10 +89,18 @@
         @if (editChannelName) {
         <div>
           <h2>#</h2>
-          <input [(ngModel)]="channelName" type="text" placeholder="{{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}" />
+          <input
+            [(ngModel)]="channelName"
+            type="text"
+            placeholder="{{
+              currentChat.charAt(0).toUpperCase() + currentChat.slice(1)
+            }}"
+          />
         </div>
         } @else {
-        <h3># {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}</h3>
+        <h3>
+          # {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}
+        </h3>
         }
       </div>
       <div>
@@ -101,14 +111,18 @@
             @if (editDescription) { Speichern } @else { Bearbeiten }
           </h3>
         </div>
-         @if(editDescription) {
-          <div class="editDescription">
-            <input [(ngModel)]="channelDescription" type="text" placeholder="Dein Text hier">
-          </div>
+        @if(editDescription) {
+        <div class="editDescription">
+          <input
+            [(ngModel)]="channelDescription"
+            type="text"
+            placeholder="Dein Text hier"
+          />
+        </div>
         } @else {
-          <p>
-            {{ channelDescription }}
-          </p>
+        <p>
+          {{ channelDescription }}
+        </p>
         }
         <div class="line"></div>
         <h3>Erstellt von:</h3>
@@ -170,7 +184,25 @@
             </svg>
           </div>
         </div>
-        <div></div>
+        <div class="no-scrollbar">
+          <div class="no-scrollbar" *ngFor="let user of users">
+            <article>
+              <figure *ngIf="user?.uid" class="user-avatar">
+                <img
+                  [src]="user?.avatar || 'assets/avatars/profile.png'"
+                  [alt]="user?.name || ''"
+                />
+                @if (user?.status) {
+                <img src="./../../../assets/img/online.png" alt="" />
+                } @else {
+                <img src="./../../../assets/img/offline.svg" alt="" />
+                }
+              </figure>
+              <p>{{ user?.name || "" }}</p>
+            </article>
+          </div>
+        </div>
+
         <button
           class="add-member-button"
           (click)="switchAddMemberOverlay = true"
@@ -290,7 +322,19 @@
               >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
             >
           </div>
-          <div class="message-text" (click)="openThread(msg.id, { uid:  msg.uid, text: msg.text, user: msg.user, timestamp: msg.timestamp })">{{ msg.text }}</div>
+          <div
+            class="message-text"
+            (click)="
+              openThread(msg.id, {
+                uid: msg.uid,
+                text: msg.text,
+                user: msg.user,
+                timestamp: msg.timestamp
+              })
+            "
+          >
+            {{ msg.text }}
+          </div>
         </div>
       </div>
     </div>
@@ -305,7 +349,9 @@
   <textarea
     id="message"
     name="message"
-    placeholder="Nachricht an #{{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}"
+    placeholder="Nachricht an #{{
+      currentChat.charAt(0).toUpperCase() + currentChat.slice(1)
+    }}"
     rows="2"
     [(ngModel)]="messageText"
   ></textarea>
