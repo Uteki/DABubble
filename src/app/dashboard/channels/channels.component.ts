@@ -77,8 +77,8 @@ export class ChannelsComponent implements OnInit {
         ? this.selectedChannelUsers
         : this.users;
     const newUids = usersToAdd
-      .map((user) => user.uid)
-      .filter((uid) => !this.chatService.pendingUsers.includes(uid));
+      .map(user => user?.uid)
+      .filter(uid => uid && !this.chatService.pendingUsers.includes(uid));
 
     this.chatService.pendingUsers.push(...newUids);
 
@@ -129,12 +129,12 @@ export class ChannelsComponent implements OnInit {
   }
 
   onInputChange(value: string) {
-    this.channelUsers = this.users;
-
     if (value.length > 0) {
-      this.foundIndexes = this.channelUsers
+      this.foundIndexes = this.users
         .map((user, index) =>
-          user.name.toLowerCase().includes(value.toLowerCase()) ? index : -1
+          user?.name && user.name.toLowerCase().includes(value.toLowerCase())
+            ? index
+            : -1
         )
         .filter((index) => index !== -1);
 
