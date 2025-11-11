@@ -45,7 +45,9 @@
       [ngClass]="{ 'no-display': !this.channelOverlay }"
     >
       <div>
-        <h3># {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}</h3>
+        <h3>
+          # {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}
+        </h3>
         <div>
           <svg
             click-stop-propagation
@@ -87,10 +89,18 @@
         @if (editChannelName) {
         <div>
           <h2>#</h2>
-          <input [(ngModel)]="channelName" type="text" placeholder="{{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}" />
+          <input
+            [(ngModel)]="channelName"
+            type="text"
+            placeholder="{{
+              currentChat.charAt(0).toUpperCase() + currentChat.slice(1)
+            }}"
+          />
         </div>
         } @else {
-        <h3># {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}</h3>
+        <h3>
+          # {{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}
+        </h3>
         }
       </div>
       <div>
@@ -101,14 +111,18 @@
             @if (editDescription) { Speichern } @else { Bearbeiten }
           </h3>
         </div>
-         @if(editDescription) {
-          <div class="editDescription">
-            <input [(ngModel)]="channelDescription" type="text" placeholder="Dein Text hier">
-          </div>
+        @if(editDescription) {
+        <div class="editDescription">
+          <input
+            [(ngModel)]="channelDescription"
+            type="text"
+            placeholder="Dein Text hier"
+          />
+        </div>
         } @else {
-          <p>
-            {{ channelDescription }}
-          </p>
+        <p>
+          {{ channelDescription }}
+        </p>
         }
         <div class="line"></div>
         <h3>Erstellt von:</h3>
@@ -290,7 +304,31 @@
               >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
             >
           </div>
-          <div class="message-text" (click)="openThread(msg.id, { uid:  msg.uid, text: msg.text, user: msg.user, timestamp: msg.timestamp })">{{ msg.text }}</div>
+          <div
+            class="message-text"
+            (click)="
+              openThread(msg.id, {
+                uid: msg.uid,
+                text: msg.text,
+                user: msg.user,
+                timestamp: msg.timestamp
+              })
+            "
+          >
+            {{ msg.text }}
+          </div>
+          <app-reactions
+            [reactions]="msg.reactions || {}"
+            [currentUserId]="meId"
+            [users]="users"
+            [compact]="false"
+            (toggled)="onReactionToggle(msg, $event)"
+            (addedNew)="onReactionAdd(msg, $event)"
+            [class.is-empty]="
+              !(msg.reactions && Object.keys(msg.reactions).length > 0)
+            "
+          >
+          </app-reactions>
         </div>
       </div>
     </div>
@@ -305,10 +343,32 @@
   <textarea
     id="message"
     name="message"
-    placeholder="Nachricht an #{{ currentChat.charAt(0).toUpperCase() + currentChat.slice(1) }}"
+    placeholder="Nachricht an #{{
+      currentChat.charAt(0).toUpperCase() + currentChat.slice(1)
+    }}"
     rows="2"
     [(ngModel)]="messageText"
   ></textarea>
+  <button
+    type="button"
+    class="emoji-insert"
+    (click)="showPicker = !showPicker"
+    aria-label="Emoji einfügen"
+  >
+    😊
+  </button>
+
+  <div class="picker" *ngIf="showPicker" (mouseleave)="showPicker = false">
+    <button
+      *ngFor="
+        let e of ['😀', '👍', '🎉', '❤️', '😊', '🙏', '🚀', '🤔', '😅', '🔥']
+      "
+      type="button"
+      (click)="insertEmojiIntoText(e); showPicker = false"
+    >
+      {{ e }}
+    </button>
+  </div>
   <button type="submit" aria-label="Nachricht senden">
     <svg
       width="23"

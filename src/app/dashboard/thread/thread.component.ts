@@ -1,22 +1,23 @@
-import {Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
-import {FormsModule} from "@angular/forms";
-import {ChatService} from "../../chat.service";
-import {DatePipe, NgClass, NgForOf, NgIf} from "@angular/common";
-import {User} from "../../core/interfaces/user";
-import {AuthService} from "../../auth.service";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ChatService } from '../../chat.service';
+import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { User } from '../../core/interfaces/user';
+import { AuthService } from '../../auth.service';
+import { ReactionsComponent } from './../../shared/reactions/reactions.component';
 
 @Component({
   selector: 'app-thread',
   standalone: true,
-  imports: [
-    FormsModule,
-    DatePipe,
-    NgForOf,
-    NgIf,
-    NgClass
-  ],
+  imports: [FormsModule, DatePipe, NgForOf, NgIf, NgClass, ReactionsComponent],
   templateUrl: './thread.component.html',
-  styleUrl: './thread.component.scss'
+  styleUrl: './thread.component.scss',
 })
 export class ThreadComponent implements OnChanges {
   @Output() toggleRequest = new EventEmitter<boolean>();
@@ -29,19 +30,62 @@ export class ThreadComponent implements OnChanges {
   stableThread: string = '';
   messageText: string = '';
   messages: any[] = [];
+  showPicker = false;
+  pickerEmojis = ['😀', '👍', '🎉', '❤️', '😊', '🙏', '🚀', '🤔', '😅', '🔥'];
 
-  constructor(private chatService: ChatService, private authService: AuthService) {}
+  public Object = Object;
+
+  constructor(
+    private chatService: ChatService,
+    private authService: AuthService
+  ) {}
+
+  get meId() {
+    return this.authService.readCurrentUser();
+  }
+
+  insertEmojiIntoText(e: string) {
+    this.messageText = (this.messageText || '') + e;
+  }
+
+  onReactionToggle(msg: any, ev: { emoji: string; add: boolean }) {
+    if (!this.messageId) return;
+    msg.reactions = msg.reactions ?? {};
+    const list = msg.reactions[ev.emoji] ?? (msg.reactions[ev.emoji] = []);
+    const i = list.indexOf(this.meId);
+    if (ev.add && i === -1) list.push(this.meId);
+    if (!ev.add && i !== -1) list.splice(i, 1);
+    if (list.length === 0) delete msg.reactions[ev.emoji];
+    this.chatService
+      .reactThreadMessage(
+        this.chatService.currentChannel,
+        this.messageId!,
+        msg.id,
+        ev.emoji,
+        ev.add,
+        this.meId
+      )
+      .catch(console.error);
+  }
+
+  onReactionAdd(_msg: any, _emoji: string) {}
 
   async sendMessage() {
-    const logger: User = this.users.find(user => user.uid === this.authService.readCurrentUser());
+    const logger: User = this.users.find(
+      (user) => user.uid === this.authService.readCurrentUser()
+    );
     if (!this.messageText.trim() || this.messageId === null) return;
 
-    await this.chatService.sendThreadMessage(`${this.currentThread}`, `${this.messageId}`, {
-      uid: logger.uid,
-      text: this.messageText,
-      user: logger.name,
-      timestamp: Date.now(),
-    });
+    await this.chatService.sendThreadMessage(
+      `${this.currentThread}`,
+      `${this.messageId}`,
+      {
+        uid: logger.uid,
+        text: this.messageText,
+        user: logger.name,
+        timestamp: Date.now(),
+      }
+    );
 
     this.messageText = '';
   }
@@ -51,14 +95,21 @@ export class ThreadComponent implements OnChanges {
       this.currentThread = this.chatService.currentChannel;
       this.stableThread = this.chatService.currentChat;
 
-      this.chatService.getThreadMessage(`${this.chatService.currentChannel}`, this.messageId).subscribe(messages => {
-        this.messages = messages.sort((a:any, b:any) => a.timestamp - b.timestamp);
-      });
+      this.chatService
+        .getThreadMessage(`${this.chatService.currentChannel}`, this.messageId)
+        .subscribe((messages) => {
+          this.messages = messages.sort(
+            (a: any, b: any) => a.timestamp - b.timestamp
+          );
+        });
     }
   }
 
   getProfilePic(uid: string) {
-    return this.users.find(user => user.uid === uid).avatar || 'assets/avatars/profile.png'
+    return (
+      this.users.find((user) => user.uid === uid).avatar ||
+      'assets/avatars/profile.png'
+    );
   }
 
   getUserId() {

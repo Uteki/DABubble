@@ -11,27 +11,39 @@
 
 <header>
   <div>
-  <img [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'" [alt]="currentPartner?.name ?? 'Anon'" />
-    <h2>{{ currentPartner?.name ?? 'Anon' }}</h2>
+    <img
+      [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'"
+      [alt]="currentPartner?.name ?? 'Anon'"
+    />
+    <h2>{{ currentPartner?.name ?? "Anon" }}</h2>
   </div>
 </header>
 
 <output>
   <figure>
     <div>
-      <img [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'" [alt]="currentPartner?.name ?? 'Anon'" />
+      <img
+        [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'"
+        [alt]="currentPartner?.name ?? 'Anon'"
+      />
       <p>
-        {{ currentPartner?.name ?? 'Anon' }}
-      @if (currentPartner?.uid === currentWhisperer) { (Du) }
+        {{ currentPartner?.name ?? "Anon" }}
+        @if (currentPartner?.uid === currentWhisperer) { (Du) }
       </p>
     </div>
     @if (currentPartner == null || undefined) {
-      <figcaption>Bitte klicke auf jemandem.</figcaption>
+    <figcaption>Bitte klicke auf jemandem.</figcaption>
     } @else if (currentPartner?.uid !== currentWhisperer) {
-      <figcaption>Diese Unterhaltung findet nur zwischen <a>&#64;{{ currentPartner?.name ?? 'Keinem' }}</a> und dir statt.</figcaption>
-    }
-    @else {
-      <figcaption><b>Dieser Raum ist nur für dich da.</b> Mache dir Notizen, liste deine To-dos auf oder bewahre Links und Dateien griffbereit auf. Du kannst hier auch gerne Dinge mit dir selbst besprechen.</figcaption>
+    <figcaption>
+      Diese Unterhaltung findet nur zwischen
+      <a>&#64;{{ currentPartner?.name ?? "Keinem" }}</a> und dir statt.
+    </figcaption>
+    } @else {
+    <figcaption>
+      <b>Dieser Raum ist nur für dich da.</b> Mache dir Notizen, liste deine
+      To-dos auf oder bewahre Links und Dateien griffbereit auf. Du kannst hier
+      auch gerne Dinge mit dir selbst besprechen.
+    </figcaption>
     }
   </figure>
 
@@ -68,10 +80,18 @@
           <div>
             <strong>{{ msg.user }}</strong>
             <span class="timestamp"
-            >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
+              >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
             >
           </div>
           <div class="message-text">{{ msg.text }}</div>
+          <app-reactions
+            [reactions]="msg.reactions || {}"
+            [currentUserId]="meId"
+            [compact]="false"
+            (toggled)="onReactionToggle(msg, $event)"
+            (addedNew)="onReactionAdd(msg, $event)"
+          >
+          </app-reactions>
         </div>
       </div>
     </div>
@@ -86,7 +106,9 @@
   <textarea
     id="message"
     name="message"
-    placeholder="Nachricht an {{ currentPartner?.uid === currentWhisperer ? 'mich': currentPartner?.name }}"
+    placeholder="Nachricht an {{
+      currentPartner?.uid === currentWhisperer ? 'mich' : currentPartner?.name
+    }}"
     rows="2"
     [(ngModel)]="messageText"
   ></textarea>
