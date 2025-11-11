@@ -523,12 +523,15 @@
 }
 
 .channel-wrapper {
+  position: relative;
+  left: -10px;
   display: flex;
   flex-direction: column;
   gap: 5px;
   padding: 20px 0 0 0;
-  > div {
-    > div:first-child {
+  > div:first-child {
+
+    > div {
       display: flex;
       gap: 5px;
       padding: 5px;
@@ -555,7 +558,9 @@
       transition: all 0.2s ease-in-out;
     }
 
-    > div:last-child {
+    
+  }
+  > div:last-child{
       display: flex;
       align-items: center;
       gap: 5px;
@@ -579,5 +584,4 @@
         }
       }
     }
-  }
 }
