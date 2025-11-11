@@ -105,14 +105,12 @@ export class ChannelsComponent implements OnInit {
   }
 
   toggleChannels() {
-    console.log('yo');
-
     this.channelsShown = !this.channelsShown;
     this.channelsNone = false;
     if (!this.channelsShown) {
       setTimeout(() => {
         this.channelsNone = true;
-      }, 300);
+      }, 10);
     }
   }
 
