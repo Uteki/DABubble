@@ -126,6 +126,10 @@ export class ChatComponent implements OnInit {
     return this.authService.readCurrentUser();
   }
 
+  leaveChannel() {
+    this.chatService.leaveChannel(this.authService.readCurrentUser()).then()
+  }
+
   saveEditedName() {
     if (this.editChannelName) {
       const newName = this.channelName.trim();

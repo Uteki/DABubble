@@ -7,10 +7,11 @@ import {
   orderBy,
   query,
   getDoc,
-  updateDoc
+  updateDoc, deleteDoc
 } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
 import {BehaviorSubject, Observable, tap} from 'rxjs';
+import {user} from "@angular/fire/auth";
 
 @Injectable({
   providedIn: 'root'
@@ -73,6 +74,19 @@ export class ChatService {
     await updateDoc(channelRef, {
       users: users
     });
+  }
+
+  async leaveChannel(lastUser: string){
+    const channelRef = doc(this.firestore, 'channels', this.currentChannel);
+    await this.searchUsers(this.currentChannel)
+    if (this.pendingUsers.length <= 1 && this.pendingUsers[0] === lastUser) {
+      await deleteDoc(channelRef);
+    } else {
+      await updateDoc(channelRef, {
+        users: this.pendingUsers.filter(uid => uid !== lastUser && !!uid)
+      });
+    }
+    this.pendingUsers = [];
   }
 
   getChannels(): Observable<any[]> {
