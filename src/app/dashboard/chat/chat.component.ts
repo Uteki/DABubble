@@ -58,6 +58,7 @@ export class ChatComponent implements OnInit {
   switchAddMemberOverlay: boolean = false;
   editChannelName: boolean = false;
   editDescription: boolean = false;
+  wasEmpty: boolean = true;
 
   channelDescription: string = '';
   channelFounder: string = '';
@@ -214,6 +215,39 @@ export class ChatComponent implements OnInit {
     } else if (overlay == 'MitgliederWechseln') {
       this.switchAddMemberOverlay = overlayBoolean;
       this.viewMemberOverlay = overlayBoolean;
+    }
+  }
+
+    onInputChange(value: string) {
+
+    const searchResultsMembers = document.getElementById(
+      'search-chat-members'
+    );
+    const searchResultsChannels = document.getElementById(
+      'search-chat-channels'
+    );
+    if (this.wasEmpty && value.length > 0) {
+      this.chatBar(value);
+      this.wasEmpty = false;
+    }
+    if (value.length === 0) {
+      this.wasEmpty = true;
+      searchResultsMembers?.classList.add('no-display');
+      searchResultsChannels?.classList.add('no-display');
+    }
+  }
+
+   chatBar(value: string) {
+    const searchResultsMembers = document.getElementById(
+      'search-chat-members'
+    );
+    const searchResultsChannels = document.getElementById(
+      'search-chat-channels'
+    );
+    if (value === '@') {
+      searchResultsMembers?.classList.remove('no-display');
+    } else if (value === '#') {
+      searchResultsChannels?.classList.remove('no-display');
     }
   }
 }

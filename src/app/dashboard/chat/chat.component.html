@@ -394,8 +394,11 @@
   (submit)="sendMessage(); $event.preventDefault()"
 >
   <label for="message"></label>
+  <div id="search-chat-channels" class="text-channel-list no-display"></div>
+  <div id="search-chat-members" class="text-member-list no-display"></div>
   <textarea
     id="message"
+       (input)="onInputChange($any($event.target).value)"
     name="message"
     placeholder="Nachricht an #{{
       currentChat.charAt(0).toUpperCase() + currentChat.slice(1)
