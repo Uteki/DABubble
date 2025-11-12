@@ -10,8 +10,7 @@ import {
   updateDoc, deleteDoc
 } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
-import {BehaviorSubject, Observable, tap} from 'rxjs';
-import {user} from "@angular/fire/auth";
+import {BehaviorSubject, map, Observable, tap} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -89,12 +88,16 @@ export class ChatService {
     this.pendingUsers = [];
   }
 
-  getChannels(): Observable<any[]> {
+  getChannels(ownUid: string): Observable<any[]> {
     const channelsRef = collection(this.firestore, 'channels');
     return collectionData(channelsRef, { idField: 'id' }).pipe(
-      tap(channels => {
-        if (!this.currentChannel && channels.length > 0) {
-          this.setCurrentChat(channels[0].id, channels[0]['name'], channels[0]['description'], channels[0]['creator']);
+      map((channels: any[]) =>
+        channels.filter(channel => Array.isArray(channel.users) && channel.users.includes(ownUid))
+      ),
+      tap(filteredChannels => {
+        if (!this.currentChannel && filteredChannels.length > 0) {
+          const first = filteredChannels[0];
+          this.setCurrentChat(first.id, first.name, first.description, first.creator);
         }
       })
     ) as Observable<any[]>;

@@ -56,10 +56,9 @@ export class ChannelsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.chatService.getChannels().subscribe((data) => {
-      const currentUser = this.authService.readCurrentUser();
+    this.chatService.getChannels(this.authService.readCurrentUser()).subscribe((data) => {
       this.channels = data.filter((channel) =>
-        channel.users?.includes(currentUser)
+        channel.users?.includes(this.authService.readCurrentUser())
       );
     });
   }
@@ -68,7 +67,7 @@ ngOnChanges(changes: SimpleChanges) {
   if (changes['users'] && changes['users'].currentValue) {
     this.channelUsers = changes['users'].currentValue.map((u: User) => ({ ...u }));
     console.log(this.channelUsers);
-    
+
   }
 }
 
