@@ -66,8 +66,6 @@ export class ChannelsComponent implements OnInit {
 ngOnChanges(changes: SimpleChanges) {
   if (changes['users'] && changes['users'].currentValue) {
     this.channelUsers = changes['users'].currentValue.map((u: User) => ({ ...u }));
-    console.log(this.channelUsers);
-
   }
 }
 

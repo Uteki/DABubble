@@ -6,6 +6,7 @@ import {
   Input,
   OnInit,
   Output,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -59,6 +60,13 @@ export class ChatComponent implements OnInit {
   editChannelName: boolean = false;
   editDescription: boolean = false;
   wasEmpty: boolean = true;
+  inputFocused: boolean = false;
+  selectedChannelUsers: any[] = [];
+  channelUsers: any[] = [];
+  userAtIndex: any = {};
+
+  foundIndexes: number[] = [];
+  nameInputValue: boolean = false;
 
   channelDescription: string = '';
   channelFounder: string = '';
@@ -95,6 +103,14 @@ export class ChatComponent implements OnInit {
         this.channelDescription = this.chatService.currentDescription;
         this.channelFounder = this.chatService.currentCreator;
       });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['users'] && changes['users'].currentValue) {
+      this.channelUsers = changes['users'].currentValue.map((u: User) => ({
+        ...u,
+      }));
+    }
   }
 
   async sendMessage() {
@@ -222,11 +238,50 @@ export class ChatComponent implements OnInit {
     }
   }
 
-    onInputChange(value: string) {
+  onFocus() {
+    this.inputFocused = true;
+  }
 
-    const searchResultsMembers = document.getElementById(
-      'search-chat-members'
-    );
+  onBlur() {
+    this.inputFocused = false;
+  }
+
+  addUserToChannel(index: number) {
+    let memberInputREF = document.getElementById(
+      'member-input'
+    ) as HTMLInputElement;
+    this.userAtIndex = this.channelUsers[index];
+    this.selectedChannelUsers.push(this.userAtIndex);
+    this.channelUsers.splice(index, 1);
+    this.nameInputValue = false;
+    memberInputREF.value = '';
+  }
+
+  deleteMember(index: number) {
+     this.userAtIndex = this.selectedChannelUsers[index];
+    this.channelUsers.push(this.userAtIndex);
+    this.selectedChannelUsers.splice(index, 1);
+  }
+
+  onMemberInputChange(value: string) {
+    if (value.length > 0) {
+      this.foundIndexes = this.channelUsers
+        .map((user, index) =>
+          user?.name && user.name.toLowerCase().includes(value.toLowerCase())
+            ? index
+            : -1
+        )
+        .filter((index) => index !== -1);
+
+      this.nameInputValue = this.foundIndexes.length > 0;
+    } else {
+      this.nameInputValue = false;
+      this.foundIndexes = [];
+    }
+  }
+
+  onInputChange(value: string) {
+    const searchResultsMembers = document.getElementById('search-chat-members');
     const searchResultsChannels = document.getElementById(
       'search-chat-channels'
     );
@@ -241,10 +296,8 @@ export class ChatComponent implements OnInit {
     }
   }
 
-   chatBar(value: string) {
-    const searchResultsMembers = document.getElementById(
-      'search-chat-members'
-    );
+  chatBar(value: string) {
+    const searchResultsMembers = document.getElementById('search-chat-members');
     const searchResultsChannels = document.getElementById(
       'search-chat-channels'
     );
