@@ -6,6 +6,7 @@ import {
   Input,
   Output,
   ViewChild,
+  SimpleChanges,
 } from '@angular/core';
 import { NgForOf, NgClass, NgIf } from '@angular/common';
 import { ChatService } from '../../chat.service';
@@ -62,6 +63,14 @@ export class ChannelsComponent implements OnInit {
       );
     });
   }
+
+ngOnChanges(changes: SimpleChanges) {
+  if (changes['users'] && changes['users'].currentValue) {
+    this.channelUsers = changes['users'].currentValue.map((u: User) => ({ ...u }));
+    console.log(this.channelUsers);
+    
+  }
+}
 
   async emitPartner(partnerUid: string) {
     const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
@@ -130,7 +139,7 @@ export class ChannelsComponent implements OnInit {
 
   onInputChange(value: string) {
     if (value.length > 0) {
-      this.foundIndexes = this.users
+      this.foundIndexes = this.channelUsers
         .map((user, index) =>
           user?.name && user.name.toLowerCase().includes(value.toLowerCase())
             ? index
@@ -149,9 +158,9 @@ export class ChannelsComponent implements OnInit {
     let memberInputREF = document.getElementById(
       'member-input'
     ) as HTMLInputElement;
-    this.userAtIndex = this.users[index];
+    this.userAtIndex = this.channelUsers[index];
     this.selectedChannelUsers.push(this.userAtIndex);
-    this.users.splice(index, 1);
+    this.channelUsers.splice(index, 1);
     this.nameInputValue = false;
     memberInputREF.value = '';
   }
