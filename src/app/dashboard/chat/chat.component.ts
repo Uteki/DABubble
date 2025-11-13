@@ -67,6 +67,7 @@ export class ChatComponent implements OnInit {
   channelName: string = '';
 
   public Object = Object;
+  
 
   constructor(
     private chatService: ChatService,
