@@ -470,32 +470,38 @@
 </header>
 
 <output>
-  <!-- TODO ng if own messages when user -->
   <div *ngIf="messages.length > 0">
     <div
       *ngFor="let msg of messages; let i = index"
       class="message"
       [ngClass]="{ 'own-message': msg.uid === getUserId() }"
     >
-      <div
-        class="message-event"
-        *ngIf="
+      @if (msg.system === true) {
+      <div class="system">
+        <p>{{ msg.user }}</p>
+      </div>
+      }
+
+      @else {
+        <div
+          class="message-event"
+          *ngIf="
           i === 0 ||
           (msg.timestamp | date : 'yyyy-MM-dd') !==
             (messages[i - 1].timestamp | date : 'yyyy-MM-dd')
         "
-      >
-        <div></div>
-        <span class="timestamp">
+        >
+          <div></div>
+          <span class="timestamp">
           {{
-            (msg.timestamp | date : "yyyy-MM-dd") ===
-            (today | date : "yyyy-MM-dd")
-              ? "Heute"
-              : (msg.timestamp | date : "EEEE, d MMMM")
-          }}
+              (msg.timestamp | date : "yyyy-MM-dd") ===
+              (today | date : "yyyy-MM-dd")
+                ? "Heute"
+                : (msg.timestamp | date : "EEEE, d MMMM")
+            }}
         </span>
-        <div></div>
-      </div>
+          <div></div>
+        </div>
 
       <div class="message-container">
         <img src="{{ getProfilePic(msg.uid) }}" alt="{{ msg.user }}" />
@@ -521,6 +527,7 @@
           </div>
         </div>
       </div>
+      }
     </div>
   </div>
 </output>

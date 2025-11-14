@@ -21,7 +21,7 @@ import {
   getDocs,
   updateDoc,
 } from '@angular/fire/firestore';
-import { distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs';
+import { distinctUntilChanged, filter, map, switchMap, takeUntil } from 'rxjs';
 import { doc } from 'firebase/firestore';
 import { AuthService } from '../../auth.service';
 import { User } from '../../core/interfaces/user';
@@ -80,29 +80,19 @@ export class ChatComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.chatService.currentChat$
-      .pipe(
+    this.chatService.currentChat$.pipe(
         distinctUntilChanged(),
-        filter((chat) => !!chat && chat.trim() !== ''),
-        switchMap((chat) => {
-          this.messages = this.chatService.getCachedMessages(chat);
-          this.currentChat = this.chatService.currentChat;
+        filter(chat => !!chat && chat.trim() !== ''),
+        switchMap(chat => {
+          this.messages = this.chatService.getCachedMessages(chat) || []; this.currentChat = this.chatService.currentChat
+          this.channelDescription = this.chatService.currentDescription; this.channelFounder = this.chatService.currentCreator
           this.cd.detectChanges();
-          return this.chatService
-            .getMessages(chat)
-            .pipe(
-              map((messages) =>
-                messages.sort((a, b) => a.timestamp - b.timestamp)
-              )
-            );
+          return this.chatService.getMessages(chat).pipe(
+            map(messages => messages.sort((a, b) => a.timestamp - b.timestamp)),
+            takeUntil(this.chatService.destroy$)
+          );
         })
-      )
-      .subscribe((sortedMessages) => {
-        this.messages = sortedMessages;
-        this.currentChat = this.chatService.currentChat;
-        this.channelDescription = this.chatService.currentDescription;
-        this.channelFounder = this.chatService.currentCreator;
-      });
+      ).subscribe(messages => { this.messages = messages; this.cd.detectChanges()});
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -114,16 +104,25 @@ export class ChatComponent implements OnInit {
   }
 
   async sendMessage() {
-    const logger: User = this.users.find(
-      (user) => user.uid === this.authService.readCurrentUser()
-    );
-    if (!this.messageText.trim()) return;
+    const currentUserId = this.authService.readCurrentUser();
+    const logger: User = this.users.find(user => user.uid === currentUserId);
+    if (!logger) return
+    if (!this.messageText.trim()) return
+    await this.chatService.searchUsers(this.chatService.currentChannel)
+    const isMember = this.chatService.pendingUsers.includes(currentUserId);
+    if (!isMember) {
+      this.messages.push({
+        uid: logger.uid, text: '⚠️ Sie können in diesem Kanal keine Nachrichten mehr senden.',
+        user: logger.name, timestamp: Date.now()
+      }); return;
+    }
+    await this.sendMessageExtension(logger)
+  }
 
+  async sendMessageExtension(logger: any) {
     await this.chatService.sendMessage(this.chatService.currentChannel, {
-      uid: logger.uid,
-      text: this.messageText,
-      user: logger.name,
-      timestamp: Date.now(),
+      uid: logger.uid, text: this.messageText,
+      user: logger.name, timestamp: Date.now(),
     });
 
     this.messageText = '';
@@ -186,8 +185,20 @@ export class ChatComponent implements OnInit {
     return this.authService.readCurrentUser();
   }
 
-  leaveChannel() {
-    this.chatService.leaveChannel(this.authService.readCurrentUser()).then()
+  async leaveChannel() {
+    const currentUserId = this.authService.readCurrentUser();
+    const logger: User = this.users.find(user => user.uid === currentUserId);
+
+
+    await this.chatService.leaveChannel(this.authService.readCurrentUser(), this.chatService.currentChannel, {user: logger.name + " hat den Kanal verlassen.", system: true, timestamp: Date.now()});
+    if (this.chatService.pendingUsers.length <= 1) {
+      //TODO CHANGE
+      this.channelDescription = '';
+      this.channelFounder = '';
+      this.channelName = '';
+    }
+    this.chatService.destroy$.next();
+    this.chatService.destroy$.complete();
   }
 
   saveEditedName() {

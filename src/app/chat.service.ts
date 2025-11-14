@@ -7,10 +7,10 @@ import {
   orderBy,
   query,
   getDoc,
-  updateDoc, deleteDoc
+  updateDoc, deleteDoc, writeBatch, getDocs
 } from '@angular/fire/firestore';
 import { doc } from 'firebase/firestore';
-import {BehaviorSubject, map, Observable, tap} from 'rxjs';
+import {BehaviorSubject, map, Observable, Subject, tap} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,10 @@ export class ChatService {
   currentChannel: any = '';
   currentCreator: string = '';
   currentDescription: string = '';
+
   currentChat$ = new BehaviorSubject(this.currentChat);
+  destroy$ = new Subject<void>();
+
   currentChannelID: string = '';
 
   pendingUsers: any[] = [];
@@ -55,35 +58,47 @@ export class ChatService {
   async createChannel(fields: { creator: string; description: string; name: string; users: any }) {
     const channelsRef = collection(this.firestore, 'channels');
     const docRef = await addDoc(channelsRef, fields);
-    console.log('Created channel with ID:', docRef.id);
     this.currentChannelID = docRef.id;
     return docRef;
   }
 
   async searchUsers(channelId: string ) {
     const channelRef = doc(this.firestore, 'channels', channelId);
-    const snapshot = await getDoc(channelRef );
+    const snapshot = await getDoc(channelRef);
 
     this.pendingUsers = [];
     this.pendingUsers.push(...(snapshot.data()?.['users'] || []));
   }
 
-  async addUsers(channelId: string, users: any[]) {
+  async addUsers(channelId: string, users: any[], current: any, systemMsg: { user: string, system: boolean, timestamp: number }) {
     const channelRef = doc(this.firestore, 'channels', channelId);
-    await updateDoc(channelRef, {
-      users: users
-    });
+    const messagesRef = collection(this.firestore, `channels/${channelId}/messages`);
+    const uidList = Array.from(new Set(users.map(u => String(u?.uid ?? u).trim()).filter(uid => uid !== '')));
+    users.forEach((user: any) => {
+      if (user.uid && user.uid !== current) {
+        addDoc(messagesRef, { user: user.name + systemMsg.user, system: systemMsg.system, timestamp: systemMsg.timestamp,});
+      }
+    })
+    await updateDoc(channelRef, { users: uidList });
   }
 
-  async leaveChannel(lastUser: string){
-    const channelRef = doc(this.firestore, 'channels', this.currentChannel);
-    await this.searchUsers(this.currentChannel)
+  async leaveChannel(lastUser: string, channelId: string, systemMsg: { user: string, system: boolean, timestamp: number }) {
+    const channelRef = doc(this.firestore, 'channels', channelId);
+    const messagesRef = collection(this.firestore, `channels/${channelId}/messages`);
+    await addDoc(messagesRef, systemMsg);
+    await this.searchUsers(this.currentChannel);
+    await this.deleteChannel(lastUser, channelRef, messagesRef);
+  }
+
+  async deleteChannel(lastUser: string, channelRef: any, messagesRef: any) {
     if (this.pendingUsers.length <= 1 && this.pendingUsers[0] === lastUser) {
+      const messages = await getDocs(messagesRef);
+      const batch = writeBatch(this.firestore);
+      messages.forEach((m) => batch.delete(m.ref));
+      await batch.commit();
       await deleteDoc(channelRef);
     } else {
-      await updateDoc(channelRef, {
-        users: this.pendingUsers.filter(uid => uid !== lastUser && !!uid)
-      });
+      await updateDoc(channelRef, {users: this.pendingUsers.filter(uid => uid !== lastUser && !!uid)});
     }
     this.pendingUsers = [];
   }

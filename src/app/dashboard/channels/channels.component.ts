@@ -14,6 +14,7 @@ import { User } from '../../core/interfaces/user';
 import { StopPropagationDirective } from '../../stop-propagation.directive';
 import { AuthService } from '../../auth.service';
 import { FormsModule } from '@angular/forms';
+import {Subject} from "rxjs";
 
 @Component({
   selector: 'app-channels',
@@ -76,26 +77,23 @@ ngOnChanges(changes: SimpleChanges) {
   }
 
   async addMembers() {
+    const usersToAdd = this.selectedValue !== 'all-members' ? this.selectedChannelUsers : this.users;
+    const newUids = usersToAdd.map(user => ({ uid: user?.uid, name: user?.name })).filter(uid => uid && !this.chatService.pendingUsers.includes(uid));
     await this.chatService.searchUsers(this.chatService.currentChannelID);
-
-    const usersToAdd =
-      this.selectedValue !== 'all-members'
-        ? this.selectedChannelUsers
-        : this.users;
-    const newUids = usersToAdd
-      .map(user => user?.uid)
-      .filter(uid => uid && !this.chatService.pendingUsers.includes(uid));
-
     this.chatService.pendingUsers.push(...newUids);
-
     await this.chatService.addUsers(
       this.chatService.currentChannelID,
-      this.chatService.pendingUsers
+      this.chatService.pendingUsers,
+      this.authService.readCurrentUser(),
+      {user: " hat den Kanal betreten.", system: true, timestamp: Date.now()}
     );
     this.chatService.pendingUsers = [];
   }
 
   swapChannel(id: any, name: string, description: string, creator: string) {
+    this.chatService.destroy$.next();
+    this.chatService.destroy$.complete();
+    this.chatService.destroy$ = new Subject<void>();
     this.chatService.setCurrentChat(id, name, description, creator);
     this.toggleRequest.emit(false);
   }
