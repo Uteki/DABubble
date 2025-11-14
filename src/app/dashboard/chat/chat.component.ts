@@ -67,7 +67,6 @@ export class ChatComponent implements OnInit {
   channelName: string = '';
 
   public Object = Object;
-  
 
   constructor(
     private chatService: ChatService,
@@ -82,7 +81,14 @@ export class ChatComponent implements OnInit {
         distinctUntilChanged(),
         filter((chat) => !!chat && chat.trim() !== ''),
         switchMap((chat) => this.chatService.getMessages(chat)),
-        map((messages) => messages.sort((a, b) => a.timestamp - b.timestamp))
+        map((messages) =>
+          messages
+            .sort((a, b) => a.timestamp - b.timestamp)
+            .map((m: any) => ({
+              ...m,
+              reactions: this.stripEmptyReactions(m.reactions || {}),
+            }))
+        )
       )
       .subscribe((sortedMessages) => {
         this.messages = sortedMessages;
@@ -93,15 +99,44 @@ export class ChatComponent implements OnInit {
       });
   }
 
-  async sendMessage() {
-    const logger: User = this.users.find(
-      (user) => user.uid === this.authService.readCurrentUser()
-    );
-    if (!this.messageText.trim()) return;
+  private stripEmptyReactions(
+    reactions: Record<string, string[]>
+  ): Record<string, string[]> {
+    const cleaned: Record<string, string[]> = {};
+    for (const key of Object.keys(reactions)) {
+      const arr = reactions[key];
+      if (Array.isArray(arr) && arr.length > 0) {
+        cleaned[key] = arr;
+      }
+    }
+    return cleaned;
+  }
 
-    await this.chatService.sendMessage(this.chatService.currentChannel, {
+  private asciiToEmojiInText(s: string): string {
+    if (!s) return s;
+    return s
+      .replace(/:-?\)/g, '😀')
+      .replace(/:-?D/gi, '😃')
+      .replace(/;-?\)/g, '😉')
+      .replace(/:-?\(/g, '☹️')
+      .replace(/:-?P/gi, '😛')
+      .replace(/:o/gi, '😮')
+      .replace(/:'\(/g, '😢')
+      .replace(/\+1/g, '👍')
+      .replace(/-1/g, '👎')
+      .replace(/<3/g, '❤️');
+  }
+
+  async sendMessage() {
+    const meId = this.authService.readCurrentUser();
+    const logger: User | undefined = this.users.find((u) => u.uid === meId);
+    const raw = (this.messageText || '').trim();
+    const channelId = this.chatService.currentChannel;
+    if (!logger || !channelId || !raw) return;
+    const text = this.asciiToEmojiInText(raw);
+    await this.chatService.sendMessage(channelId, {
       uid: logger.uid,
-      text: this.messageText,
+      text,
       user: logger.name,
       timestamp: Date.now(),
     });
@@ -244,12 +279,9 @@ export class ChatComponent implements OnInit {
       this.messageText = v + emoji;
       return;
     }
-
     const start = ta.selectionStart ?? v.length;
     const end = ta.selectionEnd ?? v.length;
-
     this.messageText = v.slice(0, start) + emoji + v.slice(end);
-
     queueMicrotask(() => {
       ta.focus();
       const pos = start + emoji.length;

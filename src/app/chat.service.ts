@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
 import {
   Firestore,
+  getDoc,
+  setDoc,
+  updateDoc,
   collection,
   addDoc,
   collectionData,
   orderBy,
   query,
-  getDoc,
-  updateDoc,
   docData,
 } from '@angular/fire/firestore';
-import { doc, arrayUnion, arrayRemove } from 'firebase/firestore';
+
+import { doc, deleteField } from 'firebase/firestore';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
@@ -129,7 +131,7 @@ export class ChatService {
     const q = query(messagesRef, orderBy('timestamp', 'asc'));
 
     return collectionData(q, { idField: 'id' }).pipe(
-      tap(messages => {
+      tap((messages) => {
         this.messageCache[channelId] = messages;
       })
     ) as Observable<any[]>;
@@ -165,6 +167,33 @@ export class ChatService {
     return collectionData(q, { idField: 'id' }) as Observable<any[]>;
   }
 
+  private async writeReactionSafe(
+    ref: ReturnType<typeof doc>,
+    emoji: string,
+    add: boolean,
+    userId: string
+  ) {
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+      if (!add) return;
+      await setDoc(ref, { reactions: { [emoji]: [userId] } }, { merge: true });
+      return;
+    }
+
+    const data = snap.data() as any;
+    const current: string[] = data?.reactions?.[emoji] ?? [];
+    const next = add
+      ? Array.from(new Set([...current, userId]))
+      : current.filter((id) => id !== userId);
+
+    if (next.length === 0) {
+      await updateDoc(ref, { [`reactions.${emoji}`]: deleteField() });
+    } else {
+      await setDoc(ref, { reactions: { [emoji]: next } }, { merge: true });
+    }
+  }
+
   async reactChannelMessage(
     channelId: string,
     messageId: string,
@@ -176,10 +205,7 @@ export class ChatService {
       this.firestore,
       `channels/${channelId}/messages/${messageId}`
     );
-    const key = `reactions.${emoji}`;
-    await updateDoc(ref, {
-      [key]: add ? arrayUnion(userId) : arrayRemove(userId),
-    });
+    return this.writeReactionSafe(ref, emoji, add, userId);
   }
 
   async reactWhisperMessage(
@@ -193,10 +219,7 @@ export class ChatService {
       this.firestore,
       `whispers/${whisperId}/messages/${messageId}`
     );
-    const key = `reactions.${emoji}`;
-    await updateDoc(ref, {
-      [key]: add ? arrayUnion(userId) : arrayRemove(userId),
-    });
+    return this.writeReactionSafe(ref, emoji, add, userId);
   }
 
   async reactThreadMessage(
@@ -211,9 +234,6 @@ export class ChatService {
       this.firestore,
       `channels/${channelId}/messages/${threadId}/thread/${messageId}`
     );
-    const key = `reactions.${emoji}`;
-    await updateDoc(ref, {
-      [key]: add ? arrayUnion(userId) : arrayRemove(userId),
-    });
+    return this.writeReactionSafe(ref, emoji, add, userId);
   }
 }

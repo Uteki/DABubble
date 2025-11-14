@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RecentEmojiService } from './recent-emoji.service';
 
 type ReMap = Record<string, string[]>;
 
@@ -30,6 +29,27 @@ export class ReactionsComponent {
 
   hintEmoji: string | null = null;
   private nameById = new Map<string, string>();
+
+  private asciiAliases: Record<string, string> = {
+    ':)': '😀',
+    ':-)': '😀',
+    ':D': '😃',
+    ':-D': '😃',
+    ':(': '☹️',
+    ':-(': '☹️',
+    ';)': '😉',
+    ';-)': '😉',
+    ':P': '😛',
+    ':-P': '😛',
+    '<3': '❤️',
+    ':o': '😮',
+    ':-o': '😮',
+    ':O': '😮',
+    ':-O': '😮',
+    ":'(": '😢',
+    ':+1': '👍',
+    ':-1': '👎',
+  };
 
   ngOnChanges() {
     this.nameById.clear();
@@ -61,19 +81,31 @@ export class ReactionsComponent {
     return over > 0 && !this.expanded ? over : 0;
   }
 
+  private normalizeEmoji(input: string): string {
+    if (!input) return input;
+    const trimmed = input.trim();
+    if (this.asciiAliases[trimmed]) return this.asciiAliases[trimmed];
+    const lower = trimmed.toLowerCase();
+    if (this.asciiAliases[lower]) return this.asciiAliases[lower];
+    return trimmed;
+  }
+
   toggle(emoji: string) {
-    const users = this.reactions[emoji] ?? [];
+    const e = this.normalizeEmoji(emoji);
+    const users = this.reactions[e] ?? [];
     const has = users.includes(this.currentUserId);
-    this.toggled.emit({ emoji, add: !has });
+    this.toggled.emit({ emoji: e, add: !has });
   }
 
   openPicker() {
     this.pickerOpen = !this.pickerOpen;
   }
+
   add(emoji: string) {
+    const e = this.normalizeEmoji(emoji);
     this.pickerOpen = false;
-    this.addedNew.emit(emoji);
-    this.toggled.emit({ emoji, add: true });
+    this.addedNew.emit(e);
+    this.toggled.emit({ emoji: e, add: true });
   }
 
   trackByEmoji = (_: number, r: { emoji: string }) => r.emoji;

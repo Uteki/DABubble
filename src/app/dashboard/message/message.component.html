@@ -84,12 +84,16 @@
             >
           </div>
           <div class="message-text">{{ msg.text }}</div>
-          <app-reactions
+             <app-reactions
             [reactions]="msg.reactions || {}"
             [currentUserId]="meId"
+            [users]="users"
             [compact]="false"
             (toggled)="onReactionToggle(msg, $event)"
             (addedNew)="onReactionAdd(msg, $event)"
+            [class.is-empty]="
+              !(msg.reactions && Object.keys(msg.reactions).length > 0)
+            "
           >
           </app-reactions>
         </div>
@@ -112,6 +116,26 @@
     rows="2"
     [(ngModel)]="messageText"
   ></textarea>
+    <button
+    type="button"
+    class="emoji-insert"
+    (click)="showPicker = !showPicker"
+    aria-label="Emoji einfügen"
+  >
+    😊
+  </button>
+
+  <div class="picker" *ngIf="showPicker" (mouseleave)="showPicker = false">
+    <button
+      *ngFor="
+        let e of ['😀', '👍', '🎉', '❤️', '😊', '🙏', '🚀', '🤔', '😅', '🔥']
+      "
+      type="button"
+      (click)="insertEmojiIntoText(e); showPicker = false"
+    >
+      {{ e }}
+    </button>
+  </div>
   <button type="submit" aria-label="Nachricht senden">
     <svg
       width="23"

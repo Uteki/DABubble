@@ -48,6 +48,33 @@ export class ThreadComponent implements OnChanges {
     this.messageText = (this.messageText || '') + e;
   }
 
+  private stripEmptyReactions(
+    reactions: Record<string, string[]> | undefined
+  ): Record<string, string[]> {
+    const src = reactions || {};
+    const out: Record<string, string[]> = {};
+    for (const k of Object.keys(src)) {
+      const arr = src[k];
+      if (Array.isArray(arr) && arr.length > 0) out[k] = arr;
+    }
+    return out;
+  }
+
+  private asciiToEmojiInText(s: string): string {
+    if (!s) return s;
+    return s
+      .replace(/:-?\)/g, '😀')
+      .replace(/:-?D/gi, '😃')
+      .replace(/;-?\)/g, '😉')
+      .replace(/:-?\(/g, '☹️')
+      .replace(/:-?P/gi, '😛')
+      .replace(/:o/gi, '😮')
+      .replace(/:'\(/g, '😢')
+      .replace(/\+1/g, '👍')
+      .replace(/-1/g, '👎')
+      .replace(/<3/g, '❤️');
+  }
+
   onReactionToggle(msg: any, ev: { emoji: string; add: boolean }) {
     if (!this.messageId) return;
     msg.reactions = msg.reactions ?? {};
@@ -56,6 +83,7 @@ export class ThreadComponent implements OnChanges {
     if (ev.add && i === -1) list.push(this.meId);
     if (!ev.add && i !== -1) list.splice(i, 1);
     if (list.length === 0) delete msg.reactions[ev.emoji];
+
     this.chatService
       .reactThreadMessage(
         this.chatService.currentChannel,
@@ -71,17 +99,23 @@ export class ThreadComponent implements OnChanges {
   onReactionAdd(_msg: any, _emoji: string) {}
 
   async sendMessage() {
-    const logger: User = this.users.find(
-      (user) => user.uid === this.authService.readCurrentUser()
-    );
-    if (!this.messageText.trim() || this.messageId === null) return;
+    const meId = this.authService.readCurrentUser();
+    const logger: User | undefined = this.users.find(u => u.uid === meId);
+
+    const raw = (this.messageText || '').trim();
+    const threadRootChannelId = this.currentThread || this.chatService.currentChannel;
+    const parentMsgId = this.messageId;
+
+    if (!logger || !threadRootChannelId || !parentMsgId || !raw) return;
+
+    const text = this.asciiToEmojiInText(raw);
 
     await this.chatService.sendThreadMessage(
-      `${this.currentThread}`,
-      `${this.messageId}`,
+      `${threadRootChannelId}`,
+      `${parentMsgId}`,
       {
         uid: logger.uid,
-        text: this.messageText,
+        text,
         user: logger.name,
         timestamp: Date.now(),
       }
@@ -98,16 +132,19 @@ export class ThreadComponent implements OnChanges {
       this.chatService
         .getThreadMessage(`${this.chatService.currentChannel}`, this.messageId)
         .subscribe((messages) => {
-          this.messages = messages.sort(
-            (a: any, b: any) => a.timestamp - b.timestamp
-          );
+          this.messages = (messages || [])
+            .map((m: any) => ({
+              ...m,
+              reactions: this.stripEmptyReactions(m.reactions),
+            }))
+            .sort((a: any, b: any) => a.timestamp - b.timestamp);
         });
     }
   }
 
   getProfilePic(uid: string) {
     return (
-      this.users.find((user) => user.uid === uid).avatar ||
+      this.users.find((user) => user.uid === uid)?.avatar ||
       'assets/avatars/profile.png'
     );
   }
