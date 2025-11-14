@@ -3,27 +3,41 @@
     Thread
     <output>
       <code>#</code>
-      <span>{{
-        stableThread.charAt(0).toUpperCase() + stableThread.slice(1)
-      }}</span>
+      <span>{{ stableThread.charAt(0).toUpperCase() + stableThread.slice(1) }}</span>
     </output>
   </h2>
-  <svg
-    (click)="closeThread()"
-    width="14"
-    height="14"
-    viewBox="0 0 14 14"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg (click)="closeThread()" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M7.00005 8.39999L2.10005 13.3C1.91672 13.4833 1.68338 13.575 1.40005 13.575C1.11672 13.575 0.883382 13.4833 0.700049 13.3C0.516715 13.1167 0.425049 12.8833 0.425049 12.6C0.425049 12.3167 0.516715 12.0833 0.700049 11.9L5.60005 6.99999L0.700049 2.09999C0.516715 1.91665 0.425049 1.68332 0.425049 1.39999C0.425049 1.11665 0.516715 0.883321 0.700049 0.699988C0.883382 0.516654 1.11672 0.424988 1.40005 0.424988C1.68338 0.424988 1.91672 0.516654 2.10005 0.699988L7.00005 5.59999L11.9 0.699988C12.0834 0.516654 12.3167 0.424988 12.6 0.424988C12.8834 0.424988 13.1167 0.516654 13.3 0.699988C13.4834 0.883321 13.575 1.11665 13.575 1.39999C13.575 1.68332 13.4834 1.91665 13.3 2.09999L8.40005 6.99999L13.3 11.9C13.4834 12.0833 13.575 12.3167 13.575 12.6C13.575 12.8833 13.4834 13.1167 13.3 13.3C13.1167 13.4833 12.8834 13.575 12.6 13.575C12.3167 13.575 12.0834 13.4833 11.9 13.3L7.00005 8.39999Z"
-      fill="black"
-    />
+      fill="black" />
   </svg>
 </header>
 
 <output>
+  <div *ngIf="rootMessage" class="message" [ngClass]="{ 'own-message': rootMessage.uid === getUserId() }">
+    <div class="message-container">
+      <img [src]="getProfilePic(rootMessage.uid)" [alt]="rootMessage.user" />
+      <div>
+        <div>
+          <strong>{{ rootMessage.user }}</strong>
+          <span class="timestamp">{{ rootMessage.timestamp | date : "HH:mm" }} Uhr</span>
+        </div>
+
+        <div class="message-text">{{ rootMessage.text }}</div>
+
+        <app-reactions
+          [reactions]="rootMessage.reactions || {}"
+          [currentUserId]="meId"
+          [users]="users"
+          [compact]="false"
+          (toggled)="onReactionToggle(rootMessage, $event)"
+          (addedNew)="onReactionAdd(rootMessage, $event)"
+          [class.is-empty]="!(rootMessage.reactions && Object.keys(rootMessage.reactions).length > 0)">
+        </app-reactions>
+      </div>
+    </div>
+  </div>
+
   <div *ngIf="messages.length > 0">
     <div
       *ngFor="let msg of messages; let i = index"
@@ -41,10 +55,9 @@
         <div></div>
         <span class="timestamp">
           {{
-            (msg.timestamp | date : "yyyy-MM-dd") ===
-            (today | date : "yyyy-MM-dd")
-              ? "Heute"
-              : (msg.timestamp | date : "EEEE, d MMMM")
+            (msg.timestamp | date : 'yyyy-MM-dd') === (today | date : 'yyyy-MM-dd')
+              ? 'Heute'
+              : (msg.timestamp | date : 'EEEE, d MMMM')
           }}
         </span>
         <div></div>
@@ -55,9 +68,7 @@
         <div>
           <div>
             <strong>{{ msg.user }}</strong>
-            <span class="timestamp"
-              >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
-            >
+            <span class="timestamp">{{ msg.timestamp | date : 'HH:mm' }} Uhr</span>
           </div>
 
           <div class="message-text">{{ msg.text }}</div>
@@ -69,10 +80,7 @@
             [compact]="false"
             (toggled)="onReactionToggle(msg, $event)"
             (addedNew)="onReactionAdd(msg, $event)"
-            [class.is-empty]="
-              !(msg.reactions && Object.keys(msg.reactions).length > 0)
-            "
-          >
+            [class.is-empty]="!(msg.reactions && Object.keys(msg.reactions).length > 0)">
           </app-reactions>
         </div>
       </div>
@@ -80,20 +88,10 @@
   </div>
 </output>
 
-<form
-  aria-label="Nachricht senden"
-  (submit)="sendMessage(); $event.preventDefault()"
->
-  <button type="button" class="emoji-insert" (click)="showPicker = !showPicker">
-    😊
-  </button>
+<form aria-label="Nachricht senden" (submit)="sendMessage(); $event.preventDefault()">
+  <button type="button" class="emoji-insert" (click)="showPicker = !showPicker">😊</button>
   <div class="picker" *ngIf="showPicker" (mouseleave)="showPicker = false">
-    <button
-      *ngFor="let e of pickerEmojis"
-      (click)="insertEmojiIntoText(e); showPicker = false"
-    >
-      {{ e }}
-    </button>
+    <button *ngFor="let e of pickerEmojis" (click)="insertEmojiIntoText(e); showPicker = false">{{ e }}</button>
   </div>
 
   <label for="message"></label>
@@ -106,17 +104,10 @@
   ></textarea>
 
   <button type="submit" aria-label="Nachricht senden">
-    <svg
-      width="23"
-      height="20"
-      viewBox="0 0 23 20"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="23" height="20" viewBox="0 0 23 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M2.5 19.2812C2.08333 19.4479 1.6875 19.4112 1.3125 19.1712C0.9375 18.9321 0.75 18.5833 0.75 18.125V13.4687C0.75 13.1771 0.833333 12.9167 1 12.6875C1.16667 12.4583 1.39583 12.3125 1.6875 12.25L10.75 9.99999L1.6875 7.74999C1.39583 7.68749 1.16667 7.54166 1 7.31249C0.833333 7.08333 0.75 6.82291 0.75 6.53124V1.87499C0.75 1.41666 0.9375 1.06749 1.3125 0.827493C1.6875 0.588327 2.08333 0.552076 2.5 0.718743L21.75 8.84374C22.2708 9.07291 22.5312 9.45833 22.5312 9.99999C22.5312 10.5417 22.2708 10.9271 21.75 11.1562L2.5 19.2812Z"
-        fill="#444DF2"
-      />
+        fill="#444DF2"/>
     </svg>
   </button>
 </form>
