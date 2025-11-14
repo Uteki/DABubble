@@ -78,14 +78,15 @@ ngOnChanges(changes: SimpleChanges) {
 
   async addMembers() {
     const usersToAdd = this.selectedValue !== 'all-members' ? this.selectedChannelUsers : this.users;
-    const newUids = usersToAdd.map(user => ({ uid: user?.uid, name: user?.name })).filter(uid => uid && !this.chatService.pendingUsers.includes(uid));
+    const newUids = usersToAdd
+      .filter(user => !user?.guest)
+      .map(user => ({ uid: user?.uid, name: user?.name }))
+      .filter(uidObj => uidObj.uid && !this.chatService.pendingUsers.some(u => u.uid === uidObj.uid));
     await this.chatService.searchUsers(this.chatService.currentChannelID);
     this.chatService.pendingUsers.push(...newUids);
     await this.chatService.addUsers(
-      this.chatService.currentChannelID,
-      this.chatService.pendingUsers,
-      this.authService.readCurrentUser(),
-      {user: " hat den Kanal betreten.", system: true, timestamp: Date.now()}
+      this.chatService.currentChannelID, this.chatService.pendingUsers,
+      this.authService.readCurrentUser(), {user: " hat den Kanal betreten.", system: true, timestamp: Date.now()}
     );
     this.chatService.pendingUsers = [];
   }
