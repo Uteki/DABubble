@@ -57,6 +57,7 @@ export class ChatComponent implements OnInit {
   viewMemberOverlay: boolean = false;
   addMemberOverlay: boolean = false;
   switchAddMemberOverlay: boolean = false;
+  profileOverlay: boolean = false;
   editChannelName: boolean = false;
   editDescription: boolean = false;
   wasEmpty: boolean = true;
@@ -64,6 +65,7 @@ export class ChatComponent implements OnInit {
   selectedChannelUsers: any[] = [];
   channelUsers: any[] = [];
   userAtIndex: any = {};
+
 
   foundIndexes: number[] = [];
   nameInputValue: boolean = false;
@@ -317,5 +319,10 @@ export class ChatComponent implements OnInit {
     } else if (value === '#') {
       searchResultsChannels?.classList.remove('no-display');
     }
+  }
+
+
+  toggleProfile() {
+  
   }
 }

@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { AuthService } from "../../auth.service";
 import { ChatService } from "../../chat.service";
 import { User } from "../../core/interfaces/user";
+import { StopPropagationDirective } from "../../stop-propagation.directive";
 
 @Component({
   selector: 'app-message',
@@ -13,8 +14,9 @@ import { User } from "../../core/interfaces/user";
     FormsModule,
     NgForOf,
     NgIf,
-    NgClass
-  ],
+    NgClass,
+    StopPropagationDirective
+],
   templateUrl: './message.component.html',
   styleUrl: './message.component.scss'
 })
@@ -31,7 +33,7 @@ export class MessageComponent implements OnChanges {
   viewMemberOverlay: boolean = false;
   addMemberOverlay: boolean = false;
   channelOverlay: boolean = false;
-
+  profileOverlay: boolean = false;
   currentPartnerChat: string = "";
   currentWhisperer: string = "";
   currentPartner: any;
@@ -84,5 +86,14 @@ export class MessageComponent implements OnChanges {
     } else if (overlay == "Hinzufügen") {
       this.addMemberOverlay = overlayBoolean;
     }
+  }
+
+  toggleProfile() {
+  
+  }
+
+  openProfile() {
+    this.overlayActivated = true;
+    this.profileOverlay = true;
   }
 }
