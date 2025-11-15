@@ -64,6 +64,8 @@ export class ChannelsComponent implements OnInit {
     });
   }
 
+  //TODO ^
+
 ngOnChanges(changes: SimpleChanges) {
   if (changes['users'] && changes['users'].currentValue) {
     this.channelUsers = changes['users'].currentValue.map((u: User) => ({ ...u }));
@@ -95,6 +97,7 @@ ngOnChanges(changes: SimpleChanges) {
     this.chatService.destroy$.next();
     this.chatService.destroy$.complete();
     this.chatService.destroy$ = new Subject<void>();
+    this.chatService.currentChannelID = id;
     this.chatService.setCurrentChat(id, name, description, creator);
     this.toggleRequest.emit(false);
   }
