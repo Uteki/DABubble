@@ -94,7 +94,18 @@ export class ChatComponent implements OnInit {
             takeUntil(this.chatService.destroy$)
           );
         })
-      ).subscribe(messages => { this.messages = messages; this.cd.detectChanges()});
+      ).subscribe(async messages => {
+        this.messages = messages;
+        this.cd.detectChanges()
+
+      //TODO maybe change not sure
+        if (this.chatService.currentChannelID) {
+          this.chatService.usersInChannel = [];
+          await this.chatService.searchUsers(this.chatService.currentChannelID).then()
+          this.chatService.usersInChannel.push(...this.chatService.pendingUsers);
+          this.chatService.pendingUsers = [];
+        }
+      });
   }
 
   ngOnChanges(changes: SimpleChanges) {

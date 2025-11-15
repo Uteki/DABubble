@@ -27,6 +27,8 @@ export class ChatService {
   currentChannelID: string = '';
 
   pendingUsers: any[] = [];
+  usersInChannel: any[] = [];
+
   messageCache: Record<string, any[]> = {};
 
   constructor(private firestore: Firestore) {}
@@ -113,6 +115,7 @@ export class ChatService {
         if (!this.currentChannel && filteredChannels.length > 0) {
           const first = filteredChannels[0];
           this.setCurrentChat(first.id, first.name, first.description, first.creator);
+          this.currentChannelID = first.id;
         }
       })
     ) as Observable<any[]>;

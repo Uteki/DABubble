@@ -97,7 +97,9 @@ ngOnChanges(changes: SimpleChanges) {
     this.chatService.destroy$.next();
     this.chatService.destroy$.complete();
     this.chatService.destroy$ = new Subject<void>();
+
     this.chatService.currentChannelID = id;
+
     this.chatService.setCurrentChat(id, name, description, creator);
     this.toggleRequest.emit(false);
   }
