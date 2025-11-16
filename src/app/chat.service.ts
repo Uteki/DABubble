@@ -9,7 +9,7 @@ import {
   getDoc,
   updateDoc, deleteDoc, writeBatch, getDocs
 } from '@angular/fire/firestore';
-import { doc } from 'firebase/firestore';
+import { doc, arrayUnion } from 'firebase/firestore';
 import {BehaviorSubject, map, Observable, Subject, tap} from 'rxjs';
 
 @Injectable({
@@ -81,6 +81,16 @@ export class ChatService {
       }
     })
     await updateDoc(channelRef, { users: uidList });
+  }
+
+  async addNewUser(user: any, systemMsg: { user: string, system: boolean, timestamp: number }) {
+    const channelRef = doc(this.firestore, 'channels', 'DALobby');
+    const messagesRef = collection(this.firestore, `channels/DALobby/messages`);
+
+    await addDoc(messagesRef, { user: systemMsg.user + user.name + '!', system: systemMsg.system, timestamp: systemMsg.timestamp });
+    await updateDoc(channelRef, {
+      users: arrayUnion(user.uid)
+    });
   }
 
   async leaveChannel(lastUser: string, channelId: string, systemMsg: { user: string, system: boolean, timestamp: number }) {

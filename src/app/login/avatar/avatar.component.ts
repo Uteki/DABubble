@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import {ChatService} from "../../chat.service";
 
 @Component({
   selector: 'app-avatar',
@@ -28,7 +29,8 @@ export class AvatarComponent implements OnInit {
   constructor(
     private router: Router,
     private auth: Auth,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private chat: ChatService,
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras?.state?.['userName']) {
@@ -75,8 +77,10 @@ export class AvatarComponent implements OnInit {
           },
           { merge: true }
         );
-        console.log('Avatar gespeichert:', this.selectedAvatar);
-        console.log('Avatar gespeichert:', this.auth.currentUser.uid);
+        await this.chat.addNewUser(
+          { name: this.userName, uid: this.auth.currentUser.uid },
+          { user: 'Willkommen zu DABubble ', system: true, timestamp: Date.now() }
+        )
         this.router.navigate(['/login']);
       } catch (error) {
         console.error('Fehler beim Speichern des Avatars:', error);
