@@ -212,7 +212,7 @@
         <h3>{{ channelFounder }}</h3>
       </div>
       <div>
-        <button
+        <button *ngIf="currentChat !== 'DALobby'"
           click-stop-propagation
           (click)="overlayFunction(false, 'Entwicklung', false); leaveChannel()"
         >
@@ -403,6 +403,7 @@
         <button
           class="add-member-button"
           (click)="switchAddMemberOverlay = true"
+          *ngIf="currentChat !== 'DALobby'"
         >
           <div>
             <svg
@@ -424,7 +425,7 @@
       </div>
     </output>
 
-    <div (click)="overlayActivated = true; addMemberOverlay = true">
+    <div (click)="overlayActivated = true; addMemberOverlay = true" *ngIf="currentChat && currentChat !== 'DALobby'">
       <svg
         width="22"
         height="16"

@@ -108,17 +108,18 @@ export class ChatService {
   getChannels(ownUid: string): Observable<any[]> {
     const channelsRef = collection(this.firestore, 'channels');
     return collectionData(channelsRef, { idField: 'id' }).pipe(
-      map((channels: any[]) =>
-        channels.filter(channel => Array.isArray(channel.users) && channel.users.includes(ownUid))
-      ),
+      map((channels: any[]) => channels.filter(channel =>
+          (Array.isArray(channel.users) && channel.users.includes(ownUid)) || channel.id === 'DALobby'
+        )),
       tap(filteredChannels => {
         if (!this.currentChannel && filteredChannels.length > 0) {
+          filteredChannels = filteredChannels.sort((a, b) =>
+            a.id === 'DALobby' ? -1 : b.id === 'DALobby' ? 1 : 0
+          );
           const first = filteredChannels[0];
-          this.setCurrentChat(first.id, first.name, first.description, first.creator);
-          this.currentChannelID = first.id;
+          this.setCurrentChat(first.id, first.name, first.description, first.creator); this.currentChannelID = first.id
         }
-      })
-    ) as Observable<any[]>;
+      })) as Observable<any[]>;
   }
 
   getMessages(channelId: string): Observable<any[]> {

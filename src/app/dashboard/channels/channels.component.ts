@@ -58,19 +58,24 @@ export class ChannelsComponent implements OnInit {
 
   ngOnInit(): void {
     this.chatService.getChannels(this.authService.readCurrentUser()).subscribe((data) => {
-      this.channels = data.filter((channel) =>
-        channel.users?.includes(this.authService.readCurrentUser())
-      );
+      const uid = this.authService.readCurrentUser();
+      this.channels = data
+        .filter(channel =>
+          channel.users?.includes(uid) || channel.id === 'DALobby'
+        )
+        .sort((a, b) =>
+          a.id === 'DALobby' ? -1 :
+            b.id === 'DALobby' ? 1 :
+              0
+        );
     });
   }
 
-  //TODO ^
-
-ngOnChanges(changes: SimpleChanges) {
-  if (changes['users'] && changes['users'].currentValue) {
-    this.channelUsers = changes['users'].currentValue.map((u: User) => ({ ...u }));
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['users'] && changes['users'].currentValue) {
+      this.channelUsers = changes['users'].currentValue.map((u: User) => ({ ...u }));
+    }
   }
-}
 
   async emitPartner(partnerUid: string) {
     const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
