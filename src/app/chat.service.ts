@@ -35,11 +35,10 @@ export class ChatService {
 
   setCurrentChat(chat: any, name: string, description: string, creator: string) {
     this.currentChat = name;
-    this.currentChat$.next(chat);
     this.currentChannel = chat;
-
     this.currentCreator = creator;
     this.currentDescription = description;
+    this.currentChat$.next(chat);
   }
 
   sendMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number }) {

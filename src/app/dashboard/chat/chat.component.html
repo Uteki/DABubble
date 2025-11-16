@@ -165,7 +165,7 @@
         <div>
           <h3>Channel-Name</h3>
 
-          <h3 (click)="saveEditedName()">
+          <h3 (click)="saveEditedName()" *ngIf="currentChat !== 'DALobby'">
             @if (editChannelName) { Speichern } @else { Bearbeiten }
           </h3>
         </div>
@@ -190,7 +190,7 @@
         <div>
           <h3>Beschreibung</h3>
 
-          <h3 (click)="saveEditedComment()">
+          <h3 (click)="saveEditedComment()" *ngIf="currentChat !== 'DALobby'">
             @if (editDescription) { Speichern } @else { Bearbeiten }
           </h3>
         </div>
