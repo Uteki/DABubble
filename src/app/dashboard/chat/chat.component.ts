@@ -47,6 +47,7 @@ export class ChatComponent implements OnInit {
   @ViewChild('channelEdit') channelEdit!: ElementRef;
   @Input() users: any[] = [];
 
+  inputValue: string = '';
   messages: any[] = [];
   messageText: string = '';
   currentChat: string = '';
@@ -66,8 +67,9 @@ export class ChatComponent implements OnInit {
   channelUsers: any[] = [];
   userAtIndex: any = {};
 
-
   foundIndexes: number[] = [];
+  currentMemberIndices: number[] = [];
+  missingIndices: number[] = [];
   nameInputValue: boolean = false;
 
   channelDescription: string = '';
@@ -82,28 +84,41 @@ export class ChatComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.chatService.currentChat$.pipe(
+    this.chatService.currentChat$
+      .pipe(
         distinctUntilChanged(),
-        filter(chat => !!chat && chat.trim() !== ''),
-        switchMap(chat => {
-          this.messages = this.chatService.getCachedMessages(chat) || []; this.currentChat = this.chatService.currentChat
-          this.channelDescription = this.chatService.currentDescription; this.channelFounder = this.chatService.currentCreator
+        filter((chat) => !!chat && chat.trim() !== ''),
+        switchMap((chat) => {
+          this.messages = this.chatService.getCachedMessages(chat) || [];
+          this.currentChat = this.chatService.currentChat;
+          this.channelDescription = this.chatService.currentDescription;
+          this.channelFounder = this.chatService.currentCreator;
           this.cd.detectChanges();
           return this.chatService.getMessages(chat).pipe(
-            map(messages => messages.sort((a, b) => a.timestamp - b.timestamp)),
+            map((messages) =>
+              messages.sort((a, b) => a.timestamp - b.timestamp)
+            ),
             takeUntil(this.chatService.destroy$)
           );
         })
-      ).subscribe(async messages => {
+      )
+      .subscribe(async (messages) => {
         this.messages = messages;
-        this.cd.detectChanges()
+        this.cd.detectChanges();
 
-      //TODO maybe change not sure
+        //TODO maybe change not sure
         if (this.chatService.currentChannelID) {
           this.chatService.usersInChannel = [];
-          await this.chatService.searchUsers(this.chatService.currentChannelID).then()
-          this.chatService.usersInChannel.push(...this.chatService.pendingUsers);
+          await this.chatService
+            .searchUsers(this.chatService.currentChannelID)
+            .then();
+          this.chatService.usersInChannel.push(
+            ...this.chatService.pendingUsers
+          );
           this.chatService.pendingUsers = [];
+          this.filterMembersInChannel();
+       
+          
         }
       });
   }
@@ -114,28 +129,50 @@ export class ChatComponent implements OnInit {
         ...u,
       }));
     }
+      
+        
+  }
+
+  filterMembersInChannel() {
+    this.missingIndices = this.users
+      .map((user, index) =>
+        this.chatService.usersInChannel.includes(user.uid) ? -1 : index
+      )
+      .filter((index) => index !== -1);
+
+    this.currentMemberIndices = this.users
+      .map((user, index) =>
+        this.chatService.usersInChannel.includes(user.uid) ? index : -1
+      ) // Index oder -1, wenn nicht enthalten
+      .filter((index) => index !== -1);
+      
   }
 
   async sendMessage() {
     const currentUserId = this.authService.readCurrentUser();
-    const logger: User = this.users.find(user => user.uid === currentUserId);
-    if (!logger) return
-    if (!this.messageText.trim()) return
-    await this.chatService.searchUsers(this.chatService.currentChannel)
+    const logger: User = this.users.find((user) => user.uid === currentUserId);
+    if (!logger) return;
+    if (!this.messageText.trim()) return;
+    await this.chatService.searchUsers(this.chatService.currentChannel);
     const isMember = this.chatService.pendingUsers.includes(currentUserId);
     if (!isMember) {
       this.messages.push({
-        uid: logger.uid, text: '⚠️ Sie können in diesem Kanal keine Nachrichten mehr senden.',
-        user: logger.name, timestamp: Date.now()
-      }); return;
+        uid: logger.uid,
+        text: '⚠️ Sie können in diesem Kanal keine Nachrichten mehr senden.',
+        user: logger.name,
+        timestamp: Date.now(),
+      });
+      return;
     }
-    await this.sendMessageExtension(logger)
+    await this.sendMessageExtension(logger);
   }
 
   async sendMessageExtension(logger: any) {
     await this.chatService.sendMessage(this.chatService.currentChannel, {
-      uid: logger.uid, text: this.messageText,
-      user: logger.name, timestamp: Date.now(),
+      uid: logger.uid,
+      text: this.messageText,
+      user: logger.name,
+      timestamp: Date.now(),
     });
 
     this.messageText = '';
@@ -200,10 +237,17 @@ export class ChatComponent implements OnInit {
 
   async leaveChannel() {
     const currentUserId = this.authService.readCurrentUser();
-    const logger: User = this.users.find(user => user.uid === currentUserId);
+    const logger: User = this.users.find((user) => user.uid === currentUserId);
 
-
-    await this.chatService.leaveChannel(this.authService.readCurrentUser(), this.chatService.currentChannel, {user: logger.name + " hat den Kanal verlassen.", system: true, timestamp: Date.now()});
+    await this.chatService.leaveChannel(
+      this.authService.readCurrentUser(),
+      this.chatService.currentChannel,
+      {
+        user: logger.name + ' hat den Kanal verlassen.',
+        system: true,
+        timestamp: Date.now(),
+      }
+    );
     if (this.chatService.pendingUsers.length <= 1) {
       //TODO CHANGE
       this.channelDescription = '';
@@ -279,10 +323,14 @@ export class ChatComponent implements OnInit {
     this.channelUsers.splice(index, 1);
     this.nameInputValue = false;
     memberInputREF.value = '';
-  }
+      this.inputValue = '';
 
+           console.log(this.selectedChannelUsers.length + "" + this.selectedChannelUsers);
+         
+  }
+  
   deleteMember(index: number) {
-     this.userAtIndex = this.selectedChannelUsers[index];
+    this.userAtIndex = this.selectedChannelUsers[index];
     this.channelUsers.push(this.userAtIndex);
     this.selectedChannelUsers.splice(index, 1);
   }
@@ -291,7 +339,9 @@ export class ChatComponent implements OnInit {
     if (value.length > 0) {
       this.foundIndexes = this.channelUsers
         .map((user, index) =>
-          user?.name && user.name.toLowerCase().includes(value.toLowerCase())
+          user?.name &&
+          user.name.toLowerCase().includes(value.toLowerCase()) &&
+          !this.currentMemberIndices.includes(index)
             ? index
             : -1
         )
@@ -332,15 +382,13 @@ export class ChatComponent implements OnInit {
     }
   }
 
-
-  toggleProfile() {
-
-  }
+  toggleProfile() {}
 
   async addMembersToChannel() {
     const usersToAdd = this.selectedChannelUsers;
     const newUids = usersToAdd
-      .filter((user) => !user?.guest).map((user) => ({ uid: user?.uid, name: user?.name }))
+      .filter((user) => !user?.guest)
+      .map((user) => ({ uid: user?.uid, name: user?.name }))
       .filter(
         (uidObj) =>
           uidObj.uid &&
@@ -349,8 +397,27 @@ export class ChatComponent implements OnInit {
     await this.chatService.searchUsers(this.chatService.currentChannelID);
     this.chatService.pendingUsers.push(...newUids);
     await this.chatService.addUsers(
-      this.chatService.currentChannelID, this.chatService.pendingUsers,
-      this.authService.readCurrentUser(), {user: " hat den Kanal betreten.", system: true, timestamp: Date.now()});
+      this.chatService.currentChannelID,
+      this.chatService.pendingUsers,
+      this.authService.readCurrentUser(),
+      { user: ' hat den Kanal betreten.', system: true, timestamp: Date.now() }
+    );
     this.chatService.pendingUsers = [];
+    this.clearSelectedUsers();
+   
+  }
+
+  clearSelectedUsers() {
+    this.selectedChannelUsers = [];
+     this.closeAllOverlays();
+  }
+
+  closeAllOverlays() {
+    this.overlayActivated = false;
+    this.channelOverlay = false;
+    this.viewMemberOverlay = false;
+    this.addMemberOverlay = false;
+    this.switchAddMemberOverlay = false;
+    this.inputValue = '';
   }
 }

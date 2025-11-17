@@ -65,7 +65,7 @@
       />
     </div>
     <div class="channel-create-one">
-      <button (click)="switchOverlay = true; createNewChannel()">
+      <button [disabled]="newChannel.length === 0" [class.disabled-button]="newChannel.length === 0" (click)="switchOverlay = true; createNewChannel()">
         Erstellen
       </button>
     </div>
@@ -175,6 +175,7 @@
           </div>
           <input
             id="member-input"
+            [(ngModel)]="inputValue"
             #inputEl
             (focus)="onFocus()"
             (blur)="onBlur()"
@@ -209,6 +210,8 @@
       </div>
       <div>
         <button
+        [disabled]="selectedChannelUsers.length === 0"
+        [class.disabled-button]="selectedChannelUsers.length === 0"
           (click)="
             switchOverlay = false; overlayActivated = false; addMembers()
           "

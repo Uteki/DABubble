@@ -1,11 +1,5 @@
 <section
-  (click)="
-    overlayActivated = false;
-    channelOverlay = false;
-    viewMemberOverlay = false;
-    addMemberOverlay = false;
-    switchAddMemberOverlay = false
-  "
+  (click)="closeAllOverlays()"
   class="overlay"
   [ngClass]="{ 'no-display': !overlayActivated }"
 >
@@ -277,8 +271,9 @@
         <div class="members-list no-scrollbar">
           <div>
             <div
-              [ngClass]="{ 'd-none': inputFocused }"
+              [ngClass]="{ 'no-display': inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
+            
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
               <p>{{ channelUser.name }}</p>
@@ -313,6 +308,7 @@
             </div>
             <input
               id="member-input"
+              [(ngModel)]="inputValue"
               #inputEl
               (focus)="onFocus()"
               (blur)="onBlur()"
@@ -346,7 +342,7 @@
           </div>
         </div>
         <div>
-          <button>Hinzufügen</button>
+          <button [disabled]="selectedChannelUsers.length === 0" [class.abled-button]="selectedChannelUsers.length > 0" (click)="addMembersToChannel()">Hinzufügen</button>
         </div>
         } @else {
         <div>
@@ -382,7 +378,7 @@
           </div>
         </div>
         <div class="no-scrollbar">
-          <div class="no-scrollbar" *ngFor="let user of users">
+          <div class="no-scrollbar" *ngFor="let user of users; let i = index"    [class.no-display]="!currentMemberIndices.includes(i)">
             <article>
               <figure *ngIf="user?.uid" class="user-avatar">
                 <img
@@ -476,8 +472,9 @@
         <div class="members-list no-scrollbar">
           <div>
             <div
-              [ngClass]="{ 'd-none': inputFocused }"
+              [ngClass]="{ 'no-display': inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
+             
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
               <p>{{ channelUser.name }}</p>
@@ -512,6 +509,7 @@
             </div>
             <input
               id="member-input"
+              [(ngModel)]="inputValue"
               #inputEl
               (focus)="onFocus()"
               (blur)="onBlur()"
@@ -545,7 +543,7 @@
           </div>
         </div>
         <div>
-          <button (click)="addMembersToChannel()">Hinzufügen</button>
+          <button [disabled]="selectedChannelUsers.length === 0" [class.abled-button]="selectedChannelUsers.length > 0" (click)="addMembersToChannel()">Hinzufügen</button>
         </div>
       </div>
     </div>

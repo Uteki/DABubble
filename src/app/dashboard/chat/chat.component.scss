@@ -725,8 +725,9 @@
       font-family: "Nunito";
       font-weight: 600;
       font-size: 14px;
-      cursor: pointer;
+      cursor: not-allowed;
       margin-top: 20px;
+
     }
   }
 }
@@ -813,7 +814,7 @@
       font-family: "Nunito";
       font-weight: 600;
       font-size: 14px;
-      cursor: pointer;
+      cursor: not-allowed;
       margin-top: 20px;
     }
   }
@@ -1136,4 +1137,7 @@ border-radius: 30px;
   display: none;
 }
 
-
+.abled-button {
+  background-color: $purple-button !important;
+  cursor: pointer !important;
+}

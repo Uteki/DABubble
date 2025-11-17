@@ -7,6 +7,7 @@ import {
   Output,
   ViewChild,
   SimpleChanges,
+  input,
 } from '@angular/core';
 import { NgForOf, NgClass, NgIf } from '@angular/common';
 import { ChatService } from '../../chat.service';
@@ -37,6 +38,8 @@ export class ChannelsComponent implements OnInit {
   channelUsers: any[] = [];
   userAtIndex: any = {};
   channels: any[] = [];
+  inputValue: string = '';
+
 
   channelsShown: boolean = true;
   channelsNone: boolean = false;
@@ -96,6 +99,8 @@ export class ChannelsComponent implements OnInit {
       this.authService.readCurrentUser(), {user: " hat den Kanal betreten.", system: true, timestamp: Date.now()}
     );
     this.chatService.pendingUsers = [];
+    this.inputValue = '';
+    this.selectedChannelUsers = [];
   }
 
   swapChannel(id: any, name: string, description: string, creator: string) {
@@ -169,6 +174,7 @@ export class ChannelsComponent implements OnInit {
     this.channelUsers.splice(index, 1);
     this.nameInputValue = false;
     memberInputREF.value = '';
+    this.inputValue = '';
   }
 
   onDivClick(event: MouseEvent) {

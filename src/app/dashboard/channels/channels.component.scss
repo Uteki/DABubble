@@ -587,3 +587,8 @@
       }
     }
 }
+
+.disabled-button {
+  background-color: gray !important;
+  cursor: not-allowed !important;
+}
