@@ -352,7 +352,7 @@
     border-radius: 15px;
     margin: 10px 20px;
     padding: 15px 0;
-
+    transition: all 0.3s ease-in-out;
     > div {
       display: flex;
       justify-content: space-between;
@@ -384,6 +384,7 @@
     border-radius: 15px;
     margin: 10px 20px;
     padding: 15px 20px;
+      transition: all 0.3s ease-in-out;
     > h3 {
       font-family: "Nunito";
       font-weight: 600;
@@ -391,6 +392,7 @@
       margin-bottom: 10px;
     }
     > div {
+      position: relative;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -411,6 +413,7 @@
       }
     }
     .editDescription {
+      position: relative;
       display: flex;
       justify-content: start !important;
       border: 1px solid $light-purple !important;
@@ -481,6 +484,19 @@
     }
   }
 }
+
+.channel-description {
+ border: none !important;
+ transition: all 0.3s ease-in-out;
+   padding: 0 !important;
+ 
+.line {
+  margin: 30px 10px !important
+}
+
+ 
+}
+
 
 .edit-one {
   position: relative;

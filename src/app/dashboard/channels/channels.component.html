@@ -346,11 +346,11 @@
   </div>
 
   <output
-    class="channel-wrapper"
+    class="channel-wrapper no-scrollbar"
     [ngClass]="{ 'd-none': channelsNone }"
     [class.deactive]="!channelsShown"
   >
-    <div>
+    <div class="no-scrollbar">
       <div
         *ngFor="let channel of channels"
         (click)="
@@ -361,6 +361,7 @@
             channel.creator
           )
         "
+        [ngClass]="{'active': isSelected(channel)}"
       >
         <svg
           width="24"

@@ -136,6 +136,9 @@ export class ChannelsComponent implements OnInit {
 
   toggleOverlay() {
     this.overlayActivated = !this.overlayActivated;
+    this.newChannel = '';
+    this.selectedChannelUsers = [];
+    this.switchOverlay = false;
   }
 
   onChange(event: Event) {
@@ -216,4 +219,9 @@ export class ChannelsComponent implements OnInit {
         });
     }
   }
+
+  isSelected(channel: any): boolean {
+    return this.chatService.currentChannelID === channel.id;
+  }
+
 }

@@ -1,11 +1,11 @@
 @use "../../../assets/styles/colors" as *;
 
 .overlay {
-  position:fixed;
+  position: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
- top: 0;
+  top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
@@ -438,7 +438,7 @@
   align-items: start;
   gap: 15px;
   margin-top: 20px;
-  max-height: 400px;
+  max-height: 250px;
   overflow-y: auto;
   max-width: 500px;
   transition: all 0.3s ease-in-out;
@@ -527,26 +527,30 @@
 .channel-wrapper {
   position: relative;
   left: -10px;
+
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 25px;
   padding: 20px 0 0 0;
   > div:first-child {
-
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+      max-height: 150px;
+      overflow-y: auto;
     > div {
       display: flex;
       gap: 5px;
-      padding: 5px;
+      padding: 2px 5px ;
       border-radius: 30px;
       font-size: 17px;
       font-weight: 600;
-
     
-      &:hover {
 
-        cursor:pointer;
+      &:hover {
+        cursor: pointer;
         background-color: $main-accent;
-        >svg path {
+        > svg path {
           fill: $purple-font !important;
         }
         > h3 {
@@ -559,36 +563,45 @@
       opacity: 0;
       transition: all 0.2s ease-in-out;
     }
-
-    
   }
-  > div:last-child{
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      margin-top: 10px;
+  > div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
 
-      padding: 5px;
-      border-radius: 30px;
+    padding: 5px;
+    border-radius: 30px;
 
-      > h3 {
-        font-size: 17px;
-        font-style: 400;
+    > h3 {
+      font-size: 17px;
+      font-style: 400;
+    }
+
+    &:hover {
+      cursor: pointer;
+      > svg path {
+        fill: $purple-font !important;
       }
-
-      &:hover {
-        cursor: pointer;
-        > svg path {
-          fill: $purple-font !important;
-        }
-        > h3 {
-          color: $purple-font !important;
-        }
+      > h3 {
+        color: $purple-font !important;
       }
     }
+  }
 }
 
 .disabled-button {
   background-color: gray !important;
   cursor: not-allowed !important;
+}
+
+
+.active {
+  background-color: $main-accent !important;
+  > h3 {
+    color: $purple-font !important;
+  }
+  > svg path {
+    fill: $purple-font !important;
+  }
 }

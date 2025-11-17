@@ -328,7 +328,7 @@ export class ChatComponent implements OnInit {
            console.log(this.selectedChannelUsers.length + "" + this.selectedChannelUsers);
          
   }
-  
+
   deleteMember(index: number) {
     this.userAtIndex = this.selectedChannelUsers[index];
     this.channelUsers.push(this.userAtIndex);
@@ -419,5 +419,8 @@ export class ChatComponent implements OnInit {
     this.addMemberOverlay = false;
     this.switchAddMemberOverlay = false;
     this.inputValue = '';
+    this.channelName = '';
+    this.selectedChannelUsers = [];
+
   }
 }
