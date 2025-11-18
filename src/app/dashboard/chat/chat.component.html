@@ -217,14 +217,16 @@
   </h2>
   <div>
     <output (click)="overlayActivated = true; viewMemberOverlay = true">
-      <!--Example-->
+    
       <div>
-        <img src="./assets/avatars/avatarSmall1.png" alt="Name1" />
-        <img src="./assets/avatars/avatarSmall2.png" alt="Name2" />
-        <img src="./assets/avatars/avatarSmall3.png" alt="Name3" />
+
+        <ng-container *ngFor="let user of users; let i = index">
+          <img *ngIf="currentMemberIndices.includes(i) && currentMemberIndices.indexOf(i) <= 2" [src]="user.avatar" alt="Name{{i}}" />
+        </ng-container>
+        
       </div>
-      <b>3</b>
-      <!--Example-->
+      <b>{{ currentMemberIndices.length > 3 ? '3+' : currentMemberIndices.length }}</b>
+    
 
       <div
         [ngClass]="{

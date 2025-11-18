@@ -41,7 +41,7 @@
         </svg>
       </button>
     </div>
-    <img [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'" alt="" />
+    <img [src]="getLargeAvatar(currentPartner?.avatar)" alt="" />
 
     <div class="profile-name">
       <h3>{{ currentPartner?.name ?? 'Anon' }}</h3>

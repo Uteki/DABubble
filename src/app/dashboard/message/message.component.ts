@@ -71,6 +71,11 @@ export class MessageComponent implements OnChanges {
     return this.users.find(user => user.uid === uid).avatar || 'assets/avatars/profile.png';
   }
 
+  getLargeAvatar(avatarPath: string | undefined): string {
+    if (!avatarPath) return 'assets/avatars/profile.png';
+    return avatarPath.replace('avatarSmall', 'avatar');
+  }
+
   getUserId() {
     return this.authService.readCurrentUser();
   }

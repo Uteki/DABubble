@@ -3,6 +3,7 @@ import { Auth } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../user.service';
+import { IdleTrackerService } from '../../idle-tracker.service';
 
 @Component({
   selector: 'app-header',
@@ -19,11 +20,14 @@ export class HeaderComponent {
   sessionData = sessionStorage.getItem('sessionData');
   private wasEmpty = true;
 
+  isUserAbsent: boolean = false;
+
   constructor(
     private router: Router,
     private auth: Auth,
     private firestore: Firestore,
-    private userService: UserService
+    private userService: UserService,
+    private idleTracker: IdleTrackerService
   ) {
     this.getUserInformation();
     this.changeUserStatus();
@@ -39,6 +43,24 @@ export class HeaderComponent {
       navigator.sendBeacon(url);
     });
   }
+
+
+  this.trackIdle();
+}
+
+trackIdle() {
+  this.idleTracker.idleTime$.subscribe(idleTime => {
+    this.isUserAbsent = (idleTime / 1000) > 30;
+   
+  });
+
+  this.idleTracker.isIdle$.subscribe(isIdle => {
+    if (!isIdle) {
+      this.isUserAbsent = false;
+    
+    }
+  
+  });
 }
 
   getUserInformation() {

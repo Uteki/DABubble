@@ -143,7 +143,7 @@ export class ChatComponent implements OnInit {
     this.currentMemberIndices = this.users
       .map((user, index) =>
         this.chatService.usersInChannel.includes(user.uid) ? index : -1
-      ) // Index oder -1, wenn nicht enthalten
+      ) 
       .filter((index) => index !== -1);
       
   }
