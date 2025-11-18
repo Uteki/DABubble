@@ -15,7 +15,8 @@ import { User } from '../../core/interfaces/user';
 import { StopPropagationDirective } from '../../stop-propagation.directive';
 import { AuthService } from '../../auth.service';
 import { FormsModule } from '@angular/forms';
-import {Subject} from "rxjs";
+import { Subject } from 'rxjs';
+import { IdleTrackerService } from '../../idle-tracker.service';
 
 @Component({
   selector: 'app-channels',
@@ -40,6 +41,8 @@ export class ChannelsComponent implements OnInit {
   channels: any[] = [];
   inputValue: string = '';
 
+  isUserAbsent: boolean = false;
+
 
   channelsShown: boolean = true;
   channelsNone: boolean = false;
@@ -56,7 +59,8 @@ export class ChannelsComponent implements OnInit {
 
   constructor(
     private chatService: ChatService,
-    private authService: AuthService
+    private authService: AuthService,
+    private idleTracker: IdleTrackerService
   ) {}
 
   ngOnInit(): void {
@@ -71,6 +75,24 @@ export class ChannelsComponent implements OnInit {
             b.id === 'DALobby' ? 1 :
               0
         );
+    });
+
+  
+    this.trackIdle();
+  }
+
+  trackIdle() {
+  
+    this.idleTracker.idleTime$.subscribe(idleTime => {
+      this.isUserAbsent = (idleTime / 1000) > 30;
+    });
+
+    this.idleTracker.isIdle$.subscribe(isIdle => {
+      if (!isIdle) {
+        this.isUserAbsent = false;
+   
+      }
+
     });
   }
 
