@@ -21,7 +21,7 @@ import {
   getDocs,
   updateDoc,
 } from '@angular/fire/firestore';
-import { distinctUntilChanged, filter, map, switchMap, takeUntil } from 'rxjs';
+import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rxjs';
 import { doc } from 'firebase/firestore';
 import { AuthService } from '../../auth.service';
 import { User } from '../../core/interfaces/user';
@@ -82,30 +82,17 @@ export class ChatComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.chatService.currentChat$.pipe(
-        distinctUntilChanged(),
-        filter(chat => !!chat && chat.trim() !== ''),
-        switchMap(chat => {
-          this.messages = this.chatService.getCachedMessages(chat) || []; this.currentChat = this.chatService.currentChat
-          this.channelDescription = this.chatService.currentDescription; this.channelFounder = this.chatService.currentCreator
-          this.cd.detectChanges();
-          return this.chatService.getMessages(chat).pipe(
-            map(messages => messages.sort((a, b) => a.timestamp - b.timestamp)),
+    this.chatService.currentChat$.pipe( distinctUntilChanged(), filter(chat => !!chat && chat.trim() !== ''),
+      switchMap(chat => {
+        this.messages = this.chatService.getCachedMessages(chat) || [];
+        return this.chatService.getChannelById(chat).pipe(
+          tap(channel => { if (!channel) return; this.checkMeta(channel)}),
+          switchMap(() =>
+            this.chatService.getMessages(chat).pipe( map(messages => messages.sort((a, b) => a.timestamp - b.timestamp)))),
             takeUntil(this.chatService.destroy$)
-          );
-        })
-      ).subscribe(async messages => {
-        this.messages = messages;
-        this.cd.detectChanges()
-
-      //TODO maybe change not sure
-        if (this.chatService.currentChannelID) {
-          this.chatService.usersInChannel = [];
-          await this.chatService.searchUsers(this.chatService.currentChannelID).then()
-          this.chatService.usersInChannel.push(...this.chatService.pendingUsers);
-          this.chatService.pendingUsers = [];
-        }
-      });
+        );
+      })
+    ).subscribe(async messages => await this.changeMeta(messages));
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -113,6 +100,18 @@ export class ChatComponent implements OnInit {
       this.channelUsers = changes['users'].currentValue.map((u: User) => ({
         ...u,
       }));
+    }
+  }
+
+  async changeMeta(messages: string[]): Promise<void> {
+    this.messages = messages;
+    this.cd.detectChanges();
+
+    if (this.chatService.currentChannelID) {
+      this.chatService.usersInChannel = [];
+      await this.chatService.searchUsers(this.chatService.currentChannelID);
+      this.chatService.usersInChannel.push(...this.chatService.pendingUsers);
+      this.chatService.pendingUsers = [];
     }
   }
 
@@ -185,6 +184,13 @@ export class ChatComponent implements OnInit {
       this.editDescription = false;
       //TODO ?
     }
+  }
+
+  checkMeta(channel: any): void {
+    this.currentChat = channel.name; this.channelName = channel.name
+    this.channelDescription = channel.description; this.channelFounder = channel.creator
+
+    this.cd.detectChanges();
   }
 
   getProfilePic(uid: string) {

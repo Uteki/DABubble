@@ -7,10 +7,18 @@ import {
   orderBy,
   query,
   getDoc,
-  updateDoc, deleteDoc, writeBatch, getDocs
+  updateDoc, deleteDoc, writeBatch, getDocs, docData
 } from '@angular/fire/firestore';
 import { doc, arrayUnion } from 'firebase/firestore';
 import {BehaviorSubject, map, Observable, Subject, tap} from 'rxjs';
+
+interface Channel {
+  id: string;
+  name: string;
+  description: string;
+  creator: string;
+  users?: string[];
+}
 
 @Injectable({
   providedIn: 'root'
@@ -112,6 +120,11 @@ export class ChatService {
       await updateDoc(channelRef, {users: this.pendingUsers.filter(uid => uid !== lastUser && !!uid)});
     }
     this.pendingUsers = [];
+  }
+
+  getChannelById(channelId: string): Observable<Channel | undefined> {
+    const channelRef = doc(this.firestore, 'channels', channelId);
+    return docData(channelRef, { idField: 'id' }) as Observable<Channel | undefined>;
   }
 
   getChannels(ownUid: string): Observable<any[]> {
