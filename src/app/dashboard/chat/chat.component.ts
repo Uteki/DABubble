@@ -47,6 +47,7 @@ export class ChatComponent implements OnInit {
   @ViewChild('channelEdit') channelEdit!: ElementRef;
   @Input() users: any[] = [];
 
+  inputValue: string = '';
   messages: any[] = [];
   messageText: string = '';
   currentChat: string = '';
@@ -66,8 +67,9 @@ export class ChatComponent implements OnInit {
   channelUsers: any[] = [];
   userAtIndex: any = {};
 
-
   foundIndexes: number[] = [];
+  currentMemberIndices: number[] = [];
+  missingIndices: number[] = [];
   nameInputValue: boolean = false;
 
   channelDescription: string = '';
@@ -112,7 +114,23 @@ export class ChatComponent implements OnInit {
       await this.chatService.searchUsers(this.chatService.currentChannelID);
       this.chatService.usersInChannel.push(...this.chatService.pendingUsers);
       this.chatService.pendingUsers = [];
+      this.filterMembersInChannel();
     }
+  }
+
+  filterMembersInChannel() {
+    this.missingIndices = this.users
+      .map((user, index) =>
+        this.chatService.usersInChannel.includes(user.uid) ? -1 : index
+      )
+      .filter((index) => index !== -1);
+
+    this.currentMemberIndices = this.users
+      .map((user, index) =>
+        this.chatService.usersInChannel.includes(user.uid) ? index : -1
+      ) // Index oder -1, wenn nicht enthalten
+      .filter((index) => index !== -1);
+
   }
 
   async sendMessage() {
@@ -285,10 +303,14 @@ export class ChatComponent implements OnInit {
     this.channelUsers.splice(index, 1);
     this.nameInputValue = false;
     memberInputREF.value = '';
+      this.inputValue = '';
+
+           console.log(this.selectedChannelUsers.length + "" + this.selectedChannelUsers);
+
   }
 
   deleteMember(index: number) {
-     this.userAtIndex = this.selectedChannelUsers[index];
+    this.userAtIndex = this.selectedChannelUsers[index];
     this.channelUsers.push(this.userAtIndex);
     this.selectedChannelUsers.splice(index, 1);
   }
@@ -297,7 +319,9 @@ export class ChatComponent implements OnInit {
     if (value.length > 0) {
       this.foundIndexes = this.channelUsers
         .map((user, index) =>
-          user?.name && user.name.toLowerCase().includes(value.toLowerCase())
+          user?.name &&
+          user.name.toLowerCase().includes(value.toLowerCase()) &&
+          !this.currentMemberIndices.includes(index)
             ? index
             : -1
         )
@@ -338,10 +362,7 @@ export class ChatComponent implements OnInit {
     }
   }
 
-
-  toggleProfile() {
-
-  }
+  toggleProfile() {}
 
   async addMembersToChannel() {
     const usersToAdd = this.selectedChannelUsers;
@@ -358,5 +379,23 @@ export class ChatComponent implements OnInit {
       this.chatService.currentChannelID, this.chatService.pendingUsers,
       this.authService.readCurrentUser(), {user: " hat den Kanal betreten.", system: true, timestamp: Date.now()});
     this.chatService.pendingUsers = [];
+    this.clearSelectedUsers();
+  }
+
+  clearSelectedUsers() {
+    this.selectedChannelUsers = [];
+     this.closeAllOverlays();
+  }
+
+  closeAllOverlays() {
+    this.overlayActivated = false;
+    this.channelOverlay = false;
+    this.viewMemberOverlay = false;
+    this.addMemberOverlay = false;
+    this.switchAddMemberOverlay = false;
+    this.inputValue = '';
+    this.channelName = '';
+    this.selectedChannelUsers = [];
+
   }
 }
