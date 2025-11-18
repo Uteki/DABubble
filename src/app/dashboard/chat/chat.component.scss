@@ -287,6 +287,24 @@
     }
   }
 
+  .message-answer {
+    align-items: center;
+    margin-top: 10px;
+
+    > span:first-child {
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 100%;
+      color: $purple-font;
+    }
+
+    > span:last-child {
+      font-size: 14px;
+      line-height: 100%;
+      color: $text-gray;
+    }
+  }
+
   .message-container {
     align-items: flex-start;
     display: flex;
@@ -489,12 +507,12 @@
  border: none !important;
  transition: all 0.3s ease-in-out;
    padding: 0 !important;
- 
+
 .line {
   margin: 30px 10px !important
 }
 
- 
+
 }
 
 
@@ -966,13 +984,13 @@
 
 
 .toggle-item {
- 
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
- 
+
   width: 400px;
   height: 500px;
   background-color: white;

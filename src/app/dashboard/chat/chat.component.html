@@ -273,7 +273,7 @@
             <div
               [ngClass]="{ 'no-display': inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
-            
+
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
               <p>{{ channelUser.name }}</p>
@@ -474,7 +474,7 @@
             <div
               [ngClass]="{ 'no-display': inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
-             
+
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
               <p>{{ channelUser.name }}</p>
@@ -605,6 +605,25 @@
             "
           >
             {{ msg.text }}
+          </div>
+
+          <div
+            class="message-answer"
+          >
+            @if (msg.threaded) {
+              <span
+                (click)="
+                  openThread(msg.id, {
+                  uid: msg.uid,
+                  text: msg.text,
+                  user: msg.user,
+                  timestamp: msg.timestamp
+                })"
+              >
+                {{ msg.threaded.amount }} Antworten
+              </span>
+              <span>Letzte Antwort {{ msg.threaded.last | date : "HH:mm" }}</span>
+            }
           </div>
         </div>
       </div>

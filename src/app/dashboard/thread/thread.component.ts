@@ -37,11 +37,9 @@ export class ThreadComponent implements OnChanges {
     if (!this.messageText.trim() || this.messageId === null) return;
 
     await this.chatService.sendThreadMessage(`${this.currentThread}`, `${this.messageId}`, {
-      uid: logger.uid,
-      text: this.messageText,
-      user: logger.name,
-      timestamp: Date.now(),
+      uid: logger.uid, text: this.messageText, user: logger.name, timestamp: Date.now(),
     });
+    await this.chatService.messageThreaded(`${this.currentThread}`, `${this.messageId}`, this.messages.length - 1, Date.now())
 
     this.messageText = '';
   }
