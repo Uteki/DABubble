@@ -3,7 +3,11 @@
   class="overlay"
   [ngClass]="{ 'no-display': !overlayActivated }"
 >
-  <div [ngClass]="{ 'no-display': !profileOverlay }" click-stop-propagation class="toggle-item">
+  <div
+    [ngClass]="{ 'no-display': !profileOverlay }"
+    click-stop-propagation
+    class="toggle-item"
+  >
     <div>
       <h2>Profil</h2>
 
@@ -180,7 +184,10 @@
         </h3>
         }
       </div>
-      <div [ngClass]="{ 'channel-description': editDescription }" class="channel-description">
+      <div
+        [ngClass]="{ 'channel-description': editDescription }"
+        class="channel-description"
+      >
         <div>
           <h3>Beschreibung</h3>
 
@@ -206,7 +213,8 @@
         <h3>{{ channelFounder }}</h3>
       </div>
       <div>
-        <button *ngIf="currentChat !== 'DALobby'"
+        <button
+          *ngIf="currentChat !== 'DALobby'"
           click-stop-propagation
           (click)="overlayFunction(false, 'Entwicklung', false); leaveChannel()"
         >
@@ -217,16 +225,22 @@
   </h2>
   <div>
     <output (click)="overlayActivated = true; viewMemberOverlay = true">
-    
       <div>
-
         <ng-container *ngFor="let user of users; let i = index">
-          <img *ngIf="currentMemberIndices.includes(i) && currentMemberIndices.indexOf(i) <= 2" [src]="user.avatar" alt="Name{{i}}" />
+          <img
+            *ngIf="
+              currentMemberIndices.includes(i) &&
+              currentMemberIndices.indexOf(i) <= 2
+            "
+            [src]="user.avatar"
+            alt="Name{{ i }}"
+          />
         </ng-container>
-        
       </div>
-      <b>{{ currentMemberIndices.length > 3 ? '3+' : currentMemberIndices.length }}</b>
-    
+      <b>{{
+        currentMemberIndices.length > 3 ? "3+" : currentMemberIndices.length
+      }}
+      </b>
 
       <div
         [ngClass]="{
@@ -275,7 +289,6 @@
             <div
               [ngClass]="{ 'no-display': inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
-            
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
               <p>{{ channelUser.name }}</p>
@@ -344,7 +357,13 @@
           </div>
         </div>
         <div>
-          <button [disabled]="selectedChannelUsers.length === 0" [class.abled-button]="selectedChannelUsers.length > 0" (click)="addMembersToChannel()">Hinzufügen</button>
+          <button
+            [disabled]="selectedChannelUsers.length === 0"
+            [class.abled-button]="selectedChannelUsers.length > 0"
+            (click)="addMembersToChannel()"
+          >
+            Hinzufügen
+          </button>
         </div>
         } @else {
         <div>
@@ -380,7 +399,11 @@
           </div>
         </div>
         <div class="no-scrollbar">
-          <div class="no-scrollbar" *ngFor="let user of users; let i = index"    [class.no-display]="!currentMemberIndices.includes(i)">
+          <div
+            class="no-scrollbar"
+            *ngFor="let user of users; let i = index"
+            [class.no-display]="!currentMemberIndices.includes(i)"
+          >
             <article>
               <figure *ngIf="user?.uid" class="user-avatar">
                 <img
@@ -423,7 +446,10 @@
       </div>
     </output>
 
-    <div (click)="overlayActivated = true; addMemberOverlay = true" *ngIf="currentChat && currentChat !== 'DALobby'">
+    <div
+      (click)="overlayActivated = true; addMemberOverlay = true"
+      *ngIf="currentChat && currentChat !== 'DALobby'"
+    >
       <svg
         width="22"
         height="16"
@@ -476,7 +502,6 @@
             <div
               [ngClass]="{ 'no-display': inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
-             
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
               <p>{{ channelUser.name }}</p>
@@ -545,7 +570,13 @@
           </div>
         </div>
         <div>
-          <button [disabled]="selectedChannelUsers.length === 0" [class.abled-button]="selectedChannelUsers.length > 0" (click)="addMembersToChannel()">Hinzufügen</button>
+          <button
+            [disabled]="selectedChannelUsers.length === 0"
+            [class.abled-button]="selectedChannelUsers.length > 0"
+            (click)="addMembersToChannel()"
+          >
+            Hinzufügen
+          </button>
         </div>
       </div>
     </div>
@@ -563,28 +594,26 @@
       <div class="system">
         <p>{{ msg.user }}</p>
       </div>
-      }
-
-      @else {
-        <div
-          class="message-event"
-          *ngIf="
+      } @else {
+      <div
+        class="message-event"
+        *ngIf="
           i === 0 ||
           (msg.timestamp | date : 'yyyy-MM-dd') !==
             (messages[i - 1].timestamp | date : 'yyyy-MM-dd')
         "
-        >
-          <div></div>
-          <span class="timestamp">
+      >
+        <div></div>
+        <span class="timestamp">
           {{
-              (msg.timestamp | date : "yyyy-MM-dd") ===
-              (today | date : "yyyy-MM-dd")
-                ? "Heute"
-                : (msg.timestamp | date : "EEEE, d MMMM")
-            }}
+            (msg.timestamp | date : "yyyy-MM-dd") ===
+            (today | date : "yyyy-MM-dd")
+              ? "Heute"
+              : (msg.timestamp | date : "EEEE, d MMMM")
+          }}
         </span>
-          <div></div>
-        </div>
+        <div></div>
+      </div>
 
       <div class="message-container">
         <img src="{{ getProfilePic(msg.uid) }}" alt="{{ msg.user }}" />
