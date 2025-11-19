@@ -12,9 +12,9 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
-  signInAnonymously,
 } from '@angular/fire/auth';
 import { IntroService } from '../intro.service';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -35,7 +35,8 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private auth: Auth,
-    private introService: IntroService
+    private introService: IntroService,
+    private authService: AuthService 
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -99,14 +100,9 @@ export class LoginComponent implements OnInit {
   }
 
   async guestLogin(): Promise<void> {
-    try {
-      const userCredential = await signInAnonymously(this.auth);
-      this.errorMessage = null;
-      this.router.navigate(['/dashboard']);
-    } catch (error: any) {
-      this.errorMessage = this.getErrorMessage(error.code);
-    }
-  }
+    this.errorMessage = null;
+    await this.authService.signInAsGuest();
+}
 
   goToRegister(): void {
     this.router.navigate(['/register']);

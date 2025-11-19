@@ -15,59 +15,43 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthService implements OnDestroy {
-  user$: Observable<User | null> = user(this.auth);
+  user$: Observable<User | null>;
   private currentUser: User | null = null;
 
   constructor(private auth: Auth, private router: Router) {
     this.user$ = user(this.auth);
+
     setPersistence(this.auth, browserSessionPersistence)
-      .then(() => {
-        console.log('Auth Persistence auf SESSION gesetzt');
-      })
-      .catch((error) => {
-        console.error('Fehler beim Setzen der Persistence:', error);
-      });
+      .then(() => console.log('Auth Persistence auf SESSION gesetzt'))
+      .catch((error) =>
+        console.error('Fehler beim Setzen der Persistence:', error)
+      );
 
     onAuthStateChanged(this.auth, (user) => {
       this.currentUser = user;
+
       if (user && user.isAnonymous) {
         console.log('Guest-User aktiv (Session-only)');
       } else if (!user) {
-        this.signInAsGuest();
+        console.log('Kein User eingeloggt');
       } else {
         console.log('Nicht-Guest-User aktiv');
       }
     });
-  }
-
-  private setupAuthStateListener(): void {
-    onAuthStateChanged(this.auth, (user) => {
-      this.currentUser = user;
-      if (user && user.isAnonymous) {
-        console.log('Guest-User aktiv (Session-only)');
-        this.router.navigate(['/dashboard']);
-      } else if (!user) {
-        this.signInAsGuest();
-      } else {
-        console.log('Nicht-Guest-User aktiv');
-      }
-    });
-  }
-
-  private signInAsGuest(): void {
-    signInAnonymously(this.auth)
-      .then((credential) => {
-        console.log('Neuer Guest-User erstellt:', credential.user.uid);
-        sessionStorage.setItem('sessionData', JSON.stringify({ guest: true }));
-        this.router.navigate(['/dashboard']);
-      })
-      .catch((error) => {
-        console.error('Fehler beim Guest-SignIn:', error);
-      });
   }
 
   readCurrentUser(): string {
-    return <string>this.currentUser?.uid;
+    return this.currentUser?.uid ?? '';
+  }
+
+  async signInAsGuest(): Promise<void> {
+    try {
+      const credential = await signInAnonymously(this.auth);
+      console.log('Neuer Guest-User:', credential.user.uid);
+      this.router.navigate(['/dashboard']);
+    } catch (error) {
+      console.error('Fehler beim Guest-SignIn:', error);
+    }
   }
 
   signOut(): void {
@@ -75,6 +59,8 @@ export class AuthService implements OnDestroy {
       .signOut()
       .then(() => {
         console.log('User ausgeloggt');
+        sessionStorage.removeItem('sessionData');
+        this.router.navigate(['/login']);
       })
       .catch((error) => {
         console.error('Fehler beim SignOut:', error);

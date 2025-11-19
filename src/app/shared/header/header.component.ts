@@ -3,6 +3,7 @@ import { Auth } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../user.service';
+import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'app-header',
@@ -23,7 +24,8 @@ export class HeaderComponent {
     private router: Router,
     private auth: Auth,
     private firestore: Firestore,
-    private userService: UserService
+    private userService: UserService,
+    private authService: AuthService
   ) {
     this.getUserInformation();
     this.changeUserStatus();
@@ -60,6 +62,16 @@ export class HeaderComponent {
         .catch((err) => console.error(err));
     }
   }
+
+  logout() {
+  if (this.sessionData) {
+    this.userService
+      .updateUserStatus(this.sessionData, false)
+      .catch((err) => console.error(err));
+    sessionStorage.removeItem('sessionData');
+  }
+  this.authService.signOut();
+}
 
   goToLogin() {
     window.location.href = '/login';
