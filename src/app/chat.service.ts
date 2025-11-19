@@ -9,7 +9,7 @@ import {
   getDoc,
   updateDoc, deleteDoc, writeBatch, getDocs, docData
 } from '@angular/fire/firestore';
-import { doc, arrayUnion } from 'firebase/firestore';
+import {doc, arrayUnion, setDoc} from 'firebase/firestore';
 import {BehaviorSubject, map, Observable, Subject, tap} from 'rxjs';
 
 interface Channel {
@@ -62,6 +62,11 @@ export class ChatService {
   sendThreadMessage(channelId: string, threadId: string, message: {uid: string, text: string; user: string; timestamp: number }) {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages/${threadId}/thread`);
     return addDoc(messagesRef, message);
+  }
+
+  async messageThreaded(channelId: string, threadId: string, amount: number, last: number ) {
+    const messagesRef = doc(this.firestore, `channels/${channelId}/messages/${threadId}`);
+    await setDoc(messagesRef, {threaded: {amount: amount, last: last}}, { merge: true });
   }
 
   async createChannel(fields: { creator: string; description: string; name: string; users: any }) {

@@ -225,6 +225,7 @@
   </h2>
   <div>
     <output (click)="overlayActivated = true; viewMemberOverlay = true">
+
       <div>
         <ng-container *ngFor="let user of users; let i = index">
           <img
@@ -236,11 +237,10 @@
             alt="Name{{ i }}"
           />
         </ng-container>
+
       </div>
-      <b>{{
-        currentMemberIndices.length > 3 ? "3+" : currentMemberIndices.length
-      }}
-      </b>
+      <b>{{ currentMemberIndices.length > 3 ? '3+' : currentMemberIndices.length }}</b>
+
 
       <div
         [ngClass]="{
@@ -289,6 +289,7 @@
             <div
               [ngClass]="{ 'no-display': inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
+
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
               <p>{{ channelUser.name }}</p>
@@ -502,6 +503,7 @@
             <div
               [ngClass]="{ 'no-display': inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
+
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
               <p>{{ channelUser.name }}</p>
@@ -636,6 +638,29 @@
             "
           >
             {{ msg.text }}
+          </div>
+
+          <div
+            class="message-answer"
+          >
+            @if (msg.threaded) {
+              <span
+                (click)="
+                  openThread(msg.id, {
+                  uid: msg.uid,
+                  text: msg.text,
+                  user: msg.user,
+                  timestamp: msg.timestamp
+                })"
+              >
+                @if (msg.threaded.amount == 1) {
+                  {{ msg.threaded.amount }} Antwort
+                } @else {
+                  {{ msg.threaded.amount }} Antworten
+                }
+              </span>
+              <span>Letzte Antwort {{ msg.threaded.last | date : "HH:mm" }}</span>
+            }
           </div>
         </div>
       </div>
