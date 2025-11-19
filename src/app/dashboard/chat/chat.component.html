@@ -217,16 +217,16 @@
   </h2>
   <div>
     <output (click)="overlayActivated = true; viewMemberOverlay = true">
-    
+
       <div>
 
         <ng-container *ngFor="let user of users; let i = index">
           <img *ngIf="currentMemberIndices.includes(i) && currentMemberIndices.indexOf(i) <= 2" [src]="user.avatar" alt="Name{{i}}" />
         </ng-container>
-        
+
       </div>
       <b>{{ currentMemberIndices.length > 3 ? '3+' : currentMemberIndices.length }}</b>
-    
+
 
       <div
         [ngClass]="{
@@ -622,7 +622,11 @@
                   timestamp: msg.timestamp
                 })"
               >
-                {{ msg.threaded.amount }} Antworten
+                @if (msg.threaded.amount == 1) {
+                  {{ msg.threaded.amount }} Antwort
+                } @else {
+                  {{ msg.threaded.amount }} Antworten
+                }
               </span>
               <span>Letzte Antwort {{ msg.threaded.last | date : "HH:mm" }}</span>
             }
