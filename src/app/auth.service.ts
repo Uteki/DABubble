@@ -67,5 +67,16 @@ export class AuthService implements OnDestroy {
       });
   }
 
+  signOutOnTabClose(): void {
+    this.auth
+      .signOut()
+      .then(() => {
+        console.log('User beim Tab-Schließen ausgeloggt');
+      })
+      .catch((error) => {
+        console.error('Fehler beim SignOut beim Tab-Schließen:', error);
+      });
+  }
+
   ngOnDestroy(): void {}
 }

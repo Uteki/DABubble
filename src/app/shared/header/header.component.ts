@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { Router, RouterLink } from '@angular/router';
@@ -12,13 +12,22 @@ import { AuthService } from '../../auth.service';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
   username: string = 'Frederik Beck';
   useremail: string = ' fred.back@email.com ';
   userStatus: boolean = false;
   edit: boolean = false;
   sessionData = sessionStorage.getItem('sessionData');
   private wasEmpty = true;
+
+  private beforeUnloadHandler = () => {
+    if (this.sessionData) {
+      const url = `/api/updateStatus?uid=${this.sessionData}&active=false`;
+      navigator.sendBeacon(url);
+    }
+
+    this.authService.signOutOnTabClose();
+  };
 
   constructor(
     private router: Router,
@@ -29,19 +38,15 @@ export class HeaderComponent {
   ) {
     this.getUserInformation();
     this.changeUserStatus();
-    this.ngOnInit();
   }
 
   ngOnInit(): void {
-
-  if (this.sessionData) {
-    window.addEventListener('beforeunload', () => {
-
-      const url = `/api/updateStatus?uid=${this.sessionData}&active=false`;
-      navigator.sendBeacon(url);
-    });
+    window.addEventListener('beforeunload', this.beforeUnloadHandler);
   }
-}
+
+  ngOnDestroy(): void {
+    window.removeEventListener('beforeunload', this.beforeUnloadHandler);
+  }
 
   getUserInformation() {
     if (this.sessionData) {
@@ -53,8 +58,6 @@ export class HeaderComponent {
     }
   }
 
-   
-
   changeUserStatus() {
     if (this.sessionData) {
       this.userService
@@ -64,14 +67,14 @@ export class HeaderComponent {
   }
 
   logout() {
-  if (this.sessionData) {
-    this.userService
-      .updateUserStatus(this.sessionData, false)
-      .catch((err) => console.error(err));
-    sessionStorage.removeItem('sessionData');
+    if (this.sessionData) {
+      this.userService
+        .updateUserStatus(this.sessionData, false)
+        .catch((err) => console.error(err));
+      sessionStorage.removeItem('sessionData');
+    }
+    this.authService.signOut();
   }
-  this.authService.signOut();
-}
 
   goToLogin() {
     window.location.href = '/login';
