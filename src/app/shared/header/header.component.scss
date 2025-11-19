@@ -102,6 +102,15 @@
   }
 }
 
+.profile-pic {
+
+  > img:nth-child(1) {
+    width: 72px;
+
+    
+  }
+}
+
 .dropdown-menu {
   position: absolute;
   width: 100%;

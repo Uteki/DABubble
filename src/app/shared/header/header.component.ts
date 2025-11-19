@@ -38,36 +38,31 @@ export class HeaderComponent {
   }
 
   ngOnInit(): void {
+    if (this.sessionData) {
+      window.addEventListener('beforeunload', () => {
+        const url = `/api/updateStatus?uid=${this.sessionData}&active=false`;
+        navigator.sendBeacon(url);
+      });
+    }
 
-  if (this.sessionData) {
-    window.addEventListener('beforeunload', () => {
-
-      const url = `/api/updateStatus?uid=${this.sessionData}&active=false`;
-      navigator.sendBeacon(url);
+    this.profileOverlayService.openProfile$.subscribe(() => {
+      this.openProfileMenu();
     });
+
+    this.trackIdle();
   }
 
-  this.profileOverlayService.openProfile$.subscribe(() => {
-    this.openProfileMenu();
-  });
+  trackIdle() {
+    this.idleTracker.idleTime$.subscribe((idleTime) => {
+      this.isUserAbsent = idleTime / 1000 > 30;
+    });
 
-  this.trackIdle();
-}
-
-trackIdle() {
-  this.idleTracker.idleTime$.subscribe(idleTime => {
-    this.isUserAbsent = (idleTime / 1000) > 30;
-   
-  });
-
-  this.idleTracker.isIdle$.subscribe(isIdle => {
-    if (!isIdle) {
-      this.isUserAbsent = false;
-    
-    }
-  
-  });
-}
+    this.idleTracker.isIdle$.subscribe((isIdle) => {
+      if (!isIdle) {
+        this.isUserAbsent = false;
+      }
+    });
+  }
 
   getUserInformation() {
     if (this.sessionData) {
@@ -80,13 +75,18 @@ trackIdle() {
     }
   }
 
-    getLargeAvatar(avatarPath: string | undefined): string {
-   
-      
+  getLargeAvatar(avatarPath: string | undefined): string {
     if (!avatarPath) return 'assets/avatars/profile.png';
     return avatarPath.replace('avatarSmall', 'avatar');
   }
-   
+
+  returnAvatarPath(): string {
+    if (this.userAvatar && this.userAvatar.length > 0) {
+      return this.userAvatar;
+    } else {
+      return 'assets/avatars/profile.png';
+    }
+  }
 
   changeUserStatus() {
     if (this.sessionData) {
@@ -97,6 +97,12 @@ trackIdle() {
   }
 
   goToLogin() {
+    if (this.sessionData) {
+      this.userService
+        .updateUserStatus(this.sessionData, false)
+        .catch((err) => console.error(err));
+      sessionStorage.setItem('sessionData', '');
+    }
     window.location.href = '/login';
   }
 
