@@ -4,6 +4,7 @@ import { Firestore } from '@angular/fire/firestore';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../user.service';
 import { IdleTrackerService } from '../../idle-tracker.service';
+import { ProfileOverlayService } from '../../profile-overlay.service';
 
 @Component({
   selector: 'app-header',
@@ -28,7 +29,8 @@ export class HeaderComponent {
     private auth: Auth,
     private firestore: Firestore,
     private userService: UserService,
-    private idleTracker: IdleTrackerService
+    private idleTracker: IdleTrackerService,
+    private profileOverlayService: ProfileOverlayService
   ) {
     this.getUserInformation();
     this.changeUserStatus();
@@ -45,6 +47,9 @@ export class HeaderComponent {
     });
   }
 
+  this.profileOverlayService.openProfile$.subscribe(() => {
+    this.openProfileMenu();
+  });
 
   this.trackIdle();
 }
@@ -143,6 +148,14 @@ trackIdle() {
     const profileMenu = document.getElementById('profile-menu');
     if (profileMenu) {
       profileMenu.classList.toggle('no-display');
+    }
+  }
+
+  openProfileMenu() {
+    this.edit = false;
+    const profileMenu = document.getElementById('profile-menu');
+    if (profileMenu) {
+      profileMenu.classList.remove('no-display');
     }
   }
 

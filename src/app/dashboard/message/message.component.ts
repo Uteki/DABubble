@@ -5,6 +5,7 @@ import { AuthService } from "../../auth.service";
 import { ChatService } from "../../chat.service";
 import { User } from "../../core/interfaces/user";
 import { StopPropagationDirective } from "../../stop-propagation.directive";
+import { ProfileOverlayService } from "../../profile-overlay.service";
 
 @Component({
   selector: 'app-message',
@@ -21,6 +22,7 @@ import { StopPropagationDirective } from "../../stop-propagation.directive";
   styleUrl: './message.component.scss'
 })
 export class MessageComponent implements OnChanges {
+   @Output() partnerSelected = new EventEmitter<User>();
   @Output() toggleRequest = new EventEmitter<boolean>();
 
   @Input() partner!: User | null;
@@ -38,7 +40,7 @@ export class MessageComponent implements OnChanges {
   currentWhisperer: string = "";
   currentPartner: any;
 
-  constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private authService: AuthService) {}
+  constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private authService: AuthService, private profileOverlayService: ProfileOverlayService) {}
   //TODO: Editable messages
 
   ngOnChanges() {
@@ -93,12 +95,25 @@ export class MessageComponent implements OnChanges {
     }
   }
 
-  toggleProfile() {
-  
+  async emitPartner(partnerUid: string) {
+    const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
+    this.partnerSelected.emit(partnerObj);
+    this.toggleRequest.emit(true);
   }
 
+
   openProfile() {
-    this.overlayActivated = true;
-    this.profileOverlay = true;
+  
+    if (this.currentPartner?.uid === this.currentWhisperer) {
+      this.profileOverlayService.triggerOpenProfile();
+    } else {
+      this.overlayActivated = true;
+      this.profileOverlay = true;
+    }
+  }
+
+  closeProfile() {
+    this.overlayActivated = false;
+    this.profileOverlay = false;
   }
 }

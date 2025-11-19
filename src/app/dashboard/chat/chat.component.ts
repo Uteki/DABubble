@@ -76,6 +76,8 @@ export class ChatComponent implements OnInit {
   channelFounder: string = '';
   channelName: string = '';
 
+  clickedUser: any;
+
   constructor(
     private chatService: ChatService,
     private cd: ChangeDetectorRef,
@@ -131,6 +133,16 @@ export class ChatComponent implements OnInit {
       ) 
       .filter((index) => index !== -1);
 
+  }
+
+  getLargeAvatar(avatarPath: string | undefined): string {
+    if (!avatarPath) return 'assets/avatars/profile.png';
+    return avatarPath.replace('avatarSmall', 'avatar');
+  }
+
+  emitPartner(partnerUid: string) {
+    const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
+    this.clickedUser = partnerObj;
   }
 
   async sendMessage() {
@@ -363,6 +375,18 @@ export class ChatComponent implements OnInit {
   }
 
   toggleProfile() {}
+
+  openProfile(user: User) {
+    this.clickedUser = user;
+    this.overlayActivated = true;
+    this.profileOverlay = true;
+  }
+
+  closeProfile() {
+    this.overlayActivated = false;
+    this.profileOverlay = false;
+  }
+
 
   async addMembersToChannel() {
     const usersToAdd = this.selectedChannelUsers;

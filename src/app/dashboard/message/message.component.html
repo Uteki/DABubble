@@ -13,7 +13,7 @@
     <div>
       <h2>Profil</h2>
 
-      <button (click)="toggleProfile()">
+      <button (click)="closeProfile()">
         <svg
           width="24"
           height="24"
@@ -60,7 +60,7 @@
       <a href="">{{ currentPartner?.email ??  'emre.iscan&#64;outlook.de' }}  </a>
     </div>
 
-    <div class="profile-direct-message">
+    <div (click)="emitPartner(currentPartner?.uid); closeProfile()" class="profile-direct-message">
       <svg
         width="24"
         height="24"
@@ -95,7 +95,7 @@
 <header>
   <div (click)="openProfile()">
   <img [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'" [alt]="currentPartner?.name ?? 'Anon'" />
-    <h2>{{ currentPartner?.name ?? 'Anon' }}</h2>
+    <h2>{{ currentPartner?.name ?? 'Anon' }}  @if(currentPartner?.uid === currentWhisperer) { (Du) }</h2>
   </div>
 </header>
 

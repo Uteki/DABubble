@@ -467,7 +467,7 @@
             <img src="./../../../assets/img/offline.svg" alt="" />
             }
           </figure>
-          <p>{{ user?.name || "" }}</p>
+          <p>{{ user?.name || "" }}  @if(user.uid === getUserId()) { (Du) }</p>
         </article>
       </div>
     </div>

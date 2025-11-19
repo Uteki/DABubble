@@ -96,6 +96,9 @@ export class ChannelsComponent implements OnInit {
 
     });
   }
+   getUserId() {
+    return this.authService.readCurrentUser();
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['users'] && changes['users'].currentValue) {

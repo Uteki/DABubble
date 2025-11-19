@@ -1,9 +1,12 @@
 <section
-  (click)="closeAllOverlays()"
-  class="overlay"
-  [ngClass]="{ 'no-display': !overlayActivated }"
+  click-stop-propagation
+  (click)="
+    profileOverlay = false
+  "
+  class="darker-screen"
+  [ngClass]="{ 'no-display': !profileOverlay }"
 >
-  <div
+ <div
     [ngClass]="{ 'no-display': !profileOverlay }"
     click-stop-propagation
     class="toggle-item"
@@ -11,7 +14,7 @@
     <div>
       <h2>Profil</h2>
 
-      <button (click)="toggleProfile()">
+      <button (click)="closeProfile()">
         <svg
           width="24"
           height="24"
@@ -39,10 +42,10 @@
         </svg>
       </button>
     </div>
-    <img src="./../../../assets/avatars/avatar1.png" alt="" />
+    <img [src]="getLargeAvatar(clickedUser?.avatar)" alt="" />
 
     <div class="profile-name">
-      <h3>Hans Peter</h3>
+      <h3>{{ clickedUser?.name ?? "Anon" }}</h3>
     </div>
 
     <div class="profile-status">
@@ -55,10 +58,13 @@
         <img src="./../../../assets/img/mail.svg" alt="" />
         <h3>E-Mail-Adresse</h3>
       </div>
-      <a href="">emre.iscan&#64;outlook.de</a>
+      <a href="">{{ clickedUser?.email ?? "emre.iscan&#64;outlook.de" }} </a>
     </div>
 
-    <div class="profile-direct-message">
+    <div
+      (click)="emitPartner(clickedUser?.uid); closeProfile()"
+      class="profile-direct-message"
+    >
       <svg
         width="24"
         height="24"
@@ -87,7 +93,20 @@
 
       <h3>Nachricht</h3>
     </div>
-  </div>
+  </div></section>
+
+<section
+  (click)="
+    overlayActivated = false;
+    channelOverlay = false;
+    viewMemberOverlay = false;
+    addMemberOverlay = false;
+    profileOverlay = false
+  "
+  class="overlay"
+  [ngClass]="{ 'no-display': !overlayActivated }"
+>
+ 
 </section>
 
 <header>
@@ -225,7 +244,6 @@
   </h2>
   <div>
     <output (click)="overlayActivated = true; viewMemberOverlay = true">
-
       <div>
         <ng-container *ngFor="let user of users; let i = index">
           <img
@@ -237,10 +255,10 @@
             alt="Name{{ i }}"
           />
         </ng-container>
-
       </div>
-      <b>{{ currentMemberIndices.length > 3 ? '3+' : currentMemberIndices.length }}</b>
-
+      <b>{{
+        currentMemberIndices.length > 3 ? "3+" : currentMemberIndices.length
+      }}</b>
 
       <div
         [ngClass]="{
@@ -289,7 +307,6 @@
             <div
               [ngClass]="{ 'no-display': inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
-
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
               <p>{{ channelUser.name }}</p>
@@ -401,6 +418,7 @@
         </div>
         <div class="no-scrollbar">
           <div
+            (click)="openProfile(user)"
             class="no-scrollbar"
             *ngFor="let user of users; let i = index"
             [class.no-display]="!currentMemberIndices.includes(i)"
@@ -417,7 +435,9 @@
                 <img src="./../../../assets/img/offline.svg" alt="" />
                 }
               </figure>
-              <p>{{ user?.name || "" }}</p>
+              <p>
+                {{ user?.name || "" }} @if(user.uid === getUserId()) { (Du) }
+              </p>
             </article>
           </div>
         </div>
@@ -503,7 +523,6 @@
             <div
               [ngClass]="{ 'no-display': inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
-
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
               <p>{{ channelUser.name }}</p>
@@ -591,7 +610,7 @@
       *ngFor="let msg of messages; let i = index"
       class="message"
       [ngClass]="{ 'own-message': msg.uid === getUserId() }"
-     (mouseover)="hoverMessage(msg.id, msg.uid, $event)"
+      (mouseover)="hoverMessage(msg.id, msg.uid, $event)"
       (mouseleave)="leaveMessage(msg.id)"
     >
       @if (msg.system === true) {
@@ -629,7 +648,7 @@
             >
           </div>
           <div
-          id="message-text-{{msg.id}}"
+            id="message-text-{{ msg.id }}"
             class="message-text"
             (click)="
               openThread(msg.id, {
@@ -643,26 +662,23 @@
             {{ msg.text }}
           </div>
 
-          <div
-            class="message-answer"
-          >
+          <div class="message-answer">
             @if (msg.threaded) {
-              <span
-                (click)="
-                  openThread(msg.id, {
+            <span
+              (click)="
+                openThread(msg.id, {
                   uid: msg.uid,
                   text: msg.text,
                   user: msg.user,
                   timestamp: msg.timestamp
-                })"
-              >
-                @if (msg.threaded.amount == 1) {
-                  {{ msg.threaded.amount }} Antwort
-                } @else {
-                  {{ msg.threaded.amount }} Antworten
-                }
-              </span>
-              <span>Letzte Antwort {{ msg.threaded.last | date : "HH:mm" }}</span>
+                })
+              "
+            >
+              @if (msg.threaded.amount == 1) {
+              {{ msg.threaded.amount }} Antwort } @else {
+              {{ msg.threaded.amount }} Antworten }
+            </span>
+            <span>Letzte Antwort {{ msg.threaded.last | date : "HH:mm" }}</span>
             }
           </div>
         </div>
