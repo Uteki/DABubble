@@ -23,6 +23,7 @@
   </button>
   <app-channels
     [users]="userList"
+    [selectedPartner]="selectedPartner"
     (partnerSelected)="onPartnerSelected($event)"
     (toggleRequest)="toggleDirect($event)"
     [class.is-hidden-final]="channelsHidden"

@@ -591,6 +591,8 @@
       *ngFor="let msg of messages; let i = index"
       class="message"
       [ngClass]="{ 'own-message': msg.uid === getUserId() }"
+     (mouseover)="hoverMessage(msg.id, msg.uid, $event)"
+      (mouseleave)="leaveMessage(msg.id)"
     >
       @if (msg.system === true) {
       <div class="system">
@@ -627,6 +629,7 @@
             >
           </div>
           <div
+          id="message-text-{{msg.id}}"
             class="message-text"
             (click)="
               openThread(msg.id, {

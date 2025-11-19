@@ -596,8 +596,20 @@
 }
 
 
-.active {
+.active-channel {
   background-color: $main-accent !important;
+  > h3 {
+    color: $purple-font !important;
+  }
+  > svg path {
+    fill: $purple-font !important;
+  }
+}
+
+.active-user-chat {
+  background-color: $main-accent !important;
+      border-radius: 30px;
+     
   > h3 {
     color: $purple-font !important;
   }

@@ -39,7 +39,7 @@
         </svg>
       </button>
     </div>
-    <img src="./../../../assets/avatars/avatar1.png" alt="" />
+    <img [src]="getLargeAvatar(userAvatar)" alt="" />
     @if (edit) {
     <div class="edit-profile-mask">
       <div>
@@ -115,7 +115,7 @@
   <div class="profile-wrapper">
     <h2>{{ username }}</h2>
     <div class="profile-pic">
-      <img src="./../../../assets/avatars/avatarSmall2.png" alt="" />
+      <img [src]="userAvatar" alt="" />
       @if (userStatus) {
       <img src="./../../../assets/img/online.png" alt="" />
       } @else {

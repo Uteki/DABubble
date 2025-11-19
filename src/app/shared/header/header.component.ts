@@ -15,6 +15,7 @@ import { IdleTrackerService } from '../../idle-tracker.service';
 export class HeaderComponent {
   username: string = 'Frederik Beck';
   useremail: string = ' fred.back@email.com ';
+  userAvatar: string = '';
   userStatus: boolean = false;
   edit: boolean = false;
   sessionData = sessionStorage.getItem('sessionData');
@@ -69,10 +70,17 @@ trackIdle() {
         this.username = user.name;
         this.useremail = user.email;
         this.userStatus = user.status;
+        this.userAvatar = user.avatar;
       });
     }
   }
 
+    getLargeAvatar(avatarPath: string | undefined): string {
+   
+      
+    if (!avatarPath) return 'assets/avatars/profile.png';
+    return avatarPath.replace('avatarSmall', 'avatar');
+  }
    
 
   changeUserStatus() {

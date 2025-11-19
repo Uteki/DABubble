@@ -30,6 +30,7 @@ export class ChannelsComponent implements OnInit {
   @Output() toggleRequest = new EventEmitter<boolean>();
 
   @Input() users: any[] = [];
+  @Input() selectedPartner: User | null = null;
 
   @ViewChild('inputEl')
   inputEl!: ElementRef<HTMLInputElement>;
@@ -246,4 +247,9 @@ export class ChannelsComponent implements OnInit {
     return this.chatService.currentChannelID === channel.id;
   }
 
+    
+
+  isSelectedUser(user: any): boolean {
+    return this.selectedPartner?.uid === user.uid;
+  }
 }

@@ -272,7 +272,9 @@
   padding: 10px 20px;
   display: flex;
   gap: 20px;
-
+ &:hover{
+    background-color: $main-accent;
+  }
   img {
     width: 70px;
     height: 70px;

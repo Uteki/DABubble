@@ -250,17 +250,37 @@
 .message {
   align-items: flex-start;
   flex-direction: column;
-  padding: 10px 20px;
+  padding: 0 0px 10px 0;
   display: flex;
+  margin: 10px 0;
   gap: 20px;
+ 
+  &:hover{
+    background-color: $main-accent;
+    .message-container {
+      transform: translateY(-1px);
+    }
+  }
 
+  &:has(.message-event:hover) {
+    background-color: white !important;
+    .message-container {
+      transform: translateY(0px) !important;
+    }
+  }
+
+   &:hover >.message-event{
+    background-color: white !important;
+  }
   img {
     width: 70px;
     height: 70px;
   }
 
   > div {
+    padding: 0 20px;
     > div {
+      
       > div {
         gap: 20px;
         display: flex;
@@ -272,7 +292,8 @@
     width: 100%;
     display: flex;
     align-items: center;
-
+    padding: 10px 20px;
+   background-color: white !important;
     > span {
       gap: 10px;
       padding: 5px 15px;
@@ -309,6 +330,7 @@
     align-items: flex-start;
     display: flex;
     gap: 20px;
+    padding-top: 10px ;
   }
 
   .message-text {
@@ -318,8 +340,10 @@
     border-top-right-radius: 30px;
     border-bottom-right-radius: 30px;
     border-bottom-left-radius: 30px;
+    
   }
 }
+
 
 .no-display {
   display: none !important;
@@ -1174,4 +1198,16 @@ border-radius: 30px;
 .abled-button {
   background-color: $purple-button !important;
   cursor: pointer !important;
+}
+
+.hovered-message {
+  background-color: white !important;
+
+  &:has(.message-event:hover) {
+    background-color: transparent !important;
+  }
+}
+
+.hovered-own-message {
+
 }

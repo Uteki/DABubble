@@ -361,7 +361,7 @@
             channel.creator
           )
         "
-        [ngClass]="{'active': isSelected(channel)}"
+        [ngClass]="{'active-channel': isSelected(channel)}"
       >
         <svg
           width="24"
@@ -454,7 +454,7 @@
       [class.deactive]="!directMessagesShown"
       class="direct-messages-list"
     >
-      <div *ngFor="let user of users">
+      <div *ngFor="let user of users" [ngClass]="{'active-user-chat': isSelectedUser(user)}">
         <article (click)="emitPartner(user.id)">
           <figure *ngIf="user?.uid" class="user-avatar">
             <img
