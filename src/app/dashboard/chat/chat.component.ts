@@ -26,6 +26,7 @@ import { doc } from 'firebase/firestore';
 import { AuthService } from '../../auth.service';
 import { User } from '../../core/interfaces/user';
 import { ProfileOverlayService } from "../../profile-overlay.service";
+import { ReactionsComponent } from './../../shared/reactions/reactions.component';
 
 @Component({
   selector: 'app-chat',
@@ -37,9 +38,10 @@ import { ProfileOverlayService } from "../../profile-overlay.service";
     NgForOf,
     NgIf,
     DatePipe,
+    ReactionsComponent,
   ],
   templateUrl: './chat.component.html',
-  styleUrl: './chat.component.scss',
+  styleUrl: './chat.component.scss'
 })
 export class ChatComponent implements OnInit {
   @Output() threadSelected = new EventEmitter<string>();
@@ -62,6 +64,7 @@ export class ChatComponent implements OnInit {
   profileOverlay: boolean = false;
   editChannelName: boolean = false;
   editDescription: boolean = false;
+  showPicker = false;
   wasEmpty: boolean = true;
   inputFocused: boolean = false;
   selectedChannelUsers: any[] = [];
@@ -76,6 +79,8 @@ export class ChatComponent implements OnInit {
   channelDescription: string = '';
   channelFounder: string = '';
   channelName: string = '';
+
+  public Object = Object;
 
   clickedUser: any;
 
@@ -100,6 +105,8 @@ export class ChatComponent implements OnInit {
       })
     ).subscribe(async messages => await this.changeMeta(messages));
   }
+
+  //TODO              reactions: this.stripEmptyReactions(m.reactions || {}),
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['users'] && changes['users'].currentValue) {
@@ -132,7 +139,7 @@ export class ChatComponent implements OnInit {
     this.currentMemberIndices = this.users
       .map((user, index) =>
         this.chatService.usersInChannel.includes(user.uid) ? index : -1
-      ) 
+      )
       .filter((index) => index !== -1);
 
   }
@@ -145,6 +152,34 @@ export class ChatComponent implements OnInit {
   emitPartner(partnerUid: string) {
     const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
     this.clickedUser = partnerObj;
+  }
+
+  private stripEmptyReactions(
+    reactions: Record<string, string[]>
+  ): Record<string, string[]> {
+    const cleaned: Record<string, string[]> = {};
+    for (const key of Object.keys(reactions)) {
+      const arr = reactions[key];
+      if (Array.isArray(arr) && arr.length > 0) {
+        cleaned[key] = arr;
+      }
+    }
+    return cleaned;
+  }
+
+  private asciiToEmojiInText(s: string): string {
+    if (!s) return s;
+    return s
+      .replace(/:-?\)/g, '😀')
+      .replace(/:-?D/gi, '😃')
+      .replace(/;-?\)/g, '😉')
+      .replace(/:-?\(/g, '☹️')
+      .replace(/:-?P/gi, '😛')
+      .replace(/:o/gi, '😮')
+      .replace(/:'\(/g, '😢')
+      .replace(/\+1/g, '👍')
+      .replace(/-1/g, '👎')
+      .replace(/<3/g, '❤️');
   }
 
   async sendMessage() {
@@ -164,8 +199,11 @@ export class ChatComponent implements OnInit {
   }
 
   async sendMessageExtension(logger: any) {
+    const raw = (this.messageText || '').trim();
+    const text = this.asciiToEmojiInText(raw);
+
     await this.chatService.sendMessage(this.chatService.currentChannel, {
-      uid: logger.uid, text: this.messageText,
+      uid: logger.uid, text: text,
       user: logger.name, timestamp: Date.now(),
     });
 
@@ -386,7 +424,7 @@ export class ChatComponent implements OnInit {
       this.overlayActivated = true;
       this.profileOverlay = true;
     }
-   
+
 
   }
 
@@ -435,7 +473,7 @@ export class ChatComponent implements OnInit {
     if (messageElement && event) {
       const target = event.target as HTMLElement;
       const messageEvent = target.closest('.message-event');
-      
+
       if (messageEvent) {
         messageElement.classList.remove('hovered-message');
         messageElement.classList.remove('hovered-own-message');
@@ -449,13 +487,56 @@ export class ChatComponent implements OnInit {
       }
     }
   }
-  
+
   leaveMessage(messageId: string) {
     const messageElement = document.getElementById('message-text-' + messageId);
 
-    if (messageElement) { 
+    if (messageElement) {
       messageElement.classList.remove('hovered-message');
       messageElement.classList.remove('hovered-own-message');
     }
+  }
+
+  get meId() {
+    return this.authService.readCurrentUser();
+  }
+
+  onReactionToggle(msg: any, ev: { emoji: string; add: boolean }) {
+    msg.reactions = msg.reactions ?? {};
+    const list: string[] =
+      msg.reactions[ev.emoji] ?? (msg.reactions[ev.emoji] = []);
+    const i = list.indexOf(this.meId);
+    if (ev.add && i === -1) list.push(this.meId);
+    if (!ev.add && i !== -1) list.splice(i, 1);
+    if (list.length === 0) delete msg.reactions[ev.emoji];
+    const channelId = this.chatService.currentChannel;
+    if (!channelId || !msg?.id) return;
+    this.chatService
+      .reactChannelMessage(channelId, msg.id, ev.emoji, ev.add, this.meId)
+      .catch(console.error);
+  }
+
+  onReactionAdd(msg: any, emoji: string) {
+    if (!emoji) return;
+    this.onReactionToggle(msg, { emoji, add: true });
+  }
+
+  insertEmojiIntoText(emoji: string) {
+    const ta = document.getElementById(
+      'composer-chat'
+    ) as HTMLTextAreaElement | null;
+    const v = this.messageText || '';
+    if (!ta) {
+      this.messageText = v + emoji;
+      return;
+    }
+    const start = ta.selectionStart ?? v.length;
+    const end = ta.selectionEnd ?? v.length;
+    this.messageText = v.slice(0, start) + emoji + v.slice(end);
+    queueMicrotask(() => {
+      ta.focus();
+      const pos = start + emoji.length;
+      ta.setSelectionRange(pos, pos);
+    });
   }
 }

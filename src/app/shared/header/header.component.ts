@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../user.service';
+import { AuthService } from '../../auth.service';
 import { IdleTrackerService } from '../../idle-tracker.service';
 import { ProfileOverlayService } from '../../profile-overlay.service';
 
@@ -13,7 +14,7 @@ import { ProfileOverlayService } from '../../profile-overlay.service';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
   username: string = 'Frederik Beck';
   useremail: string = ' fred.back@email.com ';
   userAvatar: string = '';
@@ -24,32 +25,42 @@ export class HeaderComponent {
 
   isUserAbsent: boolean = false;
 
+  private beforeUnloadHandler = () => {
+    if (this.sessionData) {
+      const url = `/api/updateStatus?uid=${this.sessionData}&active=false`;
+      navigator.sendBeacon(url);
+    }
+
+    this.authService.signOutOnTabClose();
+  };
+
   constructor(
     private router: Router,
     private auth: Auth,
     private firestore: Firestore,
     private userService: UserService,
     private idleTracker: IdleTrackerService,
-    private profileOverlayService: ProfileOverlayService
+    private profileOverlayService: ProfileOverlayService,
+    private authService: AuthService
   ) {
     this.getUserInformation();
     this.changeUserStatus();
-    this.ngOnInit();
   }
 
   ngOnInit(): void {
     if (this.sessionData) {
-      window.addEventListener('beforeunload', () => {
-        const url = `/api/updateStatus?uid=${this.sessionData}&active=false`;
-        navigator.sendBeacon(url);
-      });
+      window.addEventListener('beforeunload', this.beforeUnloadHandler);
     }
 
     this.profileOverlayService.openProfile$.subscribe(() => {
       this.openProfileMenu();
     });
 
-    this.trackIdle();
+    // this.trackIdle();
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('beforeunload', this.beforeUnloadHandler);
   }
 
   trackIdle() {
@@ -96,14 +107,14 @@ export class HeaderComponent {
     }
   }
 
-  goToLogin() {
+  logout() {
     if (this.sessionData) {
       this.userService
         .updateUserStatus(this.sessionData, false)
         .catch((err) => console.error(err));
-      sessionStorage.setItem('sessionData', '');
+      sessionStorage.removeItem('sessionData');
     }
-    window.location.href = '/login';
+    this.authService.signOut();
   }
 
   onInputChange(value: string) {

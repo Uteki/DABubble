@@ -31,7 +31,6 @@
     box-shadow: 0 2px 10px 0 #00000014;
     display: flex;
     align-items: center;
-    
 
     > div {
       padding: 5px;
@@ -218,6 +217,68 @@
     height: 145px;
     position: relative;
 
+    > .emoji-insert {
+      position: absolute;
+      left: 16px;
+      bottom: 14px;
+      width: 28px;
+      height: 28px;
+      border-radius: 9999px;
+      border: 1px solid #e7e9f5;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease,
+        transform 0.05s ease;
+      z-index: 3;
+
+      &:hover {
+        background: #f7f8ff;
+        border-color: #eceeff;
+      }
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+
+    > .picker {
+      position: absolute;
+      left: 12px;
+      bottom: 56px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid #e7e9f5;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(12, 15, 30, 0.12);
+      display: grid;
+      grid-template-columns: repeat(10, 28px);
+      gap: 6px;
+      z-index: 4;
+
+      > button {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        background: #fff;
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 1;
+        transition: background 0.12s ease, border-color 0.12s ease,
+          transform 0.05s ease;
+
+        &:hover {
+          background: #f7f8ff;
+          border-color: #eceeff;
+        }
+        &:active {
+          transform: translateY(1px);
+        }
+      }
+    }
+
     > textarea {
       height: 100%;
       width: 100%;
@@ -280,6 +341,10 @@
     height: 70px;
   }
 
+  > .reactions {
+    margin-top: 6px;
+  }
+
   > div {
     > div {
       > div {
@@ -312,6 +377,11 @@
     align-items: flex-start;
     display: flex;
     gap: 20px;
+
+    > div {
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   .message-text {
@@ -321,6 +391,11 @@
     border-top-right-radius: 30px;
     border-bottom-right-radius: 30px;
     border-bottom-left-radius: 30px;
+  }
+
+  app-reactions {
+    margin-top: 6px;
+    align-self: flex-start;
   }
 }
 
@@ -402,6 +477,7 @@
         color: $purple-font;
         font-size: 16px;
         transition: all 0.3s ease-in-out;
+        cursor: pointer;
       }
     }
     > h3 {
@@ -439,6 +515,29 @@
         font-weight: 600;
         color: $purple-font;
         font-size: 16px;
+        cursor: pointer;
+      }
+    }
+    .editDescription {
+      display: flex;
+      justify-content: start !important;
+      border: 1px solid $light-purple !important;
+      padding: 10px;
+      height: 55px;
+      border-radius: 25px;
+      gap: 10px;
+      > input {
+        width: 100%;
+        transition: all 0.3s ease-in-out;
+        border: none;
+        &:focus {
+          outline: none;
+        }
+        &::placeholder {
+          font-family: "Nunito";
+          font-weight: 400;
+          font-size: 14px;
+        }
       }
     }
     > p {
@@ -628,6 +727,23 @@
   }
 }
 
+.own-message {
+  > .message-container {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+
+    .message-text {
+      background: $purple-message;
+      color: white;
+    }
+  }
+
+  app-reactions {
+    margin-left: auto;
+    align-self: flex-end;
+  }
+}
+
 .add-member {
   display: flex;
   flex-direction: column;
@@ -707,13 +823,13 @@
 
 
 .toggle-item {
- 
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
- 
+
   width: 400px;
   height: 500px;
   background-color: white;

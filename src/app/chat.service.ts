@@ -9,7 +9,7 @@ import {
   getDoc,
   updateDoc, deleteDoc, writeBatch, getDocs, docData
 } from '@angular/fire/firestore';
-import {doc, arrayUnion, setDoc} from 'firebase/firestore';
+import {doc, arrayUnion, setDoc, deleteField } from 'firebase/firestore';
 import {BehaviorSubject, map, Observable, Subject, tap} from 'rxjs';
 
 interface Channel {
@@ -51,17 +51,17 @@ export class ChatService {
 
   sendMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number }) {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages`);
-    return addDoc(messagesRef, message);
+    return addDoc(messagesRef, { reactions: {}, message});
   }
 
   sendWhisperMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number }) {
     const messagesRef = collection(this.firestore, `whispers/${channelId}/messages`);
-    return addDoc(messagesRef, message);
+    return addDoc(messagesRef, { reactions: {}, message});
   }
 
   sendThreadMessage(channelId: string, threadId: string, message: {uid: string, text: string; user: string; timestamp: number }) {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages/${threadId}/thread`);
-    return addDoc(messagesRef, message);
+    return addDoc(messagesRef, { reactions: {}, message});
   }
 
   async messageThreaded(channelId: string, threadId: string, amount: number, last: number ) {
@@ -164,6 +164,14 @@ export class ChatService {
     return this.messageCache[channelId] || [];
   }
 
+  getChannelMessage(channelId: string, messageId: string): Observable<any> {
+    const ref = doc(
+      this.firestore,
+      `channels/${channelId}/messages/${messageId}`
+    );
+    return docData(ref, { idField: 'id' }) as Observable<any>;
+  }
+
   getThreadMessage(channelId: string, threadId: string): Observable<any> {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages/${threadId}/thread`);
     const q  = query(messagesRef, orderBy('timestamp', 'asc'));
@@ -174,5 +182,75 @@ export class ChatService {
     const messagesRef = collection(this.firestore, `whispers/${channelId}/messages`);
     const q  = query(messagesRef, orderBy('timestamp', 'asc'));
     return collectionData(q, { idField: 'id' }) as Observable<any[]>;
+  }
+
+  private async writeReactionSafe(
+    ref: ReturnType<typeof doc>,
+    emoji: string,
+    add: boolean,
+    userId: string
+  ) {
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+      if (!add) return;
+      await setDoc(ref, { reactions: { [emoji]: [userId] } }, { merge: true });
+      return;
+    }
+
+    const data = snap.data() as any;
+    const current: string[] = data?.reactions?.[emoji] ?? [];
+    const next = add
+      ? Array.from(new Set([...current, userId]))
+      : current.filter((id) => id !== userId);
+
+    if (next.length === 0) {
+      await updateDoc(ref, { [`reactions.${emoji}`]: deleteField() });
+    } else {
+      await setDoc(ref, { reactions: { [emoji]: next } }, { merge: true });
+    }
+  }
+
+  async reactChannelMessage(
+    channelId: string,
+    messageId: string,
+    emoji: string,
+    add: boolean,
+    userId: string
+  ): Promise<void> {
+    const ref = doc(
+      this.firestore,
+      `channels/${channelId}/messages/${messageId}`
+    );
+    return this.writeReactionSafe(ref, emoji, add, userId);
+  }
+
+  async reactWhisperMessage(
+    whisperId: string,
+    messageId: string,
+    emoji: string,
+    add: boolean,
+    userId: string
+  ): Promise<void> {
+    const ref = doc(
+      this.firestore,
+      `whispers/${whisperId}/messages/${messageId}`
+    );
+    return this.writeReactionSafe(ref, emoji, add, userId);
+  }
+
+  async reactThreadMessage(
+    channelId: string,
+    threadId: string,
+    messageId: string,
+    emoji: string,
+    add: boolean,
+    userId: string
+  ): Promise<void> {
+    const ref = doc(
+      this.firestore,
+      `channels/${channelId}/messages/${threadId}/thread/${messageId}`
+    );
+    return this.writeReactionSafe(ref, emoji, add, userId);
   }
 }
