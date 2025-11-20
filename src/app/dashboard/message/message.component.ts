@@ -111,6 +111,7 @@ export class MessageComponent implements OnChanges {
       text: text,
       user: logger.name,
       timestamp: Date.now(),
+      reaction: {}
     });
 
     this.messageText = '';

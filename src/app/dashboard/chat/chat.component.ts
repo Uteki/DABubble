@@ -205,6 +205,7 @@ export class ChatComponent implements OnInit {
     await this.chatService.sendMessage(this.chatService.currentChannel, {
       uid: logger.uid, text: text,
       user: logger.name, timestamp: Date.now(),
+      reaction: {}
     });
 
     this.messageText = '';

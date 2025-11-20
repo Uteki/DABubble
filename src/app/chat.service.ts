@@ -49,19 +49,19 @@ export class ChatService {
     this.currentChat$.next(chat);
   }
 
-  sendMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number }) {
+  sendMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages`);
-    return addDoc(messagesRef, { reactions: {}, message});
+    return addDoc(messagesRef, message);
   }
 
-  sendWhisperMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number }) {
+  sendWhisperMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
     const messagesRef = collection(this.firestore, `whispers/${channelId}/messages`);
-    return addDoc(messagesRef, { reactions: {}, message});
+    return addDoc(messagesRef, message);
   }
 
-  sendThreadMessage(channelId: string, threadId: string, message: {uid: string, text: string; user: string; timestamp: number }) {
+  sendThreadMessage(channelId: string, threadId: string, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
     const messagesRef = collection(this.firestore, `channels/${channelId}/messages/${threadId}/thread`);
-    return addDoc(messagesRef, { reactions: {}, message});
+    return addDoc(messagesRef, message);
   }
 
   async messageThreaded(channelId: string, threadId: string, amount: number, last: number ) {
