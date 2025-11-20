@@ -59,11 +59,7 @@ export class MessageComponent implements OnChanges {
     this.currentPartnerChat = [this.currentPartner.uid, this.currentWhisperer]
       .sort()
       .join('_');
-
-    // Alte Subscription schließen, damit keine Doppel-Streams laufen
     this.msgSub?.unsubscribe();
-
-    // Snapshot MERGEN + leere Reactions entfernen
     this.msgSub = this.chatService
       .getWhisperMessage(this.currentPartnerChat)
       .subscribe((incoming) => {
@@ -71,7 +67,6 @@ export class MessageComponent implements OnChanges {
         this.messages = (incoming || [])
           .map((m: any) => {
             const prev = prevById.get(m.id);
-            // Reactions mergen (lokale Änderungen behalten) und leere Keys entfernen
             const merged = this.stripEmptyReactions(m.reactions ?? prev?.reactions ?? {});
             return { ...m, reactions: merged };
           })
@@ -155,7 +150,6 @@ export class MessageComponent implements OnChanges {
   }
 
   onReactionToggle(msg: any, ev: { emoji: string; add: boolean }) {
-    // Optimistisch im UI
     msg.reactions = msg.reactions ?? {};
     const list: string[] =
       msg.reactions[ev.emoji] ?? (msg.reactions[ev.emoji] = []);
@@ -164,7 +158,6 @@ export class MessageComponent implements OnChanges {
     if (!ev.add && i !== -1) list.splice(i, 1);
     if (list.length === 0) delete msg.reactions[ev.emoji];
 
-    // *** WICHTIG: Direktnachricht => reactWhisperMessage + currentPartnerChat ***
     if (!this.currentPartnerChat || !msg?.id) return;
     this.chatService
       .reactWhisperMessage(this.currentPartnerChat, msg.id, ev.emoji, ev.add, this.meId)

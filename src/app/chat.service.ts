@@ -53,7 +53,7 @@ export class ChatService {
       this.firestore,
       `channels/${channelId}/messages`
     );
-    return addDoc(messagesRef, { reactions: {}, ...message });
+    return addDoc(messagesRef, { reactions: {}, message });
   }
 
   sendWhisperMessage(

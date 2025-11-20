@@ -85,7 +85,7 @@ export class ChatComponent implements OnInit {
           messages
             .sort((a, b) => a.timestamp - b.timestamp)
             .map((m: any) => ({
-              ...m,
+              m,
               reactions: this.stripEmptyReactions(m.reactions || {}),
             }))
         )
