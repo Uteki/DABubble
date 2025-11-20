@@ -15,7 +15,7 @@
 }
 
 .darker-screen {
-   position: fixed;
+  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -24,7 +24,7 @@
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
-   z-index: 400;
+  z-index: 400;
 }
 
 :host {
@@ -267,8 +267,8 @@
   display: flex;
   margin: 10px 0;
   gap: 20px;
- 
-  &:hover{
+
+  &:hover {
     background-color: $main-accent;
     .message-container {
       transform: translateY(-1px);
@@ -282,7 +282,7 @@
     }
   }
 
-   &:hover >.message-event{
+  &:hover > .message-event {
     background-color: white !important;
   }
   img {
@@ -293,7 +293,6 @@
   > div {
     padding: 0 20px;
     > div {
-      
       > div {
         gap: 20px;
         display: flex;
@@ -306,7 +305,7 @@
     display: flex;
     align-items: center;
     padding: 10px 20px;
-   background-color: white !important;
+    background-color: white !important;
     > span {
       gap: 10px;
       padding: 5px 15px;
@@ -343,7 +342,7 @@
     align-items: flex-start;
     display: flex;
     gap: 20px;
-    padding-top: 10px ;
+    padding-top: 10px;
   }
 
   .message-text {
@@ -353,14 +352,11 @@
     border-top-right-radius: 30px;
     border-bottom-right-radius: 30px;
     border-bottom-left-radius: 30px;
-    
   }
   .system {
     padding-top: 10px;
-
   }
 }
-
 
 .no-display {
   display: none !important;
@@ -443,7 +439,7 @@
     border-radius: 15px;
     margin: 10px 20px;
     padding: 15px 20px;
-      transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
     > h3 {
       font-family: "Nunito";
       font-weight: 600;
@@ -545,17 +541,14 @@
 }
 
 .channel-description {
- border: none !important;
- transition: all 0.3s ease-in-out;
-   padding: 0 !important;
+  border: none !important;
+  transition: all 0.3s ease-in-out;
+  padding: 0 !important;
 
-.line {
-  margin: 30px 10px !important
+  .line {
+    margin: 30px 10px !important;
+  }
 }
-
-
-}
-
 
 .edit-one {
   position: relative;
@@ -802,7 +795,6 @@
       font-size: 14px;
       cursor: not-allowed;
       margin-top: 20px;
-
     }
   }
 }
@@ -1023,9 +1015,8 @@
   }
 }
 
-
 .toggle-item {
-position: relative;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1036,7 +1027,7 @@ position: relative;
   height: 500px;
   background-color: white;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  border-radius:30px;
+  border-radius: 30px;
   padding: 30px 30px 30px 35px;
   z-index: 500;
   > div:nth-child(1) {
@@ -1184,8 +1175,8 @@ position: relative;
   justify-content: center;
   align-items: center;
   gap: 5px;
-padding: 10px 15px;
-border-radius: 30px;
+  padding: 10px 15px;
+  border-radius: 30px;
 
   margin-top: 10px;
   cursor: pointer;
@@ -1199,7 +1190,7 @@ border-radius: 30px;
     font-weight: 400;
     font-style: regular;
     font-size: 16px;
-   color: white;
+    color: white;
   }
 }
 
@@ -1227,5 +1218,23 @@ border-radius: 30px;
 }
 
 .hovered-own-message {
+}
 
+.view-active {
+  background-color: $main-accent !important;
+  border-radius: 30px;
+  > b {
+    color: $purple-font !important;
+  }
+}
+
+.edit-channel-active {
+  > div:first-child {
+    background: $main-accent;
+    color: $purple-message;
+
+    > svg path {
+      fill: $purple-message;
+    }
+  }
 }

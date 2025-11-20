@@ -110,7 +110,7 @@
 </section>
 
 <header>
-  <h2 (click)="overlayFunction(true, 'Entwicklung', true)">
+  <h2 (click)="overlayFunction(true, 'Entwicklung', true)" [ngClass]="{'edit-channel-active' : channelOverlay}">
     <div>
       <svg
         width="22"
@@ -243,7 +243,7 @@
     </div>
   </h2>
   <div>
-    <output (click)="overlayActivated = true; viewMemberOverlay = true">
+    <output (click)="overlayActivated = true; viewMemberOverlay = true" [ngClass]="{'view-active': viewMemberOverlay}">
       <div>
         <ng-container *ngFor="let user of users; let i = index">
           <img

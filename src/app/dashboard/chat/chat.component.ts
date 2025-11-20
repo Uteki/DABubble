@@ -25,6 +25,7 @@ import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rx
 import { doc } from 'firebase/firestore';
 import { AuthService } from '../../auth.service';
 import { User } from '../../core/interfaces/user';
+import { ProfileOverlayService } from "../../profile-overlay.service";
 
 @Component({
   selector: 'app-chat',
@@ -82,7 +83,8 @@ export class ChatComponent implements OnInit {
     private chatService: ChatService,
     private cd: ChangeDetectorRef,
     private firestore: Firestore,
-    private authService: AuthService
+    private authService: AuthService,
+    private profileOverlayService: ProfileOverlayService
   ) {}
 
   ngOnInit(): void {
@@ -377,9 +379,15 @@ export class ChatComponent implements OnInit {
   toggleProfile() {}
 
   openProfile(user: User) {
-    this.clickedUser = user;
-    this.overlayActivated = true;
-    this.profileOverlay = true;
+      if (user.uid === this.getUserId()) {
+      this.profileOverlayService.triggerOpenProfile();
+    } else {
+       this.clickedUser = user;
+      this.overlayActivated = true;
+      this.profileOverlay = true;
+    }
+   
+
   }
 
   closeProfile() {
