@@ -46,6 +46,7 @@ import { ReactionsComponent } from './../../shared/reactions/reactions.component
 export class ChatComponent implements OnInit {
   @Output() threadSelected = new EventEmitter<string>();
   @Output() toggleRequest = new EventEmitter<boolean>();
+   @Output() toggleRequestDirect = new EventEmitter<boolean>();
 
   @ViewChild('channelEdit') channelEdit!: ElementRef;
   @Input() users: any[] = [];
@@ -155,7 +156,7 @@ export class ChatComponent implements OnInit {
     const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
     this.clickedUser = partnerObj;
     this.partnerSelected.emit(partnerObj);
-    this.toggleRequest.emit(true);
+    this.toggleRequestDirect.emit(true);
   }
 
   private stripEmptyReactions(

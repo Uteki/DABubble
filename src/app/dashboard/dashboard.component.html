@@ -34,7 +34,9 @@
   <app-chat
     [users]="userList"
     [class.is-hidden]="chat"
+    (partnerSelected)="onPartnerSelected($event)"
     (threadSelected)="onThreadSelected($event)"
+    (toggleRequestDirect)="toggleDirect($event)"
     (toggleRequest)="toggleThread($event)"
   ></app-chat>
   <app-message
