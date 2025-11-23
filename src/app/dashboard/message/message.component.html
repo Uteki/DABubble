@@ -124,6 +124,8 @@
       *ngFor="let msg of messages; let i = index"
       class="message"
       [ngClass]="{ 'own-message': msg.uid === getUserId() }"
+      (mouseover)="hoverMessage(msg.id, msg.uid, $event)"
+      (mouseleave)="leaveMessage(msg.id)"
     >
       <div
         class="message-event"
@@ -154,7 +156,7 @@
             >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
             >
           </div>
-          <div class="message-text">{{ msg.text }}</div>
+          <div    id="message-text-{{ msg.id }}" class="message-text">{{ msg.text }}</div>
              <app-reactions
             [reactions]="msg.reactions || {}"
             [currentUserId]="meId"

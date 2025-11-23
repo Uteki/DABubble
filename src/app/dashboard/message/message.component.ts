@@ -208,4 +208,31 @@ export class MessageComponent implements OnChanges {
     this.overlayActivated = false;
     this.profileOverlay = false;
   }
+
+   hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {
+    const messageElement = document.getElementById('message-text-' + messageId);
+    if (messageElement && event) {
+      const target = event.target as HTMLElement;
+      const messageEvent = target.closest('.message-event');
+
+      if (messageEvent) {
+        messageElement.classList.remove('hovered-message');
+        messageElement.classList.remove('hovered-own-message');
+      } else {
+        if (messageUid === this.getUserId()) {
+          messageElement.classList.add('hovered-own-message');
+        } else {
+          messageElement.classList.add('hovered-message');
+        }
+      }
+    }
+  }
+
+  leaveMessage(messageId: string) {
+    const messageElement = document.getElementById('message-text-' + messageId);
+    if (messageElement) {
+      messageElement.classList.remove('hovered-message');
+      messageElement.classList.remove('hovered-own-message');
+    }
+  }
 }

@@ -49,6 +49,7 @@ export class ChatComponent implements OnInit {
 
   @ViewChild('channelEdit') channelEdit!: ElementRef;
   @Input() users: any[] = [];
+  @Output() partnerSelected = new EventEmitter<User>();
 
   inputValue: string = '';
   messages: any[] = [];
@@ -150,8 +151,11 @@ export class ChatComponent implements OnInit {
   }
 
   emitPartner(partnerUid: string) {
+
     const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
     this.clickedUser = partnerObj;
+    this.partnerSelected.emit(partnerObj);
+    this.toggleRequest.emit(true);
   }
 
   private stripEmptyReactions(
@@ -421,7 +425,7 @@ export class ChatComponent implements OnInit {
       if (user.uid === this.getUserId()) {
       this.profileOverlayService.triggerOpenProfile();
     } else {
-       this.clickedUser = user;
+      this.clickedUser = user;
       this.overlayActivated = true;
       this.profileOverlay = true;
     }
@@ -469,6 +473,7 @@ export class ChatComponent implements OnInit {
     this.selectedChannelUsers = [];
 
   }
+  
  hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {
     const messageElement = document.getElementById('message-text-' + messageId);
     if (messageElement && event) {
@@ -479,7 +484,6 @@ export class ChatComponent implements OnInit {
         messageElement.classList.remove('hovered-message');
         messageElement.classList.remove('hovered-own-message');
       } else {
-        // Prüfen ob es die eigene Nachricht ist
         if (messageUid === this.getUserId()) {
           messageElement.classList.add('hovered-own-message');
         } else {

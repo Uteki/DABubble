@@ -330,11 +330,27 @@
 .message {
   align-items: flex-start;
   flex-direction: column;
-  padding: 10px 20px;
+  padding: 0 0px 10px 0;
   display: flex;
+  margin: 10px 0;
   gap: 20px;
- &:hover{
+
+  &:hover {
     background-color: $main-accent;
+    .message-container {
+      transform: translateY(-1px);
+    }
+  }
+
+  &:has(.message-event:hover) {
+    background-color: white !important;
+    .message-container {
+      transform: translateY(0px) !important;
+    }
+  }
+
+  &:hover > .message-event {
+    background-color: white !important;
   }
   img {
     width: 70px;
@@ -345,7 +361,8 @@
     margin-top: 6px;
   }
 
-  > div {
+> div {
+    padding: 0 20px;
     > div {
       > div {
         gap: 20px;
@@ -354,11 +371,12 @@
     }
   }
 
-  .message-event {
+   .message-event {
     width: 100%;
     display: flex;
     align-items: center;
-
+    padding: 10px 20px;
+    background-color: white !important;
     > span {
       gap: 10px;
       padding: 5px 15px;
@@ -377,6 +395,7 @@
     align-items: flex-start;
     display: flex;
     gap: 20px;
+    padding-top: 10px;
 
     > div {
       display: flex;
@@ -999,3 +1018,12 @@ border-radius: 30px;
    color: white;
   }
 }
+
+.hovered-message {
+  background-color: white !important;
+
+  &:has(.message-event:hover) {
+    background-color: transparent !important;
+  }
+}
+
