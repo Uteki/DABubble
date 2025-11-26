@@ -73,6 +73,10 @@ export class ChatComponent implements OnInit {
   channelUsers: any[] = [];
   userAtIndex: any = {};
 
+  editMessageMenuOpen: string | null = null;
+  editingMessageId: string | null = null;
+  editingMessageText: string = '';
+
   foundIndexes: number[] = [];
   currentMemberIndices: number[] = [];
   missingIndices: number[] = [];
@@ -246,6 +250,13 @@ export class ChatComponent implements OnInit {
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    
+    // Schließe Edit-Menü wenn außerhalb geklickt wird
+    if (this.editMessageMenuOpen && !target.closest('.edit-message-menu') && !target.closest('.more-vert-button')) {
+      this.editMessageMenuOpen = null;
+    }
+
     if (
       this.editChannelName &&
       this.channelEdit &&
@@ -421,6 +432,57 @@ export class ChatComponent implements OnInit {
   }
 
   toggleProfile() {}
+
+  toggleEditMessageMenu(messageId: string, event: Event) {
+    event.stopPropagation();
+    if (this.editMessageMenuOpen === messageId) {
+      this.editMessageMenuOpen = null;
+    } else {
+      this.editMessageMenuOpen = messageId;
+    }
+  }
+
+  keepMenuOpen() {
+    // Diese Methode verhindert, dass das Menü geschlossen wird beim Hovern
+  }
+
+  editMessage(messageId: string) {
+    const message = this.messages.find(m => m.id === messageId);
+    
+    // Nur eigene Nachrichten können bearbeitet werden
+    if (!message || message.uid !== this.getUserId()) {
+      return;
+    }
+    
+    this.editingMessageId = messageId;
+    this.editingMessageText = message.text;
+    this.editMessageMenuOpen = null;
+  }
+
+  cancelEdit() {
+    this.editingMessageId = null;
+    this.editingMessageText = '';
+  }
+
+  async saveEditedMessage(messageId: string) {
+    if (!this.editingMessageText.trim()) return;
+    
+    // TODO: Implementierung für das Speichern der bearbeiteten Nachricht
+    console.log('Nachricht speichern:', messageId, this.editingMessageText);
+    
+    // Hier die Firestore-Update-Logik hinzufügen
+    const messageRef = doc(
+      this.firestore,
+      `channels/${this.chatService.currentChannel}/messages/${messageId}`
+    );
+    
+    await updateDoc(messageRef, {
+      text: this.editingMessageText.trim(),
+      edited: true
+    });
+    
+    this.cancelEdit();
+  }
 
   openProfile(user: User) {
       if (user.uid === this.getUserId()) {

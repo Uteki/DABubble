@@ -611,7 +611,7 @@
       class="message"
       [ngClass]="{ 'own-message': msg.uid === getUserId() }"
       (mouseover)="hoverMessage(msg.id, msg.uid, $event)"
-      (mouseleave)="leaveMessage(msg.id)"
+      (mouseleave)="leaveMessage(msg.id); editMessageMenuOpen = null"
     >
       @if (msg.system === true) {
       <div class="system">
@@ -647,6 +647,29 @@
               >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
             >
           </div>
+          
+          @if (editingMessageId === msg.id) {
+          <!-- Edit Mode -->
+          <div class="message-edit-bubble">
+            <textarea
+              [(ngModel)]="editingMessageText"
+              rows="3"
+              class="message-edit-textarea"
+            ></textarea>
+            <div class="message-edit-actions">
+            
+              <div class="button-group">
+                <button type="button" (click)="cancelEdit()" class="btn-secondary">
+                  Abbrechen
+                </button>
+                <button type="button" (click)="saveEditedMessage(msg.id)" class="btn-primary">
+                  Speichern
+                </button>
+              </div>
+            </div>
+          </div>
+          } @else {
+          <!-- Normal Display Mode -->
           <div
             id="message-text-{{ msg.id }}"
             class="message-text"
@@ -693,15 +716,22 @@
             <span>Letzte Antwort {{ msg.threaded.last | date : "HH:mm" }}</span>
             }
           </div>
+          }
         </div>
       </div>
       }
       <div class="comment-hover-overlay" [id]="'comment-hover-' + msg.id">
-        <div></div>
-        <div></div>
+        <div><img src="/assets/img/checkMark.svg" alt=""></div>
+        <div><img src="/assets/img/capa.svg" alt=""></div>
         <div><img src="/assets/icons/reactions/addReaction.png" alt=""></div>
         <div><img src="/assets/icons/svgs/comment.svg" alt=""></div>
-        <div><img src="/assets/icons/svgs/moreVert.svg" alt=""></div>
+        <div class="more-vert-button" (click)="toggleEditMessageMenu(msg.id, $event)">
+          <img src="/assets/icons/svgs/moreVert.svg" alt="">
+        </div>
+      </div>
+      <div class="edit-message-menu" 
+           [class.visible]="editMessageMenuOpen === msg.id">
+        <div (click)="editMessage(msg.id)">Nachricht bearbeiten</div>
       </div>
     </div>
   </div>
