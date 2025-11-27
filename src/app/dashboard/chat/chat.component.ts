@@ -251,7 +251,7 @@ export class ChatComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    
+
     // Schließe Edit-Menü wenn außerhalb geklickt wird
     if (this.editMessageMenuOpen && !target.closest('.edit-message-menu') && !target.closest('.more-vert-button')) {
       this.editMessageMenuOpen = null;
@@ -298,10 +298,7 @@ export class ChatComponent implements OnInit {
 
     await this.chatService.leaveChannel(this.authService.readCurrentUser(), this.chatService.currentChannel, {user: logger.name + " hat den Kanal verlassen.", system: true, timestamp: Date.now()});
     if (this.chatService.pendingUsers.length <= 1) {
-      //TODO CHANGE
-      this.channelDescription = '';
-      this.channelFounder = '';
-      this.channelName = '';
+      //TODO CHANGE -> cleared need better options
     }
     this.chatService.destroy$.next();
     this.chatService.destroy$.complete();
@@ -448,12 +445,12 @@ export class ChatComponent implements OnInit {
 
   editMessage(messageId: string) {
     const message = this.messages.find(m => m.id === messageId);
-    
+
     // Nur eigene Nachrichten können bearbeitet werden
     if (!message || message.uid !== this.getUserId()) {
       return;
     }
-    
+
     this.editingMessageId = messageId;
     this.editingMessageText = message.text;
     this.editMessageMenuOpen = null;
@@ -466,21 +463,21 @@ export class ChatComponent implements OnInit {
 
   async saveEditedMessage(messageId: string) {
     if (!this.editingMessageText.trim()) return;
-    
+
     // TODO: Implementierung für das Speichern der bearbeiteten Nachricht
     console.log('Nachricht speichern:', messageId, this.editingMessageText);
-    
+
     // Hier die Firestore-Update-Logik hinzufügen
     const messageRef = doc(
       this.firestore,
       `channels/${this.chatService.currentChannel}/messages/${messageId}`
     );
-    
+
     await updateDoc(messageRef, {
       text: this.editingMessageText.trim(),
       edited: true
     });
-    
+
     this.cancelEdit();
   }
 
@@ -536,7 +533,7 @@ export class ChatComponent implements OnInit {
     this.selectedChannelUsers = [];
 
   }
-  
+
  hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {
     const messageElement = document.getElementById('message-text-' + messageId);
     if (messageElement && event) {
