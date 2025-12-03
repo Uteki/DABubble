@@ -140,8 +140,8 @@ export class ChannelsComponent implements OnInit {
     this.toggleRequest.emit(false);
   }
 
-  openMention() {
-    console.log("Test")
+  openToAll() {
+    // toggleToAllMsg()
   }
 
   toggleDirectMessages() {
