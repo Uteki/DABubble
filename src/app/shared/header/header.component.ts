@@ -26,12 +26,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isUserAbsent: boolean = false;
 
   private beforeUnloadHandler = () => {
-    if (this.sessionData) {
+/*     if (this.sessionData) {
       const url = `/api/updateStatus?uid=${this.sessionData}&active=false`;
       navigator.sendBeacon(url);
     }
 
-    this.authService.signOutOnTabClose();
+    this.authService.signOutOnTabClose(); */
   };
 
   constructor(
@@ -108,13 +108,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    if (this.sessionData) {
+   /*  if (this.sessionData) {
       this.userService
         .updateUserStatus(this.sessionData, false)
         .catch((err) => console.error(err));
       sessionStorage.removeItem('sessionData');
     }
-    this.authService.signOut();
+    this.authService.signOut(); */
   }
 
   onInputChange(value: string) {

@@ -344,18 +344,7 @@
     }
   }
 
-  &:has(.message-event:hover) {
-    background-color: white !important;
-    .message-container {
-      transform: translateY(0px) !important;
-    }
 
-    > .comment-hover-overlay {
-      opacity: 0 !important;
-      pointer-events: none !important;
-      transform: translate(20px, 0) !important;
-    }
-  }
 
   &:hover > .message-event {
     background-color: white !important;
@@ -450,6 +439,8 @@
   }
 }
 
+
+
 .comment-hover-overlay {
   position: absolute;
   top: 10%;
@@ -507,6 +498,39 @@
   }
 }
 
+.edit-message {
+  
+  &:has(.message-container) {
+    background-color: $main-accent;
+    .message-container {
+      transform: translateY(-1px);
+    }
+
+    > .comment-hover-overlay {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(0, 0);
+    }
+  }
+
+
+}
+
+.not-edit-message {
+    &:has(.message-event:hover) {
+    background-color: white !important;
+    .message-container {
+      transform: translateY(0px) !important;
+    }
+
+    > .comment-hover-overlay {
+      opacity: 0 !important;
+      pointer-events: none !important;
+      transform: translate(20px, 0) !important;
+    }
+  }
+}
+
 .edit-message-menu {
   position: absolute;
   top: 25%;
@@ -551,7 +575,7 @@
 
 .message-edit-bubble {
   width: 500px;
-  height: 150px;
+  height: 100%;
   padding: 20px;
   background-color: $main-accent;
   border-top-right-radius: 30px;
@@ -1519,4 +1543,12 @@
       fill: $purple-message;
     }
   }
+}
+
+.edit-mode-width {
+  width: 100%;
+}
+
+.edit-mode-bubble {
+  background-color: white;
 }
