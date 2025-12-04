@@ -78,12 +78,12 @@ export class ChannelsComponent implements OnInit {
         );
     });
 
-  
+
     this.trackIdle();
   }
 
   trackIdle() {
-  
+
     this.idleTracker.idleTime$.subscribe(idleTime => {
       this.isUserAbsent = (idleTime / 1000) > 30;
     });
@@ -91,7 +91,7 @@ export class ChannelsComponent implements OnInit {
     this.idleTracker.isIdle$.subscribe(isIdle => {
       if (!isIdle) {
         this.isUserAbsent = false;
-   
+
       }
 
     });
@@ -138,6 +138,10 @@ export class ChannelsComponent implements OnInit {
 
     this.chatService.setCurrentChat(id, name, description, creator);
     this.toggleRequest.emit(false);
+  }
+
+  openToAll() {
+    // toggleToAllMsg()
   }
 
   toggleDirectMessages() {
@@ -250,7 +254,7 @@ export class ChannelsComponent implements OnInit {
     return this.chatService.currentChannelID === channel.id;
   }
 
-    
+
 
   isSelectedUser(user: any): boolean {
     return this.selectedPartner?.uid === user.uid;
