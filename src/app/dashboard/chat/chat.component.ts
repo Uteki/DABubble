@@ -63,6 +63,7 @@ export class ChatComponent implements OnInit {
   viewMemberOverlay: boolean = false;
   addMemberOverlay: boolean = false;
   switchAddMemberOverlay: boolean = false;
+  userInChannel: boolean = false;
   profileOverlay: boolean = false;
   editChannelName: boolean = false;
   editDescription: boolean = false;
@@ -252,7 +253,6 @@ export class ChatComponent implements OnInit {
   onClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
 
-    // Schließe Edit-Menü wenn außerhalb geklickt wird
     if (this.editMessageMenuOpen && !target.closest('.edit-message-menu') && !target.closest('.more-vert-button')) {
       this.editMessageMenuOpen = null;
     }
@@ -273,9 +273,10 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  checkMeta(channel: any): void {
+  async checkMeta(channel: any): Promise<void> {
     this.currentChat = channel.name; this.channelName = channel.name
     this.channelDescription = channel.description; this.channelFounder = channel.creator
+    await this.checkMembership();
 
     this.cd.detectChanges();
   }
@@ -302,6 +303,17 @@ export class ChatComponent implements OnInit {
     }
     this.chatService.destroy$.next();
     this.chatService.destroy$.complete();
+  }
+
+  async checkMembership(): Promise<boolean> {
+    const uid = this.authService.readCurrentUser();
+    await this.chatService.searchUsers(this.chatService.currentChannel);
+
+    const isMember = this.chatService.pendingUsers.some(u => (u?.uid ?? u) === uid);
+
+    this.userInChannel = isMember;
+    this.chatService.pendingUsers = [];
+    return isMember;
   }
 
   saveEditedName() {

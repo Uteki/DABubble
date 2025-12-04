@@ -182,7 +182,7 @@
         <div>
           <h3>Channel-Name</h3>
 
-          <h3 (click)="saveEditedName()" *ngIf="currentChat !== 'DALobby'">
+          <h3 (click)="saveEditedName()" *ngIf="currentChat !== 'DALobby' && userInChannel">
             @if (editChannelName) { Speichern } @else { Bearbeiten }
           </h3>
         </div>
@@ -210,7 +210,7 @@
         <div>
           <h3>Beschreibung</h3>
 
-          <h3 (click)="saveEditedComment()" *ngIf="currentChat !== 'DALobby'">
+          <h3 (click)="saveEditedComment()" *ngIf="currentChat !== 'DALobby' && userInChannel">
             @if (editDescription) { Speichern } @else { Bearbeiten }
           </h3>
         </div>
@@ -233,7 +233,7 @@
       </div>
       <div>
         <button
-          *ngIf="currentChat !== 'DALobby'"
+          *ngIf="currentChat !== 'DALobby' && userInChannel"
           click-stop-propagation
           (click)="overlayFunction(false, 'Entwicklung', false); leaveChannel()"
         >
@@ -445,7 +445,7 @@
         <button
           class="add-member-button"
           (click)="switchAddMemberOverlay = true"
-          *ngIf="currentChat !== 'DALobby'"
+          *ngIf="currentChat !== 'DALobby' && userInChannel"
         >
           <div>
             <svg
@@ -469,7 +469,7 @@
 
     <div
       (click)="overlayActivated = true; addMemberOverlay = true"
-      *ngIf="currentChat && currentChat !== 'DALobby'"
+      *ngIf="currentChat && currentChat !== 'DALobby' && userInChannel"
     >
       <svg
         width="22"
@@ -647,7 +647,7 @@
               >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
             >
           </div>
-          
+
           @if (editingMessageId === msg.id) {
           <!-- Edit Mode -->
           <div class="message-edit-bubble">
@@ -657,7 +657,7 @@
               class="message-edit-textarea"
             ></textarea>
             <div class="message-edit-actions">
-            
+
               <div class="button-group">
                 <button type="button" (click)="cancelEdit()" class="btn-secondary">
                   Abbrechen
@@ -729,7 +729,7 @@
           <img src="/assets/icons/svgs/moreVert.svg" alt="">
         </div>
       </div>
-      <div class="edit-message-menu" 
+      <div class="edit-message-menu"
            [class.visible]="editMessageMenuOpen === msg.id">
         <div (click)="editMessage(msg.id)">Nachricht bearbeiten</div>
       </div>
