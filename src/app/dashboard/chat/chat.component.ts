@@ -86,6 +86,7 @@ export class ChatComponent implements OnInit {
   channelDescription: string = '';
   channelFounder: string = '';
   channelName: string = '';
+  editMessageIsOpen: boolean = false;
 
   public Object = Object;
 
@@ -470,11 +471,27 @@ export class ChatComponent implements OnInit {
     this.editingMessageId = messageId;
     this.editingMessageText = message.text;
     this.editMessageMenuOpen = null;
+    this.editMessageIsOpen = true;
+    
+    // Füge die Hover-Klasse hinzu (gleiches Element wie bei hoverMessage)
+    const messageElement = document.getElementById('message-text-' + messageId);
+    if (messageElement) {
+      messageElement.classList.add('hovered-own-message');
+    }
   }
 
   cancelEdit() {
+    // Entferne die Hover-Klasse
+    if (this.editingMessageId) {
+      const messageElement = document.getElementById('message-text-' + this.editingMessageId);
+      if (messageElement) {
+        messageElement.classList.remove('hovered-own-message');
+      }
+    }
+    
     this.editingMessageId = null;
     this.editingMessageText = '';
+    this.editMessageIsOpen = false;
   }
 
   async saveEditedMessage(messageId: string) {

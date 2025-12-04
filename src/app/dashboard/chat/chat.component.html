@@ -609,7 +609,10 @@
     <div
       *ngFor="let msg of messages; let i = index"
       class="message"
-      [ngClass]="{ 'own-message': msg.uid === getUserId() }"
+      [ngClass]="{ 'own-message': msg.uid === getUserId() ,
+        'edit-message': editMessageIsOpen && editingMessageId === msg.id,
+        'not-edit-message': !editMessageIsOpen 
+      }"
       (mouseover)="hoverMessage(msg.id, msg.uid, $event)"
       (mouseleave)="leaveMessage(msg.id); editMessageMenuOpen = null"
     >
@@ -627,7 +630,7 @@
         "
       >
         <div></div>
-        <span class="timestamp">
+        <span class="timestamp" >
           {{
             (msg.timestamp | date : "yyyy-MM-dd") ===
             (today | date : "yyyy-MM-dd")
@@ -638,19 +641,19 @@
         <div></div>
       </div>
 
-      <div class="message-container">
+      <div class="message-container" [ngClass]="{ 'edit-mode-width': editMessageIsOpen }">
         <img src="{{ getProfilePic(msg.uid) }}" alt="{{ msg.user }}" />
-        <div>
+        <div [ngClass]="{ 'edit-mode-width': editMessageIsOpen }">
           <div>
             <strong>{{ msg.user }}</strong>
-            <span class="timestamp"
+            <span class="timestamp"  [ngClass]="{ 'no-display': editMessageIsOpen && editingMessageId === msg.id }"
               >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
             >
           </div>
 
           @if (editingMessageId === msg.id) {
           <!-- Edit Mode -->
-          <div class="message-edit-bubble">
+          <div class="message-edit-bubble" [ngClass]="{ 'edit-mode-bubble': editMessageIsOpen && editingMessageId === msg.id }">
             <textarea
               [(ngModel)]="editingMessageText"
               rows="3"
@@ -720,7 +723,7 @@
         </div>
       </div>
       }
-      <div class="comment-hover-overlay" [id]="'comment-hover-' + msg.id">
+      <div class="comment-hover-overlay" [id]="'comment-hover-' + msg.id" [ngClass]="{'no-display' : editMessageIsOpen && editingMessageId === msg.id}">
         <div><img src="/assets/img/checkMark.svg" alt=""></div>
         <div><img src="/assets/img/capa.svg" alt=""></div>
         <div><img src="/assets/icons/reactions/addReaction.png" alt=""></div>
