@@ -21,11 +21,18 @@ import {
   getDocs,
   updateDoc,
 } from '@angular/fire/firestore';
-import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rxjs';
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { doc } from 'firebase/firestore';
 import { AuthService } from '../../auth.service';
 import { User } from '../../core/interfaces/user';
-import { ProfileOverlayService } from "../../profile-overlay.service";
+import { ProfileOverlayService } from '../../profile-overlay.service';
 import { ReactionsComponent } from './../../shared/reactions/reactions.component';
 
 @Component({
@@ -41,12 +48,12 @@ import { ReactionsComponent } from './../../shared/reactions/reactions.component
     ReactionsComponent,
   ],
   templateUrl: './chat.component.html',
-  styleUrl: './chat.component.scss'
+  styleUrl: './chat.component.scss',
 })
 export class ChatComponent implements OnInit {
   @Output() threadSelected = new EventEmitter<string>();
   @Output() toggleRequest = new EventEmitter<boolean>();
-   @Output() toggleRequestDirect = new EventEmitter<boolean>();
+  @Output() toggleRequestDirect = new EventEmitter<boolean>();
 
   @ViewChild('channelEdit') channelEdit!: ElementRef;
   @Input() users: any[] = [];
@@ -101,17 +108,31 @@ export class ChatComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.chatService.currentChat$.pipe( distinctUntilChanged(), filter(chat => !!chat && chat.trim() !== ''),
-      switchMap(chat => {
-        this.messages = this.chatService.getCachedMessages(chat) || [];
-        return this.chatService.getChannelById(chat).pipe(
-          tap(channel => { if (!channel) return; this.checkMeta(channel)}),
-          switchMap(() =>
-            this.chatService.getMessages(chat).pipe( map(messages => messages.sort((a, b) => a.timestamp - b.timestamp)))),
+    this.chatService.currentChat$
+      .pipe(
+        distinctUntilChanged(),
+        filter((chat) => !!chat && chat.trim() !== ''),
+        switchMap((chat) => {
+          this.messages = this.chatService.getCachedMessages(chat) || [];
+          return this.chatService.getChannelById(chat).pipe(
+            tap((channel) => {
+              if (!channel) return;
+              this.checkMeta(channel);
+            }),
+            switchMap(() =>
+              this.chatService
+                .getMessages(chat)
+                .pipe(
+                  map((messages) =>
+                    messages.sort((a, b) => a.timestamp - b.timestamp)
+                  )
+                )
+            ),
             takeUntil(this.chatService.destroy$)
-        );
-      })
-    ).subscribe(async messages => await this.changeMeta(messages));
+          );
+        })
+      )
+      .subscribe(async (messages) => await this.changeMeta(messages));
   }
 
   //TODO              reactions: this.stripEmptyReactions(m.reactions || {}),
@@ -149,7 +170,6 @@ export class ChatComponent implements OnInit {
         this.chatService.usersInChannel.includes(user.uid) ? index : -1
       )
       .filter((index) => index !== -1);
-
   }
 
   getLargeAvatar(avatarPath: string | undefined): string {
@@ -158,7 +178,6 @@ export class ChatComponent implements OnInit {
   }
 
   emitPartner(partnerUid: string) {
-
     const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
     this.clickedUser = partnerObj;
     this.partnerSelected.emit(partnerObj);
@@ -195,18 +214,21 @@ export class ChatComponent implements OnInit {
 
   async sendMessage() {
     const currentUserId = this.authService.readCurrentUser();
-    const logger: User = this.users.find(user => user.uid === currentUserId);
-    if (!logger) return
-    if (!this.messageText.trim()) return
-    await this.chatService.searchUsers(this.chatService.currentChannel)
+    const logger: User = this.users.find((user) => user.uid === currentUserId);
+    if (!logger) return;
+    if (!this.messageText.trim()) return;
+    await this.chatService.searchUsers(this.chatService.currentChannel);
     const isMember = this.chatService.pendingUsers.includes(currentUserId);
     if (!isMember) {
       this.messages.push({
-        uid: logger.uid, text: '⚠️ Sie können in diesem Kanal keine Nachrichten mehr senden.',
-        user: logger.name, timestamp: Date.now()
-      }); return;
+        uid: logger.uid,
+        text: '⚠️ Sie können in diesem Kanal keine Nachrichten mehr senden.',
+        user: logger.name,
+        timestamp: Date.now(),
+      });
+      return;
     }
-    await this.sendMessageExtension(logger)
+    await this.sendMessageExtension(logger);
   }
 
   async sendMessageExtension(logger: any) {
@@ -214,9 +236,11 @@ export class ChatComponent implements OnInit {
     const text = this.asciiToEmojiInText(raw);
 
     await this.chatService.sendMessage(this.chatService.currentChannel, {
-      uid: logger.uid, text: text,
-      user: logger.name, timestamp: Date.now(),
-      reaction: {}
+      uid: logger.uid,
+      text: text,
+      user: logger.name,
+      timestamp: Date.now(),
+      reaction: {},
     });
 
     this.messageText = '';
@@ -254,7 +278,11 @@ export class ChatComponent implements OnInit {
   onClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
 
-    if (this.editMessageMenuOpen && !target.closest('.edit-message-menu') && !target.closest('.more-vert-button')) {
+    if (
+      this.editMessageMenuOpen &&
+      !target.closest('.edit-message-menu') &&
+      !target.closest('.more-vert-button')
+    ) {
       this.editMessageMenuOpen = null;
     }
 
@@ -275,8 +303,10 @@ export class ChatComponent implements OnInit {
   }
 
   async checkMeta(channel: any): Promise<void> {
-    this.currentChat = channel.name; this.channelName = channel.name
-    this.channelDescription = channel.description; this.channelFounder = channel.creator
+    this.currentChat = channel.name;
+    this.channelName = channel.name;
+    this.channelDescription = channel.description;
+    this.channelFounder = channel.creator;
     await this.checkMembership();
 
     this.cd.detectChanges();
@@ -295,10 +325,17 @@ export class ChatComponent implements OnInit {
 
   async leaveChannel() {
     const currentUserId = this.authService.readCurrentUser();
-    const logger: User = this.users.find(user => user.uid === currentUserId);
+    const logger: User = this.users.find((user) => user.uid === currentUserId);
 
-
-    await this.chatService.leaveChannel(this.authService.readCurrentUser(), this.chatService.currentChannel, {user: logger.name + " hat den Kanal verlassen.", system: true, timestamp: Date.now()});
+    await this.chatService.leaveChannel(
+      this.authService.readCurrentUser(),
+      this.chatService.currentChannel,
+      {
+        user: logger.name + ' hat den Kanal verlassen.',
+        system: true,
+        timestamp: Date.now(),
+      }
+    );
     if (this.chatService.pendingUsers.length <= 1) {
       //TODO CHANGE -> cleared need better options
     }
@@ -310,7 +347,9 @@ export class ChatComponent implements OnInit {
     const uid = this.authService.readCurrentUser();
     await this.chatService.searchUsers(this.chatService.currentChannel);
 
-    const isMember = this.chatService.pendingUsers.some(u => (u?.uid ?? u) === uid);
+    const isMember = this.chatService.pendingUsers.some(
+      (u) => (u?.uid ?? u) === uid
+    );
 
     this.userInChannel = isMember;
     this.chatService.pendingUsers = [];
@@ -382,10 +421,11 @@ export class ChatComponent implements OnInit {
     this.channelUsers.splice(index, 1);
     this.nameInputValue = false;
     memberInputREF.value = '';
-      this.inputValue = '';
+    this.inputValue = '';
 
-           console.log(this.selectedChannelUsers.length + "" + this.selectedChannelUsers);
-
+    console.log(
+      this.selectedChannelUsers.length + '' + this.selectedChannelUsers
+    );
   }
 
   deleteMember(index: number) {
@@ -457,7 +497,7 @@ export class ChatComponent implements OnInit {
   }
 
   editMessage(messageId: string) {
-    const message = this.messages.find(m => m.id === messageId);
+    const message = this.messages.find((m) => m.id === messageId);
 
     // Nur eigene Nachrichten können bearbeitet werden
     if (!message || message.uid !== this.getUserId()) {
@@ -468,7 +508,7 @@ export class ChatComponent implements OnInit {
     this.editingMessageText = message.text;
     this.editMessageMenuOpen = null;
     this.editMessageIsOpen = true;
-    
+
     // Füge die Hover-Klasse hinzu (gleiches Element wie bei hoverMessage)
     const messageElement = document.getElementById('message-text-' + messageId);
     if (messageElement) {
@@ -479,12 +519,14 @@ export class ChatComponent implements OnInit {
   cancelEdit() {
     // Entferne die Hover-Klasse
     if (this.editingMessageId) {
-      const messageElement = document.getElementById('message-text-' + this.editingMessageId);
+      const messageElement = document.getElementById(
+        'message-text-' + this.editingMessageId
+      );
       if (messageElement) {
         messageElement.classList.remove('hovered-own-message');
       }
     }
-    
+
     this.editingMessageId = null;
     this.editingMessageText = '';
     this.editMessageIsOpen = false;
@@ -504,22 +546,20 @@ export class ChatComponent implements OnInit {
 
     await updateDoc(messageRef, {
       text: this.editingMessageText.trim(),
-      edited: true
+      edited: true,
     });
 
     this.cancelEdit();
   }
 
   openProfile(user: User) {
-      if (user.uid === this.getUserId()) {
+    if (user.uid === this.getUserId()) {
       this.profileOverlayService.triggerOpenProfile();
     } else {
       this.clickedUser = user;
       this.overlayActivated = true;
       this.profileOverlay = true;
     }
-
-
   }
 
   closeProfile() {
@@ -527,11 +567,11 @@ export class ChatComponent implements OnInit {
     this.profileOverlay = false;
   }
 
-
   async addMembersToChannel() {
     const usersToAdd = this.selectedChannelUsers;
     const newUids = usersToAdd
-      .filter((user) => !user?.guest).map((user) => ({ uid: user?.uid, name: user?.name }))
+      .filter((user) => !user?.guest)
+      .map((user) => ({ uid: user?.uid, name: user?.name }))
       .filter(
         (uidObj) =>
           uidObj.uid &&
@@ -540,15 +580,20 @@ export class ChatComponent implements OnInit {
     await this.chatService.searchUsers(this.chatService.currentChannelID);
     this.chatService.pendingUsers.push(...newUids);
     await this.chatService.addUsers(
-      this.chatService.currentChannelID, this.chatService.pendingUsers,
-      this.authService.readCurrentUser(), {user: " hat den Kanal betreten.", system: true, timestamp: Date.now()});
+      this.chatService.currentChannelID,
+      this.chatService.pendingUsers,
+      this.authService.readCurrentUser(),
+      { user: ' hat den Kanal betreten.', system: true, timestamp: Date.now() }
+    );
     this.chatService.pendingUsers = [];
     this.clearSelectedUsers();
   }
 
   clearSelectedUsers() {
     this.selectedChannelUsers = [];
-     this.closeAllOverlays();
+    this.channelUsers = [];
+    this.channelUsers = [...this.users];
+    this.closeAllOverlays();
   }
 
   closeAllOverlays() {
@@ -560,10 +605,9 @@ export class ChatComponent implements OnInit {
     this.inputValue = '';
     this.channelName = '';
     this.selectedChannelUsers = [];
-
   }
 
- hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {
+  hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {
     const messageElement = document.getElementById('message-text-' + messageId);
     if (messageElement && event) {
       const target = event.target as HTMLElement;

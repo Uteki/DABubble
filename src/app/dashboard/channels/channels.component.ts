@@ -127,6 +127,8 @@ export class ChannelsComponent implements OnInit {
     this.chatService.pendingUsers = [];
     this.inputValue = '';
     this.selectedChannelUsers = [];
+    this.channelUsers = [];
+    this.channelUsers = [...this.users];
   }
 
   swapChannel(id: any, name: string, description: string, creator: string) {
@@ -247,6 +249,7 @@ export class ChannelsComponent implements OnInit {
           this.newChannelDescription = '';
           this.newChannel = '';
         });
+
     }
   }
 
