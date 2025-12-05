@@ -25,6 +25,7 @@ import {
   distinctUntilChanged,
   filter,
   map,
+  Subject,
   switchMap,
   takeUntil,
   tap,
@@ -331,13 +332,21 @@ export class ChatComponent implements OnInit {
 
     await this.chatService.searchUsers(this.chatService.currentChannel)
     if (this.chatService.pendingUsers.length < 1) {
-      this.chatService.setCurrentChat("DALobby", "", "", "");
       await this.checkMeta({ name: "DALobby" });
+
+      this.chatService.destroy$.next();
+      this.chatService.destroy$.complete();
+      this.chatService.destroy$ = new Subject<void>();
+
+      this.chatService.currentChannelID = "DALobby";
+      this.chatService.setCurrentChat("DALobby", "", "", "");
     }
     this.chatService.pendingUsers = [];
 
-    this.chatService.destroy$.next();
-    this.chatService.destroy$.complete();
+    setTimeout(()=> {
+      this.chatService.destroy$.next();
+      this.chatService.destroy$.complete();
+    },1000)
   }
 
   async checkMembership(): Promise<boolean> {
