@@ -325,20 +325,17 @@ export class ChatComponent implements OnInit {
 
   async leaveChannel() {
     const currentUserId = this.authService.readCurrentUser();
-    const logger: User = this.users.find((user) => user.uid === currentUserId);
+    const logger: User = this.users.find(user => user.uid === currentUserId);
 
-    await this.chatService.leaveChannel(
-      this.authService.readCurrentUser(),
-      this.chatService.currentChannel,
-      {
-        user: logger.name + ' hat den Kanal verlassen.',
-        system: true,
-        timestamp: Date.now(),
-      }
-    );
-    if (this.chatService.pendingUsers.length <= 1) {
-      //TODO CHANGE -> cleared need better options
+    await this.chatService.leaveChannel(this.authService.readCurrentUser(), this.chatService.currentChannel, {user: logger.name + " hat den Kanal verlassen.", system: true, timestamp: Date.now()});
+
+    await this.chatService.searchUsers(this.chatService.currentChannel)
+    if (this.chatService.pendingUsers.length < 1) {
+      this.chatService.setCurrentChat("DALobby", "", "", "");
+      await this.checkMeta({ name: "DALobby" });
     }
+    this.chatService.pendingUsers = [];
+
     this.chatService.destroy$.next();
     this.chatService.destroy$.complete();
   }
