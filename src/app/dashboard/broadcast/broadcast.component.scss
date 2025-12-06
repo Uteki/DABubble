@@ -1,0 +1,231 @@
+@use "../../../assets/styles/colors" as *;
+
+:host {
+  height: auto;
+  opacity: 1;
+  border-radius: 30px;
+  background: white;
+
+  > header {
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    display: flex;
+    padding: 32px 40px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 10px 0 #00000014;
+
+    > h2 {
+      display: flex;
+      align-items: center;
+
+      > output {
+        color: $purple-message;
+        line-height: 100%;
+        font-weight: 400;
+        font-size: 14px;
+
+        > code {
+          margin: 0 10px;
+        }
+      }
+    }
+
+    > svg {
+      cursor: pointer;
+    }
+  }
+
+  > output {
+    overflow-y: auto;
+    position: relative;
+    flex: 1;
+  }
+
+  > form {
+    margin: 20px;
+    height: 145px;
+    position: relative;
+
+    > .emoji-insert {
+      position: absolute;
+      left: 16px;
+      bottom: 14px;
+      width: 28px;
+      height: 28px;
+      border-radius: 9999px;
+      border: 1px solid #e7e9f5;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease,
+      transform 0.05s ease;
+      z-index: 3;
+
+      &:hover {
+        background: #f7f8ff;
+        border-color: #eceeff;
+      }
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+
+    > .picker {
+      position: absolute;
+      left: 12px;
+      bottom: 56px;
+      padding: 8px;
+      background: #fff;
+      border: 1px solid #e7e9f5;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(12, 15, 30, 0.12);
+      display: grid;
+      grid-template-columns: repeat(10, 28px);
+      gap: 6px;
+      z-index: 4;
+
+      > button {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        background: #fff;
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 1;
+        transition: background 0.12s ease, border-color 0.12s ease,
+        transform 0.05s ease;
+
+        &:hover {
+          background: #f7f8ff;
+          border-color: #eceeff;
+        }
+        &:active {
+          transform: translateY(1px);
+        }
+      }
+    }
+
+    > textarea {
+      height: 100%;
+      width: 100%;
+      opacity: 1;
+      border-radius: 20px;
+      gap: 40px;
+      top: 755px;
+      left: 35px;
+      padding: 20px;
+      resize: none;
+      overflow-y: auto;
+
+      border: 1px solid #adb0d9;
+
+      &::placeholder {
+        font-family: "Nunito", sans-serif;
+        line-height: 100%;
+        font-weight: 400;
+        font-size: 18px;
+      }
+
+      &:focus,
+      &:active {
+        outline: none;
+        box-shadow: none;
+      }
+    }
+
+    > button {
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      color: inherit;
+      text-align: inherit;
+      text-transform: none;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+    }
+  }
+}
+
+.message {
+  align-items: flex-start;
+  flex-direction: column;
+  padding: 10px 20px;
+  display: flex;
+  gap: 20px;
+
+  img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .message-container > div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  app-reactions {
+    margin-top: 6px;
+    align-self: flex-start;
+  }
+
+  .message-event {
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    > span {
+      gap: 10px;
+      padding: 5px 15px;
+      border-radius: 30px;
+      border: 1px solid #adb0d9;
+    }
+
+    > div {
+      border-top: 1px solid #adb0d9;
+      height: 0;
+      flex: 1;
+    }
+  }
+
+  .message-container {
+    align-items: flex-start;
+    display: flex;
+    gap: 20px;
+  }
+
+  .message-text {
+    gap: 8px;
+    padding: 15px;
+    background: $main-accent;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+    border-bottom-left-radius: 30px;
+  }
+}
+
+.own-message {
+  > .message-container {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+
+    .message-text {
+      background: $purple-message;
+      color: white;
+    }
+  }
+
+  app-reactions {
+    margin-left: auto;
+    align-self: flex-end;
+  }
+}

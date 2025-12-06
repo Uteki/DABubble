@@ -2,8 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HeaderComponent } from '../shared/header/header.component';
 import { ThreadComponent } from './thread/thread.component';
 import { ChannelsComponent } from './channels/channels.component';
-import { ChatComponent } from './chat/chat.component';
+import { BroadcastComponent } from "./broadcast/broadcast.component";
 import { MessageComponent } from './message/message.component';
+import { ChatComponent } from './chat/chat.component';
 import { UserService } from '../user.service';
 import { User } from '../core/interfaces/user';
 import { ChatService } from '../chat.service';
@@ -18,6 +19,7 @@ import { Subscription } from 'rxjs';
     ChannelsComponent,
     ChatComponent,
     MessageComponent,
+    BroadcastComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],

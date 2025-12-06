@@ -114,6 +114,19 @@ app-thread {
   margin-left: auto;
 }
 
+//TODO
+app-broadcast {
+  display: none;
+  flex: 0 0 485px;
+  margin: 0;
+  flex-direction: column;
+  transform-origin: right center;
+  transform: rotateY(0deg);
+  backface-visibility: hidden;
+  visibility: visible;
+  margin-left: auto;
+}
+
 @keyframes threadClose {
   0% {
     transform: rotateY(0deg);
