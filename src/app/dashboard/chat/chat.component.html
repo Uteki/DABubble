@@ -611,7 +611,7 @@
       class="message"
       [ngClass]="{ 'own-message': msg.uid === getUserId() ,
         'edit-message': editMessageIsOpen && editingMessageId === msg.id,
-        'not-edit-message': !editMessageIsOpen 
+        'not-edit-message': !editMessageIsOpen
       }"
       (mouseover)="hoverMessage(msg.id, msg.uid, $event)"
       (mouseleave)="leaveMessage(msg.id); editMessageMenuOpen = null"

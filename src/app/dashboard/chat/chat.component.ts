@@ -22,10 +22,10 @@ import {
   updateDoc,
 } from '@angular/fire/firestore';
 import {
+  Subject,
   distinctUntilChanged,
   filter,
   map,
-  Subject,
   switchMap,
   takeUntil,
   tap,
@@ -331,22 +331,26 @@ export class ChatComponent implements OnInit {
     await this.chatService.leaveChannel(this.authService.readCurrentUser(), this.chatService.currentChannel, {user: logger.name + " hat den Kanal verlassen.", system: true, timestamp: Date.now()});
 
     await this.chatService.searchUsers(this.chatService.currentChannel)
-    if (this.chatService.pendingUsers.length < 1) {
-      await this.checkMeta({ name: "DALobby" });
-
-      this.chatService.destroy$.next();
-      this.chatService.destroy$.complete();
-      this.chatService.destroy$ = new Subject<void>();
-
-      this.chatService.currentChannelID = "DALobby";
-      this.chatService.setCurrentChat("DALobby", "", "", "");
-    }
+    if (this.chatService.pendingUsers.length < 1) { await this.leaveChannelAsLastMember() }
     this.chatService.pendingUsers = [];
 
-    setTimeout(()=> {
-      this.chatService.destroy$.next();
-      this.chatService.destroy$.complete();
-    },1000)
+    setTimeout(() => this.resetSubscriptions(), 500);
+  }
+
+  async leaveChannelAsLastMember(): Promise<void> {
+    await this.checkMeta({ name: "DALobby" });
+
+    this.chatService.destroy$.next();
+    this.chatService.destroy$.complete();
+
+    this.chatService.currentChannelID = "DALobby";
+    this.chatService.setCurrentChat("DALobby", "", "", "");
+  }
+
+  resetSubscriptions(): void {
+    this.chatService.destroy$.next();
+    this.chatService.destroy$.complete();
+    this.chatService.destroy$ = new Subject<void>();
   }
 
   async checkMembership(): Promise<boolean> {
