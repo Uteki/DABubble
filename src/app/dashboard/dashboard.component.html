@@ -26,6 +26,7 @@
     [selectedPartner]="selectedPartner"
     (partnerSelected)="onPartnerSelected($event)"
     (toggleRequest)="toggleDirect($event)"
+    (broadcast)="toggleBroadcast()"
     [class.is-hidden-final]="channelsHidden"
     [class.is-closing]="isClosing"
     [class.is-opening]="isOpening"
@@ -53,6 +54,8 @@
     [class.is-thread-hidden-final]="threadHidden && !isThreadClosing"
   >
   </app-thread>
-  <app-broadcast>
+  <app-broadcast
+    [class.is-hidden]="broadcast"
+  >
   </app-broadcast>
 </section>

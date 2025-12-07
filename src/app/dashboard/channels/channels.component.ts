@@ -28,6 +28,7 @@ import { IdleTrackerService } from '../../idle-tracker.service';
 export class ChannelsComponent implements OnInit {
   @Output() partnerSelected = new EventEmitter<User>();
   @Output() toggleRequest = new EventEmitter<boolean>();
+  @Output() broadcast = new EventEmitter<void>();
 
   @Input() users: any[] = [];
   @Input() selectedPartner: User | null = null;
@@ -142,8 +143,8 @@ export class ChannelsComponent implements OnInit {
     this.toggleRequest.emit(false);
   }
 
-  openToAll() {
-    // toggleToAllMsg()
+  openBroadcast() {
+    this.broadcast.emit();
   }
 
   toggleDirectMessages() {

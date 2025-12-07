@@ -30,6 +30,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   chat = false;
   thread = true;
   direct = true;
+  broadcast = true;
 
   selectedThreadId: string | null = null;
   selectedPartner: User | null = null;
@@ -53,14 +54,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.subs.add(
       this.userService.getUser().subscribe((data) => {
         this.userList = data;
-      })
-    );
-
-    this.subs.add(
-      this.chatService.currentChat$.subscribe((channelId) => {
-        if (channelId) {
-          this.openThreadPane();
-        }
       })
     );
   }
@@ -91,10 +84,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   toggleDirect($event: boolean) {
     this.chat = $event;
     this.thread = true;
+    this.broadcast = true;
     this.direct = !$event;
-    if ($event === false) {
-      this.openThreadPane();
-    }
   }
 
   toggleChannels() {
@@ -113,6 +104,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.isClosing = false;
       }, 420);
     }
+  }
+
+  toggleBroadcast() {
+    this.broadcast = false;
+
+    this.thread = true;
+    this.threadHidden = true;
+    this.isThreadOpening = false;
+    this.isThreadClosing = false;
+
+    this.direct = true;
+    this.chat = true;
+
+    this.isOpening = false;
+    this.isClosing = false;
   }
 
   private openThreadPane() {
