@@ -99,7 +99,7 @@
   </div>
 </header>
 
-<output>
+<output chat-scroll [messages]="messages">
   <figure>
     <div>
       <img (click)="openProfile()" [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'" [alt]="currentPartner?.name ?? 'Anon'" />

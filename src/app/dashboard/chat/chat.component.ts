@@ -35,6 +35,7 @@ import { AuthService } from '../../auth.service';
 import { User } from '../../core/interfaces/user';
 import { ProfileOverlayService } from '../../profile-overlay.service';
 import { ReactionsComponent } from './../../shared/reactions/reactions.component';
+import { AutoScrollDirective } from "../../auto-scroll.directive";
 
 @Component({
   selector: 'app-chat',
@@ -42,6 +43,7 @@ import { ReactionsComponent } from './../../shared/reactions/reactions.component
   imports: [
     FormsModule,
     NgClass,
+    AutoScrollDirective,
     StopPropagationDirective,
     NgForOf,
     NgIf,

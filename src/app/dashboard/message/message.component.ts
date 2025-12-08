@@ -9,6 +9,7 @@ import { ReactionsComponent } from './../../shared/reactions/reactions.component
 
 import { StopPropagationDirective } from "../../stop-propagation.directive";
 import { ProfileOverlayService } from "../../profile-overlay.service";
+import {AutoScrollDirective} from "../../auto-scroll.directive";
 
 
 @Component({
@@ -21,7 +22,8 @@ import { ProfileOverlayService } from "../../profile-overlay.service";
     NgIf,
     NgClass,
     ReactionsComponent,
-    StopPropagationDirective
+    StopPropagationDirective,
+    AutoScrollDirective
   ],
   templateUrl: './message.component.html',
   styleUrl: './message.component.scss'

@@ -604,7 +604,7 @@
   </div>
 </header>
 
-<output>
+<output chat-scroll [messages]="messages">
   <div *ngIf="messages.length > 0">
     <div
       *ngFor="let msg of messages; let i = index"

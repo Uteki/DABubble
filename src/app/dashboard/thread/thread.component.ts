@@ -11,6 +11,7 @@ import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { User } from '../../core/interfaces/user';
 import { AuthService } from '../../auth.service';
 import { ReactionsComponent } from './../../shared/reactions/reactions.component';
+import {AutoScrollDirective} from "../../auto-scroll.directive";
 
 type ReactionsMap = Record<string, string[]>;
 
@@ -26,7 +27,7 @@ interface Message {
 @Component({
   selector: 'app-thread',
   standalone: true,
-  imports: [FormsModule, DatePipe, NgForOf, NgIf, NgClass, ReactionsComponent],
+  imports: [FormsModule, DatePipe, NgForOf, NgIf, NgClass, ReactionsComponent, AutoScrollDirective],
   templateUrl: './thread.component.html',
   styleUrl: './thread.component.scss'
 })
@@ -126,7 +127,7 @@ export class ThreadComponent implements OnChanges {
     await this.chatService.sendThreadMessage(`${this.currentThread}`, `${this.messageId}`, {
       uid: logger.uid, text: this.messageText, user: logger.name, timestamp: Date.now(), reaction: {}
     });
-    await this.chatService.messageThreaded(`${this.currentThread}`, `${this.messageId}`, this.messages.length - 1, Date.now())
+    await this.chatService.messageThreaded(`${this.currentThread}`, `${this.messageId}`, this.messages.length, Date.now())
 
     this.messageText = '';
   }

@@ -13,7 +13,7 @@
   </svg>
 </header>
 
-<output>
+<output chat-scroll [messages]="messages">
   <div *ngIf="rootMessage" class="message" [ngClass]="{ 'own-message': rootMessage.uid === getUserId() }">
     <div class="message-container">
       <img [src]="getProfilePic(rootMessage.uid)" [alt]="rootMessage.user" />

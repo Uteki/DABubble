@@ -171,6 +171,12 @@
   .message-container > div {
     display: flex;
     flex-direction: column;
+
+    > div:first-child {
+      gap: 20px;
+      display: flex;
+      flex-direction: column;
+    }
   }
 
   app-reactions {
