@@ -229,3 +229,29 @@
     align-self: flex-end;
   }
 }
+
+.members-list {
+  position: relative;
+  display: flex;
+  justify-content: start !important;
+  border: 1px solid rgb(173, 176, 217) !important;
+  width: 100%;
+  padding: 10px;
+  height: 60px;
+  border-radius: 25px;
+  transition: all 3s;
+  overflow: auto;
+ > div {
+   display: flex;
+   align-items: center;
+   width: 100%;
+   gap: 5px;
+   > input {
+     position: relative;
+     width: 100%;
+     transition: all 0.3s
+     ease-in-out;
+     border: none;
+   }
+ }
+}

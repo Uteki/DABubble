@@ -2,11 +2,11 @@
 <div>
   <p>Neue Nachricht an</p>
 <!--    [(ngModel)]="multiChannelMessage"-->
-  <textarea
-    placeholder="Nachricht an mehrere Kanäle..."
-    rows="2"
-    class="multi-message-input"
-  ></textarea>
+  <div class="members-list no-scrollbar">
+    <div>
+      <input id="member-input" type="text" placeholder="Name eingeben" ng-reflect-model="" class="ng-pristine ng-valid ng-touched">
+    </div>
+  </div>
 </div>
 </header>
 
