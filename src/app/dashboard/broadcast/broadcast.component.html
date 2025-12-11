@@ -11,77 +11,26 @@
 </header>
 
 <output>
-  <div *ngIf="rootMessage" class="message" [ngClass]="{ 'own-message': rootMessage.uid === getUserId() }">
-    <div class="message-container">
-      <img [src]="getProfilePic(rootMessage.uid)" [alt]="rootMessage.user" />
-      <div>
-        <div>
-          <strong>{{ rootMessage.user }}</strong>
-          <span class="timestamp">{{ rootMessage.timestamp | date : "HH:mm" }} Uhr</span>
-        </div>
-
-        <div class="message-text">{{ rootMessage.text }}</div>
-
-        <app-reactions
-          [reactions]="rootMessage.reactions || {}"
-          [currentUserId]="meId"
-          [users]="users"
-          [compact]="false"
-          (toggled)="onReactionToggle(rootMessage, $event)"
-          (addedNew)="onReactionAdd(rootMessage, $event)"
-          [class.is-empty]="!(rootMessage.reactions && Object.keys(rootMessage.reactions).length > 0)">
-        </app-reactions>
+  <div class="middle-area">
+    <ng-container *ngIf="sendingState === 'idle'">
+      <div class="idle-text">
+        Wähle Empfänger aus und schreibe deine Nachricht.
       </div>
-    </div>
-  </div>
+    </ng-container>
 
-  <div *ngIf="messages.length > 0">
-    <div
-      *ngFor="let msg of messages; let i = index"
-      class="message"
-      [ngClass]="{ 'own-message': msg.uid === getUserId() }"
-    >
-      <div
-        class="message-event"
-        *ngIf="
-          i === 0 ||
-          (msg.timestamp | date : 'yyyy-MM-dd') !==
-            (messages[i - 1].timestamp | date : 'yyyy-MM-dd')
-        "
-      >
-        <div></div>
-        <span class="timestamp">
-          {{
-            (msg.timestamp | date : 'yyyy-MM-dd') === (today | date : 'yyyy-MM-dd')
-              ? 'Heute'
-              : (msg.timestamp | date : 'EEEE, d MMMM')
-          }}
-        </span>
-        <div></div>
+    <ng-container *ngIf="sendingState === 'loading'">
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Nachricht wird gesendet...</p>
       </div>
+    </ng-container>
 
-      <div class="message-container">
-        <img [src]="getProfilePic(msg.uid)" [alt]="msg.user" />
-        <div>
-          <div>
-            <strong>{{ msg.user }}</strong>
-            <span class="timestamp">{{ msg.timestamp | date : 'HH:mm' }} Uhr</span>
-          </div>
-
-          <div class="message-text">{{ msg.text }}</div>
-
-          <app-reactions
-            [reactions]="msg.reactions || {}"
-            [currentUserId]="meId"
-            [users]="users"
-            [compact]="false"
-            (toggled)="onReactionToggle(msg, $event)"
-            (addedNew)="onReactionAdd(msg, $event)"
-            [class.is-empty]="!(msg.reactions && Object.keys(msg.reactions).length > 0)">
-          </app-reactions>
-        </div>
+    <ng-container *ngIf="sendingState === 'success'">
+      <div class="success">
+        <div class="checkmark">✔</div>
+        <p>Nachricht erfolgreich gesendet!</p>
       </div>
-    </div>
+    </ng-container>
   </div>
 </output>
 
