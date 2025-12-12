@@ -43,6 +43,9 @@ export class BroadcastComponent implements OnChanges {
 
   rootMessage: Message | null = null;
 
+  sendingState: 'idle' | 'loading' | 'success' = 'idle';
+  recipients: any[] = [];
+
   messages: Message[] = [];
 
   showPicker = false;
@@ -131,6 +134,21 @@ export class BroadcastComponent implements OnChanges {
     this.messageText = '';
   }
 
+  async sendBroadcastMessage() {
+    if (!this.messageText.trim() || this.recipients.length === 0) return;
+
+    this.sendingState = 'loading';
+
+    // await this.chatService.sendToMany(this.recipients, this.messageText);
+
+    this.sendingState = 'success';
+    this.messageText = '';
+
+    setTimeout(() => {
+      this.sendingState = 'idle';
+    }, 2000);
+  }
+
   ngOnChanges() {
     if (this.messageId) {
       this.currentThread = this.chatService.currentChannel;
@@ -177,9 +195,5 @@ export class BroadcastComponent implements OnChanges {
 
   getUserId() {
     return this.authService.readCurrentUser();
-  }
-
-  closeThread() {
-    this.toggleRequest.emit(false);
   }
 }
