@@ -64,6 +64,11 @@ export class ChatService {
     return addDoc(messagesRef, message);
   }
 
+  sendBroadcastMessage(recipients: any, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
+    // if (recipients[test] = mail || person) {}
+    // if (recipients[test] = channel) {}
+  }
+
   async messageThreaded(channelId: string, threadId: string, amount: number, last: number ) {
     const messagesRef = doc(this.firestore, `channels/${channelId}/messages/${threadId}`);
     await setDoc(messagesRef, {threaded: {amount: amount, last: last}}, { merge: true });
