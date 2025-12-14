@@ -64,9 +64,26 @@ export class ChatService {
     return addDoc(messagesRef, message);
   }
 
-  sendBroadcastMessage(recipients: any, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
-    // if (recipients[test] = mail || person) {}
-    // if (recipients[test] = channel) {}
+  async sendBroadcastMessage(recipients: any, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
+    for (const r of recipients) {
+      switch (r.type) {
+        case 'channel':
+          await this.sendMessage(r.channelId, message);
+          break;
+
+        case 'user':
+          await this.sendWhisperMessage(r.partnerChat, message);
+          break;
+
+        case 'mail':
+          // await this.sendToMail(r.mail, message);
+          break;
+      }
+    }
+  }
+
+  private sendToMail(mail: string, message: any) {
+    console.log('Send mail to', mail, message);
   }
 
   async messageThreaded(channelId: string, threadId: string, amount: number, last: number ) {
