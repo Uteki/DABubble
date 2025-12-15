@@ -34,7 +34,7 @@
   </div>
 </output>
 
-<form aria-label="Nachricht senden" (submit)="sendMessage(); $event.preventDefault()">
+<form aria-label="Nachricht senden" (submit)="sendBroadcastMessage(); $event.preventDefault()">
   <button type="button" class="emoji-insert" (click)="showPicker = !showPicker">😊</button>
   <div class="picker" *ngIf="showPicker" (mouseleave)="showPicker = false">
     <button *ngFor="let e of pickerEmojis" (click)="insertEmojiIntoText(e); showPicker = false">{{ e }}</button>

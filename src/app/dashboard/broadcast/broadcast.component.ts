@@ -9,8 +9,9 @@ import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../chat.service';
 import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { User } from '../../core/interfaces/user';
-import { AuthService } from '../../auth.service';
+import { BroadcastRecipient } from "../../core/type/recipient";
 import { ReactionsComponent } from './../../shared/reactions/reactions.component';
+import { AuthService } from '../../auth.service';
 
 type ReactionsMap = Record<string, string[]>;
 
@@ -44,7 +45,7 @@ export class BroadcastComponent implements OnChanges {
   rootMessage: Message | null = null;
 
   sendingState: 'idle' | 'loading' | 'success' = 'idle';
-  recipients: any[] = [];
+  recipients: BroadcastRecipient[] = [];
 
   messages: Message[] = [];
 
@@ -122,31 +123,25 @@ export class BroadcastComponent implements OnChanges {
     this.onReactionToggle(msg, { emoji, add: true });
   }
 
-  async sendMessage() {
-    const logger: User = this.users.find(user => user.uid === this.authService.readCurrentUser());
-    if (!this.messageText.trim() || this.messageId === null) return;
-
-    await this.chatService.sendThreadMessage(`${this.currentThread}`, `${this.messageId}`, {
-      uid: logger.uid, text: this.messageText, user: logger.name, timestamp: Date.now(), reaction: {}
-    });
-    await this.chatService.messageThreaded(`${this.currentThread}`, `${this.messageId}`, this.messages.length - 1, Date.now())
-
-    this.messageText = '';
-  }
-
   async sendBroadcastMessage() {
-    if (!this.messageText.trim() || this.recipients.length === 0) return;
+    this.recipients = [
+      { type: 'channel', channelId: 'DALobby', name: 'DALobby' },
+      { type: 'user', partnerChat: 'PB1KgqARUrMiIHdLq3GI1Mip3un2_wXzxp0ORtVbWptur9onPxNz0Uen1', name: 'Denzel Leinad', mail: 'denzelleinad@gmail.com' },
+      // { type: 'mail', mail: 'test@example.com' }
+    ];
 
+    const logger: User = this.users.find(user => user.uid === this.authService.readCurrentUser());
+    if (!this.messageText.trim() || this.recipients.length === 0) return;
     this.sendingState = 'loading';
 
-    // await this.chatService.sendToMany(this.recipients, this.messageText);
+    await this.chatService.sendBroadcastMessage(this.recipients, {
+      uid: logger.uid, text: this.messageText, user: logger.name, timestamp: Date.now(), reaction: {}
+    });
 
     this.sendingState = 'success';
     this.messageText = '';
 
-    setTimeout(() => {
-      this.sendingState = 'idle';
-    }, 2000);
+    setTimeout(() => { this.sendingState = 'idle' }, 2000);
   }
 
   ngOnChanges() {
