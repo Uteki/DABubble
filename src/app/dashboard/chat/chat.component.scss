@@ -177,6 +177,7 @@
 
   > output {
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
     flex: 1;
   }
@@ -330,21 +331,33 @@
   display: flex;
   margin: 10px 0;
   gap: 20px;
+  
+  // Responsive adjustments for message containers
+  @media (max-width: 768px) {
+    padding: 0 10px 10px 0;
+    margin: 5px 0;
+    gap: 15px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 5px 5px 0;
+    margin: 5px 0;
+    gap: 10px;
+  }
 
   &:hover:has(.message-container) {
     background-color: $main-accent;
     .message-container {
       transform: translateY(-1px);
     }
-
-    > .comment-hover-overlay {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translate(0, 0);
+    > div {
+      > .comment-hover-overlay {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(0, 0);
+      }
     }
   }
-
-
 
   &:hover > .message-event {
     background-color: white !important;
@@ -364,7 +377,7 @@
       > div {
         gap: 20px;
         display: flex;
-    flex-direction: column;
+        flex-direction: column;
       }
     }
   }
@@ -412,13 +425,23 @@
     display: flex;
     gap: 20px;
     padding-top: 10px;
+    position: relative;
+    
+    // Ensure proper containment for absolutely positioned elements
+    @media (max-width: 768px) {
+      gap: 15px;
+      padding-top: 8px;
+    }
+    
+    @media (max-width: 480px) {
+      gap: 10px;
+      padding-top: 5px;
+    }
 
     > div {
       display: flex;
       flex-direction: column;
     }
-
-    
   }
 
   .message-text {
@@ -439,15 +462,44 @@
   }
 }
 
+.message-actions-container {
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  width: 160px;
+  height: 40px;
+  
 
+  @media (max-width: 768px) {
+    width: 140px;
+    height: 35px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 120px;
+    height: 30px;
+    top: 5%;
+    right: 5%;
+  }
+}
+
+.own-message .message-actions-container {
+  left: 10%;
+  right: auto;
+  
+  @media (max-width: 480px) {
+    left: 5%;
+  }
+}
 
 .comment-hover-overlay {
   position: absolute;
-  top: 10%;
-  left: 20%;
-  width: 180px;
+  top: 0;
+  right: 0;
+  width: 160px;
   height: 40px;
-  border-radius: 30px 30px 0 30px;
+
+  border-radius: 30px 30px 30px 0 !important;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -455,7 +507,7 @@
   padding: 0px 20px;
   background-color: white;
   border: 1px solid $main-accent;
-  
+
   opacity: 0;
   pointer-events: none;
   transform: translate(20px, 0);
@@ -478,7 +530,6 @@
     flex-shrink: 0;
 
     &:hover {
-    
       background-color: $main-accent;
     }
 
@@ -490,51 +541,54 @@
 }
 
 .own-message {
-  .comment-hover-overlay {
-    top: 15%;
-    left: 10%;
-   
-    border-radius: 30px 30px 30px 0;
+  > div {
+    .comment-hover-overlay {
+      width: 180px !important;
+      top: 10% !important;
+      left: 10% !important;
+
+      border-radius: 30px 30px 0 30px !important;
+    }
   }
 }
 
 .edit-message {
-  
   &:has(.message-container) {
     background-color: $main-accent;
     .message-container {
       transform: translateY(-1px);
     }
-
-    > .comment-hover-overlay {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translate(0, 0);
+    > div {
+      > .comment-hover-overlay {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(0, 0);
+      }
     }
   }
-
-
 }
 
 .not-edit-message {
-    &:has(.message-event:hover) {
+  &:has(.message-event:hover) {
     background-color: white !important;
     .message-container {
       transform: translateY(0px) !important;
     }
 
-    > .comment-hover-overlay {
-      opacity: 0 !important;
-      pointer-events: none !important;
-      transform: translate(20px, 0) !important;
+    > div {
+      > .comment-hover-overlay {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: translate(20px, 0) !important;
+      }
     }
   }
 }
 
 .edit-message-menu {
   position: absolute;
-  top: 25%;
-  left: 35%;
+  top: 20px;  
+  left: 115%;
   background-color: white;
   border: 1px solid $main-accent;
   border-radius: 0 30px 30px 30px;
@@ -542,6 +596,16 @@
   z-index: 1000;
   min-width: 200px;
   
+  @media (max-width: 768px) {
+    top: 40px;
+    min-width: 180px;
+  }
+  
+  @media (max-width: 480px) {
+    top: 35px;
+    min-width: 160px;
+  }
+
   opacity: 0;
   pointer-events: none;
   transform: translate(20px, 0);
@@ -555,7 +619,7 @@
 
   > div {
     margin: 5px 0;
-    padding: 10px 25px;
+    padding: 15px 20px;
     cursor: pointer;
     font-family: "Nunito";
     font-size: 16px;
@@ -615,7 +679,7 @@
       padding: 0;
       transition: transform 0.2s;
       margin-right: auto;
-       width: 15px;
+      width: 15px;
       &:hover {
         transform: scale(1.15);
       }
@@ -1551,4 +1615,24 @@
 
 .edit-mode-bubble {
   background-color: white;
+}
+
+.own-message {
+  > div {
+    .message-actions-container {
+      left: 10%;
+      right: auto;
+      
+      .comment-hover-overlay {
+        width: 180px !important;
+        border-radius: 30px 30px 0 30px !important;
+      }
+      
+      .edit-message-menu {
+        left: 0;
+        right: auto;
+        border-radius: 30px 0 30px 30px !important;
+      }
+    }
+  }
 }
