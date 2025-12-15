@@ -31,7 +31,7 @@ interface Message {
   templateUrl: './broadcast.component.html',
   styleUrl: './broadcast.component.scss'
 })
-export class BroadcastComponent implements OnChanges {
+export class BroadcastComponent {
   @Output() toggleRequest = new EventEmitter<boolean>();
 
   @Input() messageId!: string | null;
@@ -79,50 +79,6 @@ export class BroadcastComponent implements OnChanges {
     return out;
   }
 
-  private isRoot(msg: Message): boolean {
-    return !!this.messageId && msg.id === this.messageId;
-  }
-
-  onReactionToggle(msg: Message, ev: { emoji: string; add: boolean }) {
-    if (!this.messageId) return;
-
-    msg.reactions = msg.reactions ?? {};
-    const list = msg.reactions[ev.emoji] ?? (msg.reactions[ev.emoji] = []);
-    const i = list.indexOf(this.meId);
-    if (ev.add && i === -1) list.push(this.meId);
-    if (!ev.add && i !== -1) list.splice(i, 1);
-    if (list.length === 0) delete msg.reactions[ev.emoji];
-
-    if (this.isRoot(msg)) {
-      this.chatService
-        .reactChannelMessage(
-          this.chatService.currentChannel,
-          this.messageId!,
-          ev.emoji,
-          ev.add,
-          this.meId
-        )
-        .catch(console.error);
-    } else {
-      if (!msg.id) return;
-      this.chatService
-        .reactThreadMessage(
-          this.chatService.currentChannel,
-          this.messageId!,
-          msg.id,
-          ev.emoji,
-          ev.add,
-          this.meId
-        )
-        .catch(console.error);
-    }
-  }
-
-  onReactionAdd(msg: Message, emoji: string) {
-    if (!emoji) return;
-    this.onReactionToggle(msg, { emoji, add: true });
-  }
-
   async sendBroadcastMessage() {
     this.recipients = [
       { type: 'channel', channelId: 'DALobby', name: 'DALobby' },
@@ -142,53 +98,5 @@ export class BroadcastComponent implements OnChanges {
     this.messageText = '';
 
     setTimeout(() => { this.sendingState = 'idle' }, 2000);
-  }
-
-  ngOnChanges() {
-    if (this.messageId) {
-      this.currentThread = this.chatService.currentChannel;
-      this.stableThread = this.chatService.currentChat;
-
-      this.chatService
-        .getChannelMessage(this.currentThread, this.messageId)
-        .subscribe((root: Message) => {
-          this.rootMessage = root
-            ? { ...root, reactions: this.stripEmptyReactions(root.reactions) }
-            : null;
-        });
-
-      this.chatService
-        .getThreadMessage(`${this.currentThread}`, this.messageId)
-        .subscribe((msgs: Message[]) => {
-          const cleaned: Message[] = (msgs || [])
-            .map((m: Message) => ({
-              ...m,
-              reactions: this.stripEmptyReactions(m.reactions),
-            }))
-            .sort((a: Message, b: Message) => a.timestamp - b.timestamp);
-
-          this.messages = this.rootMessage
-            ? cleaned.filter(
-              (m: Message) =>
-                !(
-                  m.uid === this.rootMessage!.uid &&
-                  m.text === this.rootMessage!.text &&
-                  m.timestamp === this.rootMessage!.timestamp
-                )
-            )
-            : cleaned;
-        });
-    }
-  }
-
-  getProfilePic(uid: string) {
-    return (
-      this.users.find((user: any) => user.uid === uid)?.avatar ||
-      'assets/avatars/profile.png'
-    );
-  }
-
-  getUserId() {
-    return this.authService.readCurrentUser();
   }
 }
