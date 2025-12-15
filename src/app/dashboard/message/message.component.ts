@@ -6,6 +6,8 @@ import { ChatService } from "../../chat.service";
 import { User } from "../../core/interfaces/user";
 import { Subscription } from 'rxjs';
 import { ReactionsComponent } from './../../shared/reactions/reactions.component';
+import { Firestore } from '@angular/fire/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 
 import { StopPropagationDirective } from "../../stop-propagation.directive";
 import { ProfileOverlayService } from "../../profile-overlay.service";
@@ -48,11 +50,16 @@ export class MessageComponent implements OnChanges {
   currentPartner: any;
   showPicker = false;
 
+  editMessageMenuOpen: string | null = null;
+  editingMessageId: string | null = null;
+  editingMessageText: string = '';
+  editMessageIsOpen: boolean = false;
+
   public Object = Object;
 
   private msgSub?: Subscription;
 
-  constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private authService: AuthService, private profileOverlayService: ProfileOverlayService) {}
+  constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private authService: AuthService, private profileOverlayService: ProfileOverlayService, private firestore: Firestore) {}
   //TODO: Editable messages
 
   ngOnChanges() {
@@ -236,5 +243,67 @@ export class MessageComponent implements OnChanges {
       messageElement.classList.remove('hovered-message');
       messageElement.classList.remove('hovered-own-message');
     }
+  }
+
+  toggleEditMessageMenu(messageId: string, event: Event) {
+    event.stopPropagation();
+    if (this.editMessageMenuOpen === messageId) {
+      this.editMessageMenuOpen = null;
+    } else {
+      this.editMessageMenuOpen = messageId;
+    }
+  }
+
+  editMessage(messageId: string) {
+    const message = this.messages.find((m) => m.id === messageId);
+
+    // Nur eigene Nachrichten können bearbeitet werden
+    if (!message || message.uid !== this.getUserId()) {
+      return;
+    }
+
+    this.editingMessageId = messageId;
+    this.editingMessageText = message.text;
+    this.editMessageMenuOpen = null;
+    this.editMessageIsOpen = true;
+
+    // Füge die Hover-Klasse hinzu (gleiches Element wie bei hoverMessage)
+    const messageElement = document.getElementById('message-text-' + messageId);
+    if (messageElement) {
+      messageElement.classList.add('hovered-own-message');
+    }
+  }
+
+  cancelEdit() {
+    // Entferne die Hover-Klasse
+    if (this.editingMessageId) {
+      const messageElement = document.getElementById(
+        'message-text-' + this.editingMessageId
+      );
+      if (messageElement) {
+        messageElement.classList.remove('hovered-own-message');
+      }
+    }
+
+    this.editingMessageId = null;
+    this.editingMessageText = '';
+    this.editMessageIsOpen = false;
+  }
+
+  async saveEditedMessage(messageId: string) {
+    if (!this.editingMessageText.trim()) return;
+
+    // Firestore-Update-Logik für Whisper-Nachrichten
+    const messageRef = doc(
+      this.firestore,
+      `whispers/${this.currentPartnerChat}/messages/${messageId}`
+    );
+
+    await updateDoc(messageRef, {
+      text: this.editingMessageText.trim(),
+      edited: true,
+    });
+
+    this.cancelEdit();
   }
 }

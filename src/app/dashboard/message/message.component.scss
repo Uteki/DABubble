@@ -176,6 +176,7 @@
 
   > output {
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
     flex: 1;
 
@@ -328,17 +329,38 @@
 }
 
 .message {
+  position: relative;
   align-items: flex-start;
   flex-direction: column;
   padding: 0 0px 10px 0;
   display: flex;
   margin: 10px 0;
   gap: 20px;
+  
+  // Responsive adjustments for message containers
+  @media (max-width: 768px) {
+    padding: 0 10px 10px 0;
+    margin: 5px 0;
+    gap: 15px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 5px 5px 0;
+    margin: 5px 0;
+    gap: 10px;
+  }
 
-  &:hover {
+  &:hover:has(.message-container) {
     background-color: $main-accent;
     .message-container {
       transform: translateY(-1px);
+    }
+    > div {
+      > .comment-hover-overlay {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(0, 0);
+      }
     }
   }
 
@@ -361,12 +383,13 @@
     margin-top: 6px;
   }
 
-> div {
+  > div {
     padding: 0 20px;
     > div {
       > div {
         gap: 20px;
         display: flex;
+        flex-direction: column;
       }
     }
   }
@@ -396,6 +419,18 @@
     display: flex;
     gap: 20px;
     padding-top: 10px;
+    position: relative;
+    
+    // Ensure proper containment for absolutely positioned elements
+    @media (max-width: 768px) {
+      gap: 15px;
+      padding-top: 8px;
+    }
+    
+    @media (max-width: 480px) {
+      gap: 10px;
+      padding-top: 5px;
+    }
 
     > div {
       display: flex;
@@ -418,6 +453,236 @@
   }
 }
 
+.no-message-event {
+  top: -12% !important;
+}
+
+.message-edit-bubble {
+  width: 500px;
+  height: 100%;
+  padding: 20px;
+  background-color: $main-accent;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+  border-bottom-left-radius: 30px;
+  margin-top: 8px;
+
+  .message-edit-textarea {
+    width: 100%;
+    padding: 0;
+    font-family: "Nunito";
+    font-size: 18px;
+    border: none;
+    resize: none;
+    outline: none;
+    background-color: transparent;
+    min-height: 60px;
+    margin-bottom: 15px;
+    color: #000;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .message-edit-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px;
+
+    .btn-emoji {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.2s;
+      margin-right: auto;
+      width: 15px;
+      &:hover {
+        transform: scale(1.15);
+      }
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+
+      button {
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-family: "Nunito";
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        border: none;
+        white-space: nowrap;
+
+        &.btn-secondary {
+          background-color: white;
+          color: $purple-font;
+          border: 1px solid $purple-font;
+
+          &:hover {
+            background-color: #f0f0ff;
+          }
+        }
+
+        &.btn-primary {
+          background-color: $purple-font;
+          color: white;
+
+          &:hover {
+            opacity: 0.9;
+          }
+        }
+      }
+    }
+  }
+}
+
+.message-actions-container {
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  width: 160px;
+  height: 40px;
+  
+  @media (max-width: 768px) {
+    width: 140px;
+    height: 35px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 120px;
+    height: 30px;
+    top: 5%;
+    right: 5%;
+  }
+}
+
+.own-message .message-actions-container {
+  left: 10%;
+  right: auto;
+  
+  .comment-hover-overlay {
+    width: 180px !important;
+    border-radius: 30px 30px 0 30px !important;
+  }
+  
+  .edit-message-menu {
+
+    right: auto;
+  
+  }
+  
+  @media (max-width: 480px) {
+    left: 5%;
+  }
+}
+
+.comment-hover-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 160px;
+  height: 40px;
+
+  border-radius: 30px 30px 30px 0 !important;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  padding: 0px 20px;
+  background-color: white;
+  border: 1px solid $main-accent;
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(20px, 0);
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  > div {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: white;
+    flex-shrink: 0;
+
+    &:hover {
+      background-color: $main-accent;
+    }
+
+    > img {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.edit-message-menu {
+  position: absolute;
+  top: 20px;  
+  left: 95%;
+  background-color: white;
+  border: 1px solid $main-accent;
+  border-radius: 0 30px 30px 30px;
+  box-shadow: 0px 6px 14px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  min-width: 200px;
+  
+  @media (max-width: 768px) {
+    top: 40px;
+    min-width: 180px;
+  }
+  
+  @media (max-width: 480px) {
+    top: 35px;
+    min-width: 160px;
+  }
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(20px, 0);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+
+  &.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(0, 0);
+  }
+
+  > div {
+    margin: 5px 0;
+    padding: 15px 20px;
+    cursor: pointer;
+    font-family: "Nunito";
+    font-size: 16px;
+    font-weight: 400;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background-color: $main-accent;
+      color: $purple-font;
+    }
+
+    &:first-child {
+      border-radius: 30px 30px 30px 30px;
+    }
+  }
+}
+
 .own-message {
   > .message-container {
     align-self: flex-end;
@@ -428,6 +693,52 @@
       color: white;
     }
   }
+
+  app-reactions {
+    margin-left: auto;
+    align-self: flex-end;
+  }
+}
+
+.edit-message {
+  &:has(.message-container) {
+    background-color: $main-accent;
+    .message-container {
+      transform: translateY(-1px);
+    }
+    > div {
+      > .comment-hover-overlay {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(0, 0);
+      }
+    }
+  }
+}
+
+.not-edit-message {
+  &:has(.message-event:hover) {
+    background-color: white !important;
+    .message-container {
+      transform: translateY(0px) !important;
+    }
+
+    > div {
+      > .comment-hover-overlay {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transform: translate(20px, 0) !important;
+      }
+    }
+  }
+}
+
+.edit-mode-width {
+  width: 100%;
+}
+
+.edit-mode-bubble {
+  background-color: white;
 }
 
 .no-display {
