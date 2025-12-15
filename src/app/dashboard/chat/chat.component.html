@@ -757,7 +757,7 @@
         </div>
       </div>
       }
-      <div class="message-actions-container">
+      <div class="message-actions-container" [ngClass]="{ 'no-message-event': i !== 0 && (msg.timestamp | date : 'yyyy-MM-dd') === (messages[i - 1].timestamp | date : 'yyyy-MM-dd') }">
         <div
           class="comment-hover-overlay"
           [id]="'comment-hover-' + msg.id"

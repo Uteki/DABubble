@@ -123,9 +123,13 @@
     <div
       *ngFor="let msg of messages; let i = index"
       class="message"
-      [ngClass]="{ 'own-message': msg.uid === getUserId() }"
+      [ngClass]="{
+        'own-message': msg.uid === getUserId(),
+        'edit-message': editMessageIsOpen && editingMessageId === msg.id,
+        'not-edit-message': !editMessageIsOpen
+      }"
       (mouseover)="hoverMessage(msg.id, msg.uid, $event)"
-      (mouseleave)="leaveMessage(msg.id)"
+      (mouseleave)="leaveMessage(msg.id); editMessageMenuOpen = null"
     >
       <div
         class="message-event"
@@ -147,17 +151,57 @@
         <div></div>
       </div>
 
-      <div class="message-container">
+      <div class="message-container" [ngClass]="{ 'edit-mode-width': editMessageIsOpen }">
         <img src="{{ getProfilePic(msg.uid) }}" alt="{{ msg.user }}" />
-        <div>
+        <div [ngClass]="{ 'edit-mode-width': editMessageIsOpen }">
           <div>
             <strong>{{ msg.user }}</strong>
-            <span class="timestamp"
+            <span
+              class="timestamp"
+              [ngClass]="{
+                'no-display': editMessageIsOpen && editingMessageId === msg.id
+              }"
             >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
             >
           </div>
-          <div    id="message-text-{{ msg.id }}" class="message-text">{{ msg.text }}</div>
-             <app-reactions
+
+          @if (editingMessageId === msg.id) {
+          <!-- Edit Mode -->
+          <div
+            class="message-edit-bubble"
+            [ngClass]="{
+              'edit-mode-bubble':
+                editMessageIsOpen && editingMessageId === msg.id
+            }"
+          >
+            <textarea
+              [(ngModel)]="editingMessageText"
+              rows="3"
+              class="message-edit-textarea"
+            ></textarea>
+            <div class="message-edit-actions">
+              <div class="button-group">
+                <button
+                  type="button"
+                  (click)="cancelEdit()"
+                  class="btn-secondary"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  type="button"
+                  (click)="saveEditedMessage(msg.id)"
+                  class="btn-primary"
+                >
+                  Speichern
+                </button>
+              </div>
+            </div>
+          </div>
+          } @else {
+          <!-- Normal Display Mode -->
+          <div id="message-text-{{ msg.id }}" class="message-text">{{ msg.text }}</div>
+          <app-reactions
             [reactions]="msg.reactions || {}"
             [currentUserId]="meId"
             [users]="users"
@@ -169,6 +213,37 @@
             "
           >
           </app-reactions>
+          }
+        </div>
+      </div>
+      <div class="message-actions-container" [ngClass]="{ 'no-message-event': i !== 0 && (msg.timestamp | date : 'yyyy-MM-dd') === (messages[i - 1].timestamp | date : 'yyyy-MM-dd') }">
+        <div
+          class="comment-hover-overlay"
+          [id]="'comment-hover-' + msg.id"
+          [ngClass]="{
+            'no-display': editMessageIsOpen && editingMessageId === msg.id
+          }"
+        >
+        
+          <div><img src="/assets/img/checkMark.svg" alt="" /></div>
+          <div><img src="/assets/img/capa.svg" alt="" /></div>
+          <div>
+            <img src="/assets/icons/reactions/addReaction.png" alt="" />
+          </div>
+          <div><img src="/assets/icons/svgs/comment.svg" alt="" /></div>
+          <div
+          [ngClass]="{'no-display': msg.uid !== getUserId()}"
+            class="more-vert-button"
+            (click)="toggleEditMessageMenu(msg.id, $event)"
+          >
+            <img src="/assets/icons/svgs/moreVert.svg" alt="" />
+          </div>
+        </div>
+        <div
+          class="edit-message-menu"
+          [class.visible]="editMessageMenuOpen === msg.id"
+        >
+          <div (click)="editMessage(msg.id)">Nachricht bearbeiten</div>
         </div>
       </div>
     </div>
