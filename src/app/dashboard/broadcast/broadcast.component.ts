@@ -31,11 +31,13 @@ interface Message {
   templateUrl: './broadcast.component.html',
   styleUrl: './broadcast.component.scss',
 })
-export class BroadcastComponent implements OnInit{
+export class BroadcastComponent {
   @Output() toggleRequest = new EventEmitter<boolean>();
 
   @Input() messageId!: string | null;
+
   @Input() users: any[] = [];
+  @Input() channels: any[] = [];
 
   today = new Date();
   messageText: string = '';
@@ -46,7 +48,6 @@ export class BroadcastComponent implements OnInit{
   recipients: BroadcastRecipient[] = [];
 
   messages: Message[] = [];
-  channels: any[] = [];
 
   showPicker = false;
   pickerEmojis = ['😀', '👍', '🎉', '❤️', '😊', '🙏', '🚀', '🤔', '😅', '🔥'];
@@ -60,21 +61,6 @@ export class BroadcastComponent implements OnInit{
     private authService: AuthService
   ) {}
 
-  ngOnInit() {
-    this.chatService.getChannels(this.authService.readCurrentUser()).subscribe((data) => {
-      const uid = this.authService.readCurrentUser();
-      this.channels = data
-        .filter(channel =>
-          channel.users?.includes(uid) || channel.id === 'DALobby'
-        )
-        .sort((a, b) =>
-          a.id === 'DALobby' ? -1 :
-            b.id === 'DALobby' ? 1 :
-              0
-        );
-    });
-  }
-
   get meId() {
     return this.authService.readCurrentUser();
   }
@@ -85,9 +71,6 @@ export class BroadcastComponent implements OnInit{
 
 
   async sendBroadcastMessage() {
-    console.log(this.channels);
-    return
-
     this.recipients = [
       { type: 'channel', channelId: 'DALobby', name: 'DALobby' },
       {

@@ -23,6 +23,7 @@
   </button>
   <app-channels
     [users]="userList"
+    [channels]="channelList"
     [selectedPartner]="selectedPartner"
     (partnerSelected)="onPartnerSelected($event)"
     (toggleRequest)="toggleDirect($event)"
@@ -56,6 +57,7 @@
   </app-thread>
   <app-broadcast
     [users]="userList"
+    [channels]="channelList"
     [class.is-hidden]="broadcast"
   >
   </app-broadcast>

@@ -8,6 +8,7 @@ import { ChatComponent } from './chat/chat.component';
 import { UserService } from '../user.service';
 import { User } from '../core/interfaces/user';
 import { ChatService } from '../chat.service';
+import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -26,6 +27,7 @@ import { Subscription } from 'rxjs';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   userList: any[] = [];
+  channelList: any[] = [];
 
   chat = false;
   thread = true;
@@ -47,7 +49,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private userService: UserService,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -56,6 +59,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.userList = data;
       })
     );
+
+    this.chatService.getChannels(this.authService.readCurrentUser()).subscribe((data) => {
+      const uid = this.authService.readCurrentUser();
+      this.channelList = data
+        .filter(channel => channel.users?.includes(uid) || channel.id === 'DALobby')
+        .sort((a, b) => a.id === 'DALobby' ? -1 : b.id === 'DALobby' ? 1 : 0);
+    });
   }
 
   ngOnDestroy(): void {
