@@ -2,7 +2,7 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
+  OnChanges, OnInit,
   Output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -31,15 +31,13 @@ interface Message {
   templateUrl: './broadcast.component.html',
   styleUrl: './broadcast.component.scss'
 })
-export class BroadcastComponent {
+export class BroadcastComponent implements OnInit{
   @Output() toggleRequest = new EventEmitter<boolean>();
 
   @Input() messageId!: string | null;
   @Input() users: any[] = [];
 
   today = new Date();
-  currentThread: string = '';
-  stableThread: string = '';
   messageText: string = '';
 
   rootMessage: Message | null = null;
@@ -48,6 +46,7 @@ export class BroadcastComponent {
   recipients: BroadcastRecipient[] = [];
 
   messages: Message[] = [];
+  channels: any[] = [];
 
   showPicker = false;
   pickerEmojis = ['😀', '👍', '🎉', '❤️', '😊', '🙏', '🚀', '🤔', '😅', '🔥'];
@@ -59,6 +58,21 @@ export class BroadcastComponent {
     private authService: AuthService
   ) {}
 
+  ngOnInit() {
+    this.chatService.getChannels(this.authService.readCurrentUser()).subscribe((data) => {
+      const uid = this.authService.readCurrentUser();
+      this.channels = data
+        .filter(channel =>
+          channel.users?.includes(uid) || channel.id === 'DALobby'
+        )
+        .sort((a, b) =>
+          a.id === 'DALobby' ? -1 :
+            b.id === 'DALobby' ? 1 :
+              0
+        );
+    });
+  }
+
   get meId() {
     return this.authService.readCurrentUser();
   }
@@ -67,19 +81,11 @@ export class BroadcastComponent {
     this.messageText = (this.messageText || '') + e;
   }
 
-  private stripEmptyReactions(
-    reactions: ReactionsMap | undefined
-  ): ReactionsMap {
-    const src = reactions || {};
-    const out: ReactionsMap = {};
-    for (const k of Object.keys(src)) {
-      const arr = src[k];
-      if (Array.isArray(arr) && arr.length > 0) out[k] = arr;
-    }
-    return out;
-  }
 
   async sendBroadcastMessage() {
+    console.log(this.channels);
+    return
+
     this.recipients = [
       { type: 'channel', channelId: 'DALobby', name: 'DALobby' },
       { type: 'user', partnerChat: 'PB1KgqARUrMiIHdLq3GI1Mip3un2_wXzxp0ORtVbWptur9onPxNz0Uen1', name: 'Denzel Leinad', mail: 'denzelleinad@gmail.com' },
