@@ -9,10 +9,9 @@
   > header {
     border-top-left-radius: 30px;
     border-top-right-radius: 30px;
-    display: flex;
+
     padding: 32px 40px;
-    align-items: center;
-    justify-content: space-between;
+
     box-shadow: 0 2px 10px 0 #00000014;
 
     > h2 {
@@ -252,6 +251,46 @@
      transition: all 0.3s
      ease-in-out;
      border: none;
+      &::placeholder {
+      font-weight: 400;
+      border: none;
+      color: var($text-gray);
+    }
+    &:focus {
+      outline: none;
+    }
    }
  }
 }
+
+.broadcast-wrapper {
+  position: relative;
+
+    >div:nth-child(3) {
+    position: absolute;
+    top: 62px;
+    left: 10px;
+    width: 300px;
+    height: 400px;
+    border: 1px solid $light-purple;
+    border-radius: 0 30px 30px 30px;
+    background-color: white;
+    z-index: 200;
+  }
+
+  >div:last-child {
+    position: absolute;
+    top: 62px;
+    left: 10px;
+    width: 300px;
+    height: 200px;
+    border: 1px solid $light-purple;
+    border-radius: 0 30px 30px 30px;
+    background-color: white;
+    z-index: 200;
+  } 
+}
+
+.no-display {
+  display: none;
+} 
