@@ -9,8 +9,4 @@ export type BroadcastRecipient =
   partnerChat: string;
   name: string;
   mail?: string;
-}
-  | {
-  type: 'mail';
-  mail: string;
 };

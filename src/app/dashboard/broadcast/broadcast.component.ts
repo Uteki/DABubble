@@ -170,16 +170,22 @@ export class BroadcastComponent {
   }
 
    searchBar(value: string) {
+    console.log(value);
     const searchResultsContacts = document.getElementById(
       'search-broadcast-contacts'
     );
     const searchResultsChannels = document.getElementById(
       'search-broadcast-channels'
     );
-    if (value === '@') {
-      searchResultsContacts?.classList.remove('no-display');
-    } else if (value === '#') {
-      searchResultsChannels?.classList.remove('no-display');
-    }
+     if (value && (value.startsWith('@') || /^[a-zA-Z]/.test(value))) {
+       searchResultsContacts?.classList.remove('no-display');
+     } else {
+       searchResultsContacts?.classList.add('no-display');
+     }
+     if (value && value.startsWith('#')) {
+       searchResultsChannels?.classList.remove('no-display');
+     } else {
+       searchResultsChannels?.classList.add('no-display');
+     }
   }
 }
