@@ -65,36 +65,42 @@ export class BroadcastComponent {
     return this.authService.readCurrentUser();
   }
 
+  get filteredUsers() {
+    const usedPartnerChats = new Set(
+      this.recipients
+        .filter(this.isUserRecipient)
+        .map(r => r.partnerChat)
+    );
+
+    return this.users.filter(user => {
+      const partnerChat = this.buildPartnerChat(user.uid);
+      return !usedPartnerChats.has(partnerChat);
+    });
+  }
+
+  get filteredChannels() {
+    const usedChannelIds = new Set(
+      this.recipients
+        .filter(this.isChannelRecipient)
+        .map(r => r.channelId)
+    );
+
+    return this.channels.filter(
+      channel => !usedChannelIds.has(channel.id)
+    );
+  }
+
   insertEmojiIntoText(e: string) {
     this.messageText = (this.messageText || '') + e;
   }
 
-
   async sendBroadcastMessage() {
-    this.recipients = [
-      { type: 'channel', channelId: 'DALobby', name: 'DALobby' },
-      {
-        type: 'user',
-        partnerChat:
-          'PB1KgqARUrMiIHdLq3GI1Mip3un2_wXzxp0ORtVbWptur9onPxNz0Uen1',
-        name: 'Denzel Leinad',
-        mail: 'denzelleinad@gmail.com',
-      },
-      // { type: 'mail', mail: 'test@example.com' }
-    ];
-
-    const logger: User = this.users.find(
-      (user) => user.uid === this.authService.readCurrentUser()
-    );
+    const logger: User = this.users.find((user) => user.uid === this.authService.readCurrentUser());
     if (!this.messageText.trim() || this.recipients.length === 0) return;
     this.sendingState = 'loading';
 
     await this.chatService.sendBroadcastMessage(this.recipients, {
-      uid: logger.uid,
-      text: this.messageText,
-      user: logger.name,
-      timestamp: Date.now(),
-      reaction: {},
+      uid: logger.uid, text: this.messageText, user: logger.name, timestamp: Date.now(), reaction: {},
     });
 
     this.sendingState = 'success';
@@ -103,6 +109,46 @@ export class BroadcastComponent {
     setTimeout(() => {
       this.sendingState = 'idle';
     }, 2000);
+  }
+
+  private buildPartnerChat(uid: string): string {
+    return [uid, this.authService.readCurrentUser()].sort().join('_');
+  }
+
+  addRecipient(userid: string, name: string, mail: string) {
+    const partnerChat = this.buildPartnerChat(userid);
+
+    if (
+      this.recipients.some(
+        r => r.type === 'user' && r.partnerChat === partnerChat
+      )
+    ) return;
+
+    this.recipients.push({
+      type: 'user', partnerChat,
+      name: name, mail: mail
+    });
+  }
+
+  addChannelRecipient(channelId: string, name: string) {
+    if (
+      this.recipients.some(
+        r => r.type === 'channel' && r.channelId === channelId
+      )
+    ) return;
+
+    this.recipients.push({
+      type: 'channel',
+      channelId, name
+    });
+  }
+
+  isUserRecipient(r: BroadcastRecipient): r is Extract<BroadcastRecipient, { type: 'user' }> {
+    return r.type === 'user';
+  }
+
+  isChannelRecipient(r: BroadcastRecipient): r is Extract<BroadcastRecipient, { type: 'channel' }> {
+    return r.type === 'channel';
   }
 
   onInputChange(value: string) {
