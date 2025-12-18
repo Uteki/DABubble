@@ -2,7 +2,7 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
+  OnChanges, OnInit,
   Output,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -35,11 +35,11 @@ export class BroadcastComponent {
   @Output() toggleRequest = new EventEmitter<boolean>();
 
   @Input() messageId!: string | null;
+
   @Input() users: any[] = [];
+  @Input() channels: any[] = [];
 
   today = new Date();
-  currentThread: string = '';
-  stableThread: string = '';
   messageText: string = '';
 
   rootMessage: Message | null = null;
@@ -69,17 +69,6 @@ export class BroadcastComponent {
     this.messageText = (this.messageText || '') + e;
   }
 
-  private stripEmptyReactions(
-    reactions: ReactionsMap | undefined
-  ): ReactionsMap {
-    const src = reactions || {};
-    const out: ReactionsMap = {};
-    for (const k of Object.keys(src)) {
-      const arr = src[k];
-      if (Array.isArray(arr) && arr.length > 0) out[k] = arr;
-    }
-    return out;
-  }
 
   async sendBroadcastMessage() {
     this.recipients = [

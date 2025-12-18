@@ -31,6 +31,8 @@ export class ChannelsComponent implements OnInit {
   @Output() broadcast = new EventEmitter<void>();
 
   @Input() users: any[] = [];
+  @Input() channels: any[] = [];
+
   @Input() selectedPartner: User | null = null;
 
   @ViewChild('inputEl')
@@ -40,7 +42,6 @@ export class ChannelsComponent implements OnInit {
   foundIndexes: number[] = [];
   channelUsers: any[] = [];
   userAtIndex: any = {};
-  channels: any[] = [];
   inputValue: string = '';
 
   isUserAbsent: boolean = false;
@@ -66,20 +67,6 @@ export class ChannelsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.chatService.getChannels(this.authService.readCurrentUser()).subscribe((data) => {
-      const uid = this.authService.readCurrentUser();
-      this.channels = data
-        .filter(channel =>
-          channel.users?.includes(uid) || channel.id === 'DALobby'
-        )
-        .sort((a, b) =>
-          a.id === 'DALobby' ? -1 :
-            b.id === 'DALobby' ? 1 :
-              0
-        );
-    });
-
-
     this.trackIdle();
   }
 
