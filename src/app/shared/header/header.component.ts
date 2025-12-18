@@ -6,11 +6,12 @@ import { UserService } from '../../user.service';
 import { AuthService } from '../../auth.service';
 import { IdleTrackerService } from '../../idle-tracker.service';
 import { ProfileOverlayService } from '../../profile-overlay.service';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, NgClass],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
@@ -18,6 +19,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   username: string = 'Frederik Beck';
   useremail: string = ' fred.back@email.com ';
   userAvatar: string = '';
+  toggleDropdownMenu: boolean = false;
+  toggleProfileMenu: boolean = false;
   userStatus: boolean = false;
   edit: boolean = false;
   sessionData = sessionStorage.getItem('sessionData');
@@ -56,7 +59,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.openProfileMenu();
     });
 
-    // this.trackIdle();
   }
 
   ngOnDestroy(): void {
@@ -150,9 +152,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   toggleDropdown() {
-    const dropdown = document.getElementById('dropdownMenu');
-    if (dropdown) {
-      dropdown.classList.toggle('no-display');
+    if (this.toggleDropdownMenu) {
+      const dropdown = document.querySelector('.dropdown-item-mobile');
+      if (dropdown) {
+        dropdown.classList.add('no-display');
+        setTimeout(() => {
+          this.toggleDropdownMenu = false;
+        }, 200); 
+      }
+    } else {
+
+      this.toggleDropdownMenu = true;
+      setTimeout(() => {
+        const dropdown = document.querySelector('.dropdown-item-mobile');
+        if (dropdown) {
+          dropdown.classList.remove('no-display');
+        }
+      }, 10); 
     }
   }
 
@@ -162,18 +178,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   toggleProfile() {
     this.edit = false;
-    const profileMenu = document.getElementById('profile-menu');
-    if (profileMenu) {
-      profileMenu.classList.toggle('no-display');
-    }
+    this.toggleProfileMenu = !this.toggleProfileMenu;
   }
 
   openProfileMenu() {
     this.edit = false;
-    const profileMenu = document.getElementById('profile-menu');
-    if (profileMenu) {
-      profileMenu.classList.remove('no-display');
-    }
+   this.toggleProfileMenu = !this.toggleProfileMenu;
   }
 
   editProfile() {

@@ -60,7 +60,7 @@
       font-size: 16px;
       cursor: pointer;
       transition: background 0.12s ease, border-color 0.12s ease,
-      transform 0.05s ease;
+        transform 0.05s ease;
       z-index: 3;
 
       &:hover {
@@ -96,7 +96,7 @@
         font-size: 18px;
         line-height: 1;
         transition: background 0.12s ease, border-color 0.12s ease,
-        transform 0.05s ease;
+          transform 0.05s ease;
 
         &:hover {
           background: #f7f8ff;
@@ -240,33 +240,32 @@
   border-radius: 25px;
   transition: all 3s;
   overflow: auto;
- > div {
-   display: flex;
-   align-items: center;
-   width: 100%;
-   gap: 5px;
-   > input {
-     position: relative;
-     width: 100%;
-     transition: all 0.3s
-     ease-in-out;
-     border: none;
-      &::placeholder {
-      font-weight: 400;
+  > div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 5px;
+    > input {
+      position: relative;
+      width: 100%;
+      transition: all 0.3s ease-in-out;
       border: none;
-      color: var($text-gray);
+      &::placeholder {
+        font-weight: 400;
+        border: none;
+        color: var($text-gray);
+      }
+      &:focus {
+        outline: none;
+      }
     }
-    &:focus {
-      outline: none;
-    }
-   }
- }
+  }
 }
 
 .broadcast-wrapper {
   position: relative;
 
-    >div:nth-child(3) {
+  > div:nth-child(3) {
     position: absolute;
     top: 62px;
     left: 10px;
@@ -278,7 +277,7 @@
     z-index: 200;
   }
 
-  >div:last-child {
+  > div:last-child {
     position: absolute;
     top: 62px;
     left: 10px;
@@ -288,9 +287,9 @@
     border-radius: 0 30px 30px 30px;
     background-color: white;
     z-index: 200;
-  } 
+  }
 }
 
 .no-display {
   display: none;
-} 
+}
