@@ -4,11 +4,16 @@
   position: relative;
   padding: 10px 15px;
   width: 100%;
-  height: 150px;
+  height: 100px;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
   gap: 20px;
+  
+  @media (max-width: 1024px) {
+    justify-content: space-between;
+    padding: 10px 20px;
+  }
 }
 
 .logo-wrapper {
@@ -16,6 +21,11 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  >img {
+    @media (max-width: 1024px) {
+      width: 200px;
+    }
+  }
 }
 
 .search-wrapper {
@@ -24,10 +34,14 @@
   justify-content: space-around;
   padding: 0px 30px;
   width: 100%;
-  max-width: 789px;
+  max-width: 989px;
   height: 70px;
   background-color: white;
   border-radius: 42px;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
   > input {
     width: 100%;
     max-width: 700px;
@@ -49,7 +63,7 @@
     width: 35px;
   }
 
-  >div:nth-child(3) {
+  > div:nth-child(3) {
     position: absolute;
     top: 45px;
     left: 30px;
@@ -61,7 +75,7 @@
     z-index: 200;
   }
 
-  >div:last-child {
+  > div:last-child {
     position: absolute;
     top: 45px;
     left: 30px;
@@ -71,25 +85,37 @@
     border-radius: 0 30px 30px 30px;
     background-color: white;
     z-index: 200;
-  } 
+  }
 }
 
 .profile-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
-  > div {
+  
+
+  > h2 {
+    @media (max-width: 1024px) {
+      display: none;
+    }
+  }
+  
+  > svg {
+    @media (max-width: 1024px) {
+      display: none;
+    }
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  > div:nth-child(2) {
     position: relative;
     > img:last-child {
       position: absolute;
       bottom: 10%;
       right: 0;
       width: 20px;
-    }
-  }
-  > svg {
-    &:hover {
-      cursor: pointer;
     }
   }
   &:hover {
@@ -103,11 +129,14 @@
 }
 
 .profile-pic {
-
+  cursor: pointer;
   > img:nth-child(1) {
     width: 72px;
-
-    
+  }
+  @media (max-width: 1024px) {
+    > img:nth-child(2) {
+    display: none;
+    }
   }
 }
 
@@ -127,13 +156,19 @@
   justify-content: center;
   align-items: center;
   gap: 10px;
-  top: 130px;
-  right: 6%;
+  top: 100px;
+  right: 1%;
   width: 212px;
   height: 141px;
   background-color: white;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 30px 0 30px 30px;
+  z-index: 500;
+  
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
   > button {
     background-color: white;
     border: none;
@@ -144,14 +179,14 @@
     max-width: 180px;
     height: 40px;
     border-radius: 40px;
-   
+
     &:hover {
       cursor: pointer;
-       color: $purple-font;
+      color: $purple-font;
       background-color: $main-accent;
     }
   }
- /*  > button:last-child {
+  /*  > button:last-child {
     &:hover {
       color: $purple-font;
       background-color: $main-accent;
@@ -159,8 +194,126 @@
   } */
 }
 
+.dropdown-item-mobile {
+  position: absolute;
+  display: none; 
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  bottom: 0;
+  width: 100%;
+  height: 141px;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px -4px 10px;
+  border-radius: 30px 30px 0 0;
+  z-index: 500;
+  
+  transform: translateY(100%);
+  transition: transform 0.1s ease-in-out;
+  
+  &:not(.no-display) {
+    transform: translateY(0);
+  }
+  
+  &.no-display {
+    transform: translateY(100%);
+    pointer-events: none;
+  }
+  
+
+  @media (max-width: 1024px) {
+    display: flex !important;
+  }
+  > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    width: 100%;
+    padding-left: 30px;
+    gap: 10px;
+    > div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 40px;
+
+      > svg {
+        width: 50px;
+      }
+      
+
+      &:hover {
+        cursor: pointer;
+        color: $purple-font;
+        background-color: $main-accent;
+        >svg path {
+          fill: $purple-font !important;
+        }
+        >button {
+          cursor: pointer;
+          color: $purple-font;
+          background-color: $main-accent;
+        }
+      }
+      
+      &.profile-active {
+        color: $purple-font;
+        background-color: $main-accent;
+        >svg path {
+          fill: $purple-font !important;
+        }
+        >button {
+          color: $purple-font;
+          background-color: $main-accent;
+        }
+      }
+
+        
+      > button {
+        background-color: white;
+        border: none;
+        font-family: "Nunito";
+        font-weight: 600;
+        font-size: 18px;
+        width: 100%;
+        max-width: 180px;
+        height: 40px;
+        border-radius: 40px;
+
+        
+      }
+    }
+
+    >div:last-child {
+      &:hover {
+        cursor: pointer;
+        >button {
+          cursor:pointer;
+        }
+   
+      }
+    }
+  }
+  /*  > button:last-child {
+    &:hover {
+      color: $purple-font;
+      background-color: $main-accent;
+    }
+  } */
+}
+
+.svg-dropdown-mobile {
+  cursor: pointer;
+}
+
 .no-display {
-  display: none;
+  display: none !important;
+}
+
+.dropdown-item-mobile.no-display {
+  display: flex !important;
 }
 
 .toggle-menu {
@@ -179,14 +332,24 @@
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  top: 130px;
-  right: 6%;
+  top: 100px;
+  right: 1%;
   width: 350px;
   height: 400px;
   background-color: white;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   border-radius: 30px 0 30px 30px;
   padding: 30px 30px 30px 35px;
+  z-index: 500;
+  
+  @media (max-width: 1024px) {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
+    border-radius: 30px;
+  }
   > div:nth-child(1) {
     display: flex;
     justify-content: space-between;
@@ -292,6 +455,25 @@
     &:hover {
       cursor: pointer;
     }
+    @media (max-width: 1024px) {
+      display: none;
+    }
+  }
+  > svg {
+    display: none;
+    @media (max-width: 1024px) {
+      display: block;
+    }
+    
+    // Wenn edit-active Klasse gesetzt ist
+    &.edit-active {
+      rect {
+        fill: $main-accent;
+      }
+      g path {
+        fill: $purple-font;
+      }
+    }
   }
 }
 
@@ -393,10 +575,12 @@
       color: white;
       &:hover {
         background-color: $purple-message;
-            transform: scale(0.96);
+        transform: scale(0.96);
         transform-origin: left top;
         transition: all 0.1s ease-in-out;
       }
     }
   }
 }
+
+
