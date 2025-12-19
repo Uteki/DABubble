@@ -8,5 +8,6 @@ export type BroadcastRecipient =
   type: 'user';
   partnerChat: string;
   name: string;
-  mail?: string;
+  mail: string;
+  avatar: string;
 };

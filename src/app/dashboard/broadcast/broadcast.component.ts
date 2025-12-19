@@ -115,7 +115,11 @@ export class BroadcastComponent {
     return [uid, this.authService.readCurrentUser()].sort().join('_');
   }
 
-  addRecipient(userid: string, name: string, mail: string) {
+  removeRecipient(index: number) {
+    this.recipients.splice(index, 1);
+  }
+
+  addRecipient(userid: string, name: string, mail: string, avatar: string) {
     const partnerChat = this.buildPartnerChat(userid);
 
     if (
@@ -126,7 +130,8 @@ export class BroadcastComponent {
 
     this.recipients.push({
       type: 'user', partnerChat,
-      name: name, mail: mail
+      name: name, mail: mail,
+      avatar: avatar
     });
   }
 
