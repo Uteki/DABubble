@@ -12,7 +12,7 @@
   background-color: rgba(0, 0, 0, 0.192);
 
   z-index: 200;
-  
+
   @media (max-width: 1024px) {
     display: none;
   }
@@ -53,7 +53,7 @@
     > h2 {
       position: relative;
       padding: 0 10px;
-      
+
       @media (max-width: 1024px) {
         position: static;
       }
@@ -83,7 +83,7 @@
         z-index: 300;
 
         border-radius: 0 25px 25px 25px;
-        
+
         @media (max-width: 1024px) {
           position: static;
           width: auto;
@@ -348,13 +348,13 @@
   display: flex;
   margin: 10px 0;
   gap: 20px;
-  
+
   @media (max-width: 768px) {
     padding: 0 10px 10px 0;
     margin: 5px 0;
     gap: 15px;
   }
-  
+
   @media (max-width: 480px) {
     padding: 0 5px 5px 0;
     margin: 5px 0;
@@ -442,12 +442,12 @@
     gap: 20px;
     padding-top: 10px;
     position: relative;
-    
+
     @media (max-width: 768px) {
       gap: 15px;
       padding-top: 8px;
     }
-    
+
     @media (max-width: 480px) {
       gap: 10px;
       padding-top: 5px;
@@ -487,13 +487,12 @@
   right: 10%;
   width: 160px;
   height: 40px;
-  
 
   @media (max-width: 768px) {
     width: 140px;
     height: 35px;
   }
-  
+
   @media (max-width: 480px) {
     width: 120px;
     height: 30px;
@@ -505,7 +504,7 @@
 .own-message .message-actions-container {
   left: 10%;
   right: auto;
-  
+
   @media (max-width: 480px) {
     left: 5%;
   }
@@ -606,7 +605,7 @@
 
 .edit-message-menu {
   position: absolute;
-  top: 20px;  
+  top: 20px;
   left: 115%;
   background-color: white;
   border: 1px solid $main-accent;
@@ -614,12 +613,12 @@
   box-shadow: 0px 6px 14px 0px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   min-width: 200px;
-  
+
   @media (max-width: 768px) {
     top: 40px;
     min-width: 180px;
   }
-  
+
   @media (max-width: 480px) {
     top: 35px;
     min-width: 160px;
@@ -751,17 +750,18 @@
   flex-direction: column;
   padding: 15px;
   box-shadow: 0px 6px 10px 0px rgba(0, 0, 0, 0.2);
-  
+
   @media (max-width: 1024px) {
     position: fixed !important;
-    top: 10% !important;
+    top: 0% !important;
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
     z-index: 9999 !important;
     background-color: white !important;
     border-radius: 0 !important;
-    padding: 20px !important;
+    padding: 0 0 30px 0!important;
+    
     overflow-y: auto !important;
     margin: 0 !important;
     box-shadow: none !important;
@@ -773,6 +773,19 @@
     align-items: center;
     gap: 10px;
     margin: 10px 20px;
+    
+
+    @media (max-width: 1024px) {
+      position: sticky;
+      top: 0;
+      background-color: white;
+      z-index: 10;
+      padding: 40px 20px 5px 20px;
+      margin: 0;
+   
+      box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 4px;
+    }
+    
     > h3:first-child {
       font-family: "Nunito";
       font-weight: 700;
@@ -807,6 +820,10 @@
     margin: 10px 20px;
     padding: 15px 0;
     transition: all 0.3s ease-in-out;
+
+    @media (max-width: 1024px) {
+      margin: 20px;
+    }
     > div {
       display: flex;
       justify-content: space-between;
@@ -937,16 +954,28 @@
       }
     }
   }
-  
-  .view-members-mobile {
+
+  .view-member-wrapper {
     display: none;
-    
+
     @media (max-width: 1024px) {
       display: block;
-      margin-top: 30px;
-      padding-top: 30px;
+      margin: 20px 20px 0 20px;
+    }
+  }
+
+  .view-members-mobile {
+    display: none;
+
+    @media (max-width: 1024px) {
+      display: block;
+      border: 1px solid $light-purple;
+      padding: 30px;
+      padding-bottom: 40px;
+      margin-bottom: 40px;
+
       border-top: 2px solid $light-purple;
-      
+      border-radius: 15px;
       > div:nth-child(1) {
         margin: 10px 0 20px 0;
         > h3 {
@@ -955,36 +984,49 @@
           font-size: 24px;
         }
       }
-      
+
       > div:nth-child(2) {
-        max-height: 400px;
+        height: 100%;
+        max-height: 320px;
         overflow-y: auto;
         margin-bottom: 20px;
         
+        @media (max-height: 800px) {
+          max-height: 250px;
+        }
+        
+        @media (max-height: 700px) {
+          max-height: 200px;
+        }
+        
+        @media (max-height: 600px) {
+          max-height: 150px;
+        }
+
         > div {
           padding: 10px 0;
           border-radius: 10px;
           transition: background-color 0.2s ease;
-          
+
           &:hover {
             background-color: $main-accent;
             cursor: pointer;
           }
-          
+
           > article {
             display: flex;
             align-items: center;
             gap: 15px;
-            
+
             > figure {
               position: relative;
-              
+
               > img:nth-child(1) {
                 width: 60px;
                 height: 60px;
                 border-radius: 50%;
               }
-              
+
               > img:nth-child(2) {
                 position: absolute;
                 bottom: 0;
@@ -993,7 +1035,7 @@
                 height: 20px;
               }
             }
-            
+
             > p {
               font-family: "Nunito";
               font-weight: 500;
@@ -1002,7 +1044,7 @@
           }
         }
       }
-      
+
       > button {
         width: 100%;
         margin: 0;
@@ -1032,8 +1074,13 @@
       transform: translate(-20px, -20px);
       transition: all 0.3s ease-in-out;
     }
-    > h3:nth-child(2) {
+    > h3:nth-child(3) {
       transform: translate(20px, -20px);
+      transition: all 0.3s ease-in-out;
+    }
+
+    >img {
+        transform: translate(20px, -20px);
       transition: all 0.3s ease-in-out;
     }
   }
@@ -1728,12 +1775,12 @@
     .message-actions-container {
       left: 10%;
       right: auto;
-      
+
       .comment-hover-overlay {
         width: 180px !important;
         border-radius: 30px 30px 0 30px !important;
       }
-      
+
       .edit-message-menu {
         left: 0;
         right: auto;
@@ -1741,4 +1788,59 @@
       }
     }
   }
+}
+
+.leave-channel-button {
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
+.leave-channel-button-mobile {
+  display: none;
+  @media (max-width: 1024px) {
+    display: flex;
+    justify-content: end;
+    padding: 0 20px;
+    height: 200px;
+    > button {
+      width: 150px;
+      height: 35px;
+      border-radius: 30px;
+      border: none;
+      background-color: $purple-button;
+      color: white;
+      font-family: "Nunito";
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      &:hover {
+        background-color: $purple-font;
+      }
+    }
+  }
+}
+
+.edit-channel {
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}
+
+.edit-channel-mobile {
+  display: none;
+  @media (max-width: 1024px) {
+    display: flex;
+    cursor: pointer;
+     transition: all 0.3s ease-in-out;
+  }
+  
+
+}
+
+.member-overflow {
+  @media (max-height: 1024px) {
+    display: none !important;
+  }
+
 }
