@@ -41,6 +41,7 @@ export class BroadcastComponent {
 
   today = new Date();
   messageText: string = '';
+  recipientInput = "";
 
   rootMessage: Message | null = null;
 
@@ -50,6 +51,7 @@ export class BroadcastComponent {
   messages: Message[] = [];
 
   showPicker = false;
+  inputFocused: boolean = false;
   pickerEmojis = ['😀', '👍', '🎉', '❤️', '😊', '🙏', '🚀', '🤔', '😅', '🔥'];
 
   private wasEmpty = true;
@@ -90,6 +92,13 @@ export class BroadcastComponent {
     );
   }
 
+  get recipientPlaceholder(): string {
+    if (this.recipients.length > 4) {
+      return 'Maximale Anzahl an Empfängern erreicht';
+    }
+    return 'An: #channel, @jemand oder E-Mail-Adresse';
+  }
+
   insertEmojiIntoText(e: string) {
     this.messageText = (this.messageText || '') + e;
   }
@@ -122,30 +131,34 @@ export class BroadcastComponent {
   addRecipient(userid: string, name: string, mail: string, avatar: string) {
     const partnerChat = this.buildPartnerChat(userid);
 
-    if (
-      this.recipients.some(
-        r => r.type === 'user' && r.partnerChat === partnerChat
-      )
-    ) return;
+    if (this.recipients.some(r => r.type === 'user' && r.partnerChat === partnerChat)) {
+      return;
+    }
+    else if (this.recipients.length > 4) {
+      return;
+    }
 
     this.recipients.push({
       type: 'user', partnerChat,
       name: name, mail: mail,
       avatar: avatar
-    });
+    }); this.recipientInput = "";
+    this.onInputChange(this.recipientInput);
   }
 
   addChannelRecipient(channelId: string, name: string) {
-    if (
-      this.recipients.some(
-        r => r.type === 'channel' && r.channelId === channelId
-      )
-    ) return;
+    if (this.recipients.some(r => r.type === 'channel' && r.channelId === channelId)) {
+      return;
+    }
+    else if (this.recipients.length > 4) {
+      return;
+    }
 
     this.recipients.push({
       type: 'channel',
       channelId, name
-    });
+    }); this.recipientInput = "";
+    this.onInputChange(this.recipientInput);
   }
 
   isUserRecipient(r: BroadcastRecipient): r is Extract<BroadcastRecipient, { type: 'user' }> {
@@ -163,7 +176,7 @@ export class BroadcastComponent {
     const searchResultsChannels = document.getElementById(
       'search-broadcast-channels'
     );
-    if (this.wasEmpty && value.length > 0) {
+    if (this.wasEmpty && value.length > 0 && !(this.recipients.length > 4)) {
       this.searchBar(value);
       this.wasEmpty = false;
     }
@@ -175,7 +188,6 @@ export class BroadcastComponent {
   }
 
    searchBar(value: string) {
-    console.log(value);
     const searchResultsContacts = document.getElementById(
       'search-broadcast-contacts'
     );
@@ -192,5 +204,15 @@ export class BroadcastComponent {
      } else {
        searchResultsChannels?.classList.add('no-display');
      }
+  }
+
+  onFocus() {
+    if (this.recipients.length > 4) return
+    this.inputFocused = true;
+  }
+
+  onBlur() {
+    if (this.recipients.length > 4) return
+    this.inputFocused = false;
   }
 }

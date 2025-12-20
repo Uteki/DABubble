@@ -5,6 +5,7 @@
   <div class="members-list no-scrollbar">
     <div>
       <div
+        [ngClass]="{ 'no-display': inputFocused }"
         *ngFor="let recipient of recipients; let i = index"
       >
         @if (recipient.type === 'user') {
@@ -42,7 +43,14 @@
           </svg>
         </div>
       </div>
-      <input  (input)="onInputChange($any($event.target).value)" id="member-input" type="text" placeholder="An: #channel, @jemand oder E-Mail-Adresse" ng-reflect-model="" class="ng-pristine ng-valid ng-touched">
+      <input
+        [(ngModel)]="recipientInput"
+        [disabled]="recipients.length > 4"
+        [placeholder]="recipientPlaceholder"
+        (focus)="onFocus()"
+        (blur)="onBlur()"
+        (input)="onInputChange($any($event.target).value)"
+        id="member-input" type="text" placeholder="An: #channel, @jemand oder E-Mail-Adresse" ng-reflect-model="" class="ng-pristine ng-valid ng-touched">
     </div>
   </div>
     <div class="no-display" id="search-broadcast-contacts">
