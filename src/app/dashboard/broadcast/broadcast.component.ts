@@ -75,19 +75,19 @@ export class BroadcastComponent {
   }
 
   get filteredUsers() {
-    if (!this.recipientInput.startsWith('@')) return [];
+    const isUserSearch = this.recipientInput.startsWith('@');
+    const isChannelSearch = this.recipientInput.startsWith('#');
+    const isEmailSearch = !isUserSearch && !isChannelSearch && this.recipientInput.length > 0;
+
+    if (!isUserSearch && !isEmailSearch) return [];
 
     const usedPartnerChats = new Set(
       this.recipients.filter(this.isUserRecipient).map(r => r.partnerChat)
     );
 
-    return this.users.filter(user => {
-        const partnerChat = this.buildPartnerChat(user.uid);
-        return !usedPartnerChats.has(partnerChat);
-      }).filter(user => {
-        if (!this.searchTerm) return true;
-        return user.name?.toLowerCase().includes(this.searchTerm);
-      }).sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
+    return this.users.filter(user => !this.isAlreadyAdded(user, usedPartnerChats))
+      .filter(user => this.isUserMatch(user, isUserSearch, isEmailSearch, this.recipientInput))
+      .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
   }
 
   get filteredChannels() {
@@ -112,10 +112,6 @@ export class BroadcastComponent {
     return 'An: #channel, @jemand oder E-Mail-Adresse';
   }
 
-  insertEmojiIntoText(e: string) {
-    this.messageText = (this.messageText || '') + e;
-  }
-
   async sendBroadcastMessage() {
     const logger: User = this.users.find((user) => user.uid === this.authService.readCurrentUser());
     if (!this.messageText.trim() || this.recipients.length === 0) return;
@@ -133,6 +129,28 @@ export class BroadcastComponent {
 
   private buildPartnerChat(uid: string): string {
     return [uid, this.authService.readCurrentUser()].sort().join('_');
+  }
+
+  private isAlreadyAdded(user: any, usedPartnerChats: Set<string>): boolean {
+    const partnerChat = this.buildPartnerChat(user.uid);
+    return usedPartnerChats.has(partnerChat);
+  }
+
+  private isUserMatch(user: any, isUserSearch: boolean, isEmailSearch: boolean, value: string): boolean {
+    if (isUserSearch) {
+      if (!this.searchTerm) return true;
+      return user.name?.toLowerCase().includes(this.searchTerm);
+    }
+
+    if (isEmailSearch) {
+      return user.email?.toLowerCase().includes(value.toLowerCase());
+    }
+
+    return false;
+  }
+
+  insertEmojiIntoText(e: string) {
+    this.messageText = (this.messageText || '') + e;
   }
 
   removeRecipient(index: number) {
@@ -179,8 +197,12 @@ export class BroadcastComponent {
     const contacts = document.getElementById('search-broadcast-contacts');
     const channels = document.getElementById('search-broadcast-channels');
 
-    contacts?.classList.toggle('no-display', !value.startsWith('@'));
-    channels?.classList.toggle('no-display', !value.startsWith('#'));
+    const isUser = value.startsWith('@');
+    const isChannel = value.startsWith('#');
+    const isEmail = !isUser && !isChannel && value.length > 0;
+
+    contacts?.classList.toggle('no-display', !(isUser || isEmail));
+    channels?.classList.toggle('no-display', !isChannel);
 
     this.wasEmpty = value.length === 0;
   }
