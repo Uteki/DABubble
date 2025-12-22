@@ -67,29 +67,42 @@ export class BroadcastComponent {
     return this.authService.readCurrentUser();
   }
 
+  get searchTerm(): string {
+    return this.recipientInput
+      .replace(/^[@#]/, '')
+      .toLowerCase()
+      .trim();
+  }
+
   get filteredUsers() {
+    if (!this.recipientInput.startsWith('@')) return [];
+
     const usedPartnerChats = new Set(
-      this.recipients
-        .filter(this.isUserRecipient)
-        .map(r => r.partnerChat)
+      this.recipients.filter(this.isUserRecipient).map(r => r.partnerChat)
     );
 
     return this.users.filter(user => {
-      const partnerChat = this.buildPartnerChat(user.uid);
-      return !usedPartnerChats.has(partnerChat);
-    });
+        const partnerChat = this.buildPartnerChat(user.uid);
+        return !usedPartnerChats.has(partnerChat);
+      }).filter(user => {
+        if (!this.searchTerm) return true;
+        return user.name?.toLowerCase().includes(this.searchTerm);
+      }).sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
   }
 
   get filteredChannels() {
-    const usedChannelIds = new Set(
-      this.recipients
-        .filter(this.isChannelRecipient)
-        .map(r => r.channelId)
-    );
+    if (!this.recipientInput.startsWith('#')) return [];
 
-    return this.channels.filter(
-      channel => !usedChannelIds.has(channel.id)
+    const usedChannelIds = new Set(
+      this.recipients.filter(this.isChannelRecipient).map(r => r.channelId)
     );
+    let filtered = this.channels.filter(channel => !usedChannelIds.has(channel.id));
+    let term = this.searchTerm;
+
+    if (term) {
+      filtered = filtered.filter(channel => channel.name.toLowerCase().includes(term));
+    }
+    return filtered.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   get recipientPlaceholder(): string {
@@ -115,9 +128,7 @@ export class BroadcastComponent {
     this.sendingState = 'success';
     this.messageText = '';
 
-    setTimeout(() => {
-      this.sendingState = 'idle';
-    }, 2000);
+    setTimeout(() => {this.sendingState = 'idle'}, 2000);
   }
 
   private buildPartnerChat(uid: string): string {
@@ -138,11 +149,8 @@ export class BroadcastComponent {
       return;
     }
 
-    this.recipients.push({
-      type: 'user', partnerChat,
-      name: name, mail: mail,
-      avatar: avatar
-    }); this.recipientInput = "";
+    this.recipients.push({type: 'user', partnerChat, name: name, mail: mail, avatar: avatar});
+    this.recipientInput = "";
     this.onInputChange(this.recipientInput);
   }
 
@@ -154,10 +162,8 @@ export class BroadcastComponent {
       return;
     }
 
-    this.recipients.push({
-      type: 'channel',
-      channelId, name
-    }); this.recipientInput = "";
+    this.recipients.push({type: 'channel', channelId, name});
+    this.recipientInput = "";
     this.onInputChange(this.recipientInput);
   }
 
@@ -170,40 +176,13 @@ export class BroadcastComponent {
   }
 
   onInputChange(value: string) {
-    const searchResultsContacts = document.getElementById(
-      'search-broadcast-contacts'
-    );
-    const searchResultsChannels = document.getElementById(
-      'search-broadcast-channels'
-    );
-    if (this.wasEmpty && value.length > 0 && !(this.recipients.length > 4)) {
-      this.searchBar(value);
-      this.wasEmpty = false;
-    }
-    if (value.length === 0) {
-      this.wasEmpty = true;
-      searchResultsContacts?.classList.add('no-display');
-      searchResultsChannels?.classList.add('no-display');
-    }
-  }
+    const contacts = document.getElementById('search-broadcast-contacts');
+    const channels = document.getElementById('search-broadcast-channels');
 
-   searchBar(value: string) {
-    const searchResultsContacts = document.getElementById(
-      'search-broadcast-contacts'
-    );
-    const searchResultsChannels = document.getElementById(
-      'search-broadcast-channels'
-    );
-     if (value && (value.startsWith('@') || /^[a-zA-Z]/.test(value))) {
-       searchResultsContacts?.classList.remove('no-display');
-     } else {
-       searchResultsContacts?.classList.add('no-display');
-     }
-     if (value && value.startsWith('#')) {
-       searchResultsChannels?.classList.remove('no-display');
-     } else {
-       searchResultsChannels?.classList.add('no-display');
-     }
+    contacts?.classList.toggle('no-display', !value.startsWith('@'));
+    channels?.classList.toggle('no-display', !value.startsWith('#'));
+
+    this.wasEmpty = value.length === 0;
   }
 
   onFocus() {
