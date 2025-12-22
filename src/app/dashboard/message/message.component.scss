@@ -337,7 +337,6 @@
   margin: 10px 0;
   gap: 20px;
   
-  // Responsive adjustments for message containers
   @media (max-width: 768px) {
     padding: 0 10px 10px 0;
     margin: 5px 0;
@@ -421,7 +420,6 @@
     padding-top: 10px;
     position: relative;
     
-    // Ensure proper containment for absolutely positioned elements
     @media (max-width: 768px) {
       gap: 15px;
       padding-top: 8px;
@@ -734,7 +732,7 @@
 }
 
 .edit-mode-width {
-  width: 100%;
+  width: 100% !important;
 }
 
 .edit-mode-bubble {

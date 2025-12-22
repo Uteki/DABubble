@@ -72,6 +72,7 @@ export class ChatComponent implements OnInit {
   channelOverlay: boolean = false;
   viewMemberOverlay: boolean = false;
   addMemberOverlay: boolean = false;
+  viewMemberMobileOverlay: boolean = false;
   switchAddMemberOverlay: boolean = false;
   userInChannel: boolean = false;
   profileOverlay: boolean = false;
@@ -410,9 +411,11 @@ export class ChatComponent implements OnInit {
       this.viewMemberOverlay = overlayBoolean;
     } else if (overlay == 'Hinzufügen') {
       this.addMemberOverlay = overlayBoolean;
+      this.viewMemberMobileOverlay = overlayBoolean;
     } else if (overlay == 'MitgliederWechseln') {
       this.switchAddMemberOverlay = overlayBoolean;
       this.viewMemberOverlay = overlayBoolean;
+      this.viewMemberMobileOverlay = overlayBoolean;
     }
   }
 
@@ -505,13 +508,12 @@ export class ChatComponent implements OnInit {
   }
 
   keepMenuOpen() {
-    // Diese Methode verhindert, dass das Menü geschlossen wird beim Hovern
+   
   }
 
   editMessage(messageId: string) {
     const message = this.messages.find((m) => m.id === messageId);
 
-    // Nur eigene Nachrichten können bearbeitet werden
     if (!message || message.uid !== this.getUserId()) {
       return;
     }
@@ -521,7 +523,6 @@ export class ChatComponent implements OnInit {
     this.editMessageMenuOpen = null;
     this.editMessageIsOpen = true;
 
-    // Füge die Hover-Klasse hinzu (gleiches Element wie bei hoverMessage)
     const messageElement = document.getElementById('message-text-' + messageId);
     if (messageElement) {
       messageElement.classList.add('hovered-own-message');
@@ -529,7 +530,6 @@ export class ChatComponent implements OnInit {
   }
 
   cancelEdit() {
-    // Entferne die Hover-Klasse
     if (this.editingMessageId) {
       const messageElement = document.getElementById(
         'message-text-' + this.editingMessageId
@@ -547,10 +547,8 @@ export class ChatComponent implements OnInit {
   async saveEditedMessage(messageId: string) {
     if (!this.editingMessageText.trim()) return;
 
-    // TODO: Implementierung für das Speichern der bearbeiteten Nachricht
     console.log('Nachricht speichern:', messageId, this.editingMessageText);
 
-    // Hier die Firestore-Update-Logik hinzufügen
     const messageRef = doc(
       this.firestore,
       `channels/${this.chatService.currentChannel}/messages/${messageId}`

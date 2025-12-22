@@ -58,6 +58,8 @@ export class ChannelsComponent implements OnInit {
 
   newChannel: string = '';
   newChannelDescription: string = '';
+  newChannelMobile: string = '';
+  newChannelDescriptionMobile: string = '';
   selectedValue: string = 'all-members';
 
   constructor(
@@ -166,6 +168,9 @@ export class ChannelsComponent implements OnInit {
 
     if (target.value == 'all-members') {
       this.selectedValue = 'all-members';
+      this.inputValue = '';
+      this.nameInputValue = false;
+      this.foundIndexes = [];
     } else if (target.value == 'specific-members') {
       this.selectedValue = 'specific-members';
     }
@@ -238,6 +243,22 @@ export class ChannelsComponent implements OnInit {
           this.newChannel = '';
         });
 
+    }
+  }
+
+  createNewChannelMobile() {
+    if (this.newChannelMobile.length > 0) {
+      const currentUid = this.authService.readCurrentUser();
+      const currentUser = this.users.find((user) => user.uid === currentUid);
+
+      this.chatService
+        .createChannel({
+          creator: currentUser.name,
+          description: this.newChannelDescriptionMobile,
+          name: this.newChannelMobile,
+          users: [currentUser.uid],
+        })
+        .then(() => {});
     }
   }
 

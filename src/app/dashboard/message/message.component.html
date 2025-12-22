@@ -4,12 +4,16 @@
     channelOverlay = false;
     viewMemberOverlay = false;
     addMemberOverlay = false;
-    profileOverlay = false;
+    profileOverlay = false
   "
   class="overlay"
   [ngClass]="{ 'no-display': !overlayActivated }"
 >
-<div [ngClass]="{ 'no-display': !profileOverlay }" click-stop-propagation class="toggle-item">
+  <div
+    [ngClass]="{ 'no-display': !profileOverlay }"
+    click-stop-propagation
+    class="toggle-item"
+  >
     <div>
       <h2>Profil</h2>
 
@@ -44,7 +48,7 @@
     <img [src]="getLargeAvatar(currentPartner?.avatar)" alt="" />
 
     <div class="profile-name">
-      <h3>{{ currentPartner?.name ?? 'Anon' }}</h3>
+      <h3>{{ currentPartner?.name ?? "Anon" }}</h3>
     </div>
 
     <div class="profile-status">
@@ -57,10 +61,13 @@
         <img src="./../../../assets/img/mail.svg" alt="" />
         <h3>E-Mail-Adresse</h3>
       </div>
-      <a href="">{{ currentPartner?.email ??  'emre.iscan&#64;outlook.de' }}  </a>
+      <a href="">{{ currentPartner?.email ?? "emre.iscan&#64;outlook.de" }} </a>
     </div>
 
-    <div (click)="emitPartner(currentPartner?.uid); closeProfile()" class="profile-direct-message">
+    <div
+      (click)="emitPartner(currentPartner?.uid); closeProfile()"
+      class="profile-direct-message"
+    >
       <svg
         width="24"
         height="24"
@@ -94,27 +101,43 @@
 
 <header>
   <div (click)="openProfile()">
-  <img [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'" [alt]="currentPartner?.name ?? 'Anon'" />
-    <h2>{{ currentPartner?.name ?? 'Anon' }}  @if(currentPartner?.uid === currentWhisperer) { (Du) }</h2>
+    <img
+      [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'"
+      [alt]="currentPartner?.name ?? 'Anon'"
+    />
+    <h2>
+      {{ currentPartner?.name ?? "Anon" }} @if(currentPartner?.uid ===
+      currentWhisperer) { (Du) }
+    </h2>
   </div>
 </header>
 
 <output chat-scroll [messages]="messages">
   <figure>
     <div>
-      <img (click)="openProfile()" [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'" [alt]="currentPartner?.name ?? 'Anon'" />
+      <img
+        (click)="openProfile()"
+        [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'"
+        [alt]="currentPartner?.name ?? 'Anon'"
+      />
       <p (click)="openProfile()">
-        {{ currentPartner?.name ?? 'Anon' }}
-      @if (currentPartner?.uid === currentWhisperer) { (Du) }
+        {{ currentPartner?.name ?? "Anon" }}
+        @if (currentPartner?.uid === currentWhisperer) { (Du) }
       </p>
     </div>
     @if (currentPartner == null || undefined) {
-      <figcaption>Bitte klicke auf jemandem.</figcaption>
+    <figcaption>Bitte klicke auf jemandem.</figcaption>
     } @else if (currentPartner?.uid !== currentWhisperer) {
-      <figcaption>Diese Unterhaltung findet nur zwischen <a>&#64;{{ currentPartner?.name ?? 'Keinem' }}</a> und dir statt.</figcaption>
-    }
-    @else {
-      <figcaption><b>Dieser Raum ist nur für dich da.</b> Mache dir Notizen, liste deine To-dos auf oder bewahre Links und Dateien griffbereit auf. Du kannst hier auch gerne Dinge mit dir selbst besprechen.</figcaption>
+    <figcaption>
+      Diese Unterhaltung findet nur zwischen
+      <a>&#64;{{ currentPartner?.name ?? "Keinem" }}</a> und dir statt.
+    </figcaption>
+    } @else {
+    <figcaption>
+      <b>Dieser Raum ist nur für dich da.</b> Mache dir Notizen, liste deine
+      To-dos auf oder bewahre Links und Dateien griffbereit auf. Du kannst hier
+      auch gerne Dinge mit dir selbst besprechen.
+    </figcaption>
     }
   </figure>
 
@@ -151,9 +174,18 @@
         <div></div>
       </div>
 
-      <div class="message-container" [ngClass]="{ 'edit-mode-width': editMessageIsOpen }">
+      <div
+        class="message-container"
+        [ngClass]="{
+          'edit-mode-width': editMessageIsOpen && editingMessageId === msg.id
+        }"
+      >
         <img src="{{ getProfilePic(msg.uid) }}" alt="{{ msg.user }}" />
-        <div [ngClass]="{ 'edit-mode-width': editMessageIsOpen }">
+        <div
+          [ngClass]="{
+            'edit-mode-width': editMessageIsOpen && editingMessageId === msg.id
+          }"
+        >
           <div>
             <strong>{{ msg.user }}</strong>
             <span
@@ -161,7 +193,7 @@
               [ngClass]="{
                 'no-display': editMessageIsOpen && editingMessageId === msg.id
               }"
-            >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
+              >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
             >
           </div>
 
@@ -171,6 +203,8 @@
             class="message-edit-bubble"
             [ngClass]="{
               'edit-mode-bubble':
+                editMessageIsOpen && editingMessageId === msg.id,
+              'edit-mode-width':
                 editMessageIsOpen && editingMessageId === msg.id
             }"
           >
@@ -200,7 +234,9 @@
           </div>
           } @else {
           <!-- Normal Display Mode -->
-          <div id="message-text-{{ msg.id }}" class="message-text">{{ msg.text }}</div>
+          <div id="message-text-{{ msg.id }}" class="message-text">
+            {{ msg.text }}
+          </div>
           <app-reactions
             [reactions]="msg.reactions || {}"
             [currentUserId]="meId"
@@ -216,7 +252,15 @@
           }
         </div>
       </div>
-      <div class="message-actions-container" [ngClass]="{ 'no-message-event': i !== 0 && (msg.timestamp | date : 'yyyy-MM-dd') === (messages[i - 1].timestamp | date : 'yyyy-MM-dd') }">
+      <div
+        class="message-actions-container"
+        [ngClass]="{
+          'no-message-event':
+            i !== 0 &&
+            (msg.timestamp | date : 'yyyy-MM-dd') ===
+              (messages[i - 1].timestamp | date : 'yyyy-MM-dd')
+        }"
+      >
         <div
           class="comment-hover-overlay"
           [id]="'comment-hover-' + msg.id"
@@ -224,7 +268,6 @@
             'no-display': editMessageIsOpen && editingMessageId === msg.id
           }"
         >
-        
           <div><img src="/assets/img/checkMark.svg" alt="" /></div>
           <div><img src="/assets/img/capa.svg" alt="" /></div>
           <div>
@@ -232,7 +275,7 @@
           </div>
           <div><img src="/assets/icons/svgs/comment.svg" alt="" /></div>
           <div
-          [ngClass]="{'no-display': msg.uid !== getUserId()}"
+            [ngClass]="{ 'no-display': msg.uid !== getUserId() }"
             class="more-vert-button"
             (click)="toggleEditMessageMenu(msg.id, $event)"
           >
@@ -258,11 +301,13 @@
   <textarea
     id="message"
     name="message"
-    placeholder="Nachricht an {{ currentPartner?.uid === currentWhisperer ? 'mich': currentPartner?.name }}"
+    placeholder="Nachricht an {{
+      currentPartner?.uid === currentWhisperer ? 'mich' : currentPartner?.name
+    }}"
     rows="2"
     [(ngModel)]="messageText"
   ></textarea>
-    <button
+  <button
     type="button"
     class="emoji-insert"
     (click)="showPicker = !showPicker"
