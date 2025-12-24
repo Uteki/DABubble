@@ -149,6 +149,50 @@ export class ChatService {
     this.pendingUsers = [];
   }
 
+  async searchInConversation(type: 'channel' | 'user', id: string, term: string): Promise<ChatMessage[]> {
+    const basePath = type === 'channel' ? `channels/${id}/messages` : `whispers/${id}/messages`;
+
+    const ref = collection(this.firestore, basePath);
+    const q = query(ref, orderBy('timestamp', 'desc'));
+
+    const snap = await getDocs(q);
+
+    return snap.docs
+      .map(d => ({
+        id: d.id, ...(d.data() as Omit<ChatMessage, 'id'>),
+      }))
+      .filter(msg =>
+        msg.text?.toLowerCase().includes(term.toLowerCase())
+      );
+  }
+
+  async searchGlobally(channelIds: string[], whisperIds: string[], term: string): Promise<GlobalSearchResult[]> {
+    const results: GlobalSearchResult[] = [];
+    const lower = term.toLowerCase();
+
+    for (const id of channelIds) {
+      const ref = collection(this.firestore, `channels/${id}/messages`);
+      const snap = await getDocs(ref);
+
+      snap.docs.forEach(d => {
+        const data = d.data() as Omit<ChatMessage, 'id'>;
+        if (data.text?.toLowerCase().includes(lower)) results.push({id: d.id, ...data, channelId: id});
+      });
+    }
+
+    for (const id of whisperIds) {
+      const ref = collection(this.firestore, `whispers/${id}/messages`);
+      const snap = await getDocs(ref);
+
+      snap.docs.forEach(d => {
+        const data = d.data() as Omit<ChatMessage, 'id'>;
+        if (data.text?.toLowerCase().includes(lower)) results.push({id: d.id, ...data, whisperId: id});
+      });
+    }
+
+    return results;
+  }
+
   getChannelById(channelId: string): Observable<Channel | undefined> {
     const channelRef = doc(this.firestore, 'channels', channelId);
     return docData(channelRef, { idField: 'id' }) as Observable<Channel | undefined>;
