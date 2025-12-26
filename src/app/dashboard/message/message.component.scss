@@ -336,13 +336,13 @@
   display: flex;
   margin: 10px 0;
   gap: 20px;
-  
+
   @media (max-width: 768px) {
     padding: 0 10px 10px 0;
     margin: 5px 0;
     gap: 15px;
   }
-  
+
   @media (max-width: 480px) {
     padding: 0 5px 5px 0;
     margin: 5px 0;
@@ -419,12 +419,12 @@
     gap: 20px;
     padding-top: 10px;
     position: relative;
-    
+
     @media (max-width: 768px) {
       gap: 15px;
       padding-top: 8px;
     }
-    
+
     @media (max-width: 480px) {
       gap: 10px;
       padding-top: 5px;
@@ -443,6 +443,11 @@
     border-top-right-radius: 30px;
     border-bottom-right-radius: 30px;
     border-bottom-left-radius: 30px;
+
+    &.highlight {
+      background-color: $message-highlight;
+      transition: background-color 0.5s ease;
+    }
   }
 
   app-reactions {
@@ -547,12 +552,12 @@
   right: 10%;
   width: 160px;
   height: 40px;
-  
+
   @media (max-width: 768px) {
     width: 140px;
     height: 35px;
   }
-  
+
   @media (max-width: 480px) {
     width: 120px;
     height: 30px;
@@ -564,18 +569,18 @@
 .own-message .message-actions-container {
   left: 10%;
   right: auto;
-  
+
   .comment-hover-overlay {
     width: 180px !important;
     border-radius: 30px 30px 0 30px !important;
   }
-  
+
   .edit-message-menu {
 
     right: auto;
-  
+
   }
-  
+
   @media (max-width: 480px) {
     left: 5%;
   }
@@ -631,7 +636,7 @@
 
 .edit-message-menu {
   position: absolute;
-  top: 20px;  
+  top: 20px;
   left: 95%;
   background-color: white;
   border: 1px solid $main-accent;
@@ -639,12 +644,12 @@
   box-shadow: 0px 6px 14px 0px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   min-width: 200px;
-  
+
   @media (max-width: 768px) {
     top: 40px;
     min-width: 180px;
   }
-  
+
   @media (max-width: 480px) {
     top: 35px;
     min-width: 160px;
@@ -689,6 +694,11 @@
     .message-text {
       background: $purple-message;
       color: white;
+
+      &.highlight {
+        background-color: $message-highlight;
+        transition: background-color 0.5s ease;
+      }
     }
   }
 
@@ -1063,6 +1073,11 @@
     .message-text {
       background: $purple-message;
       color: white;
+
+      &.highlight {
+        background-color: $message-highlight;
+        transition: background-color 0.5s ease;
+      }
     }
   }
 

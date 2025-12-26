@@ -479,7 +479,13 @@
     border-top-right-radius: 30px;
     border-bottom-right-radius: 30px;
     border-bottom-left-radius: 30px;
+
+    &.highlight {
+      background-color: $message-highlight;
+      transition: background-color 0.5s ease;
+    }
   }
+
   .system {
     padding-top: 10px;
   }
@@ -774,7 +780,7 @@
     background-color: white !important;
     border-radius: 0 !important;
     padding: 0 0 30px 0!important;
-    
+
     overflow-y: auto !important;
     margin: 0 !important;
     box-shadow: none !important;
@@ -786,7 +792,7 @@
     align-items: center;
     gap: 10px;
     margin: 10px 20px;
-    
+
 
     @media (max-width: 1024px) {
       position: sticky;
@@ -795,10 +801,10 @@
       z-index: 10;
       padding: 40px 20px 5px 20px;
       margin: 0;
-   
+
       box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 4px;
     }
-    
+
     > h3:first-child {
       font-family: "Nunito";
       font-weight: 700;
@@ -1003,15 +1009,15 @@
         max-height: 320px;
         overflow-y: auto;
         margin-bottom: 20px;
-        
+
         @media (max-height: 800px) {
           max-height: 250px;
         }
-        
+
         @media (max-height: 700px) {
           max-height: 200px;
         }
-        
+
         @media (max-height: 600px) {
           max-height: 150px;
         }
@@ -1338,6 +1344,11 @@
     .message-text {
       background: $purple-message;
       color: white;
+
+      &.highlight {
+        background-color: $message-highlight;
+        transition: background-color 0.5s ease;
+      }
     }
   }
 
@@ -1851,7 +1862,7 @@
     cursor: pointer;
      transition: all 0.3s ease-in-out;
   }
-  
+
 
 }
 
@@ -1866,7 +1877,7 @@
 .view-member-mobile-overlay {
 
   @media (max-width: 1024px) {
- 
+
   padding: 15px;
   > div:nth-child(1) {
     display: flex;

@@ -11,14 +11,9 @@ import {
 } from '@angular/fire/firestore';
 import {doc, arrayUnion, setDoc, deleteField } from 'firebase/firestore';
 import {BehaviorSubject, map, Observable, Subject, tap} from 'rxjs';
-
-interface Channel {
-  id: string;
-  name: string;
-  description: string;
-  creator: string;
-  users?: string[];
-}
+import { Channel } from './core/interfaces/channel';
+import { ChatMessage } from './core/interfaces/chat-message';
+import { GlobalSearchResult } from './core/interfaces/global-search-result';
 
 @Injectable({
   providedIn: 'root'
@@ -41,29 +36,6 @@ export class ChatService {
 
   constructor(private firestore: Firestore) {}
 
-  setCurrentChat(chat: any, name: string, description: string, creator: string) {
-    this.currentChat = name;
-    this.currentChannel = chat;
-    this.currentCreator = creator;
-    this.currentDescription = description;
-    this.currentChat$.next(chat);
-  }
-
-  sendMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
-    const messagesRef = collection(this.firestore, `channels/${channelId}/messages`);
-    return addDoc(messagesRef, message);
-  }
-
-  sendWhisperMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
-    const messagesRef = collection(this.firestore, `whispers/${channelId}/messages`);
-    return addDoc(messagesRef, message);
-  }
-
-  sendThreadMessage(channelId: string, threadId: string, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
-    const messagesRef = collection(this.firestore, `channels/${channelId}/messages/${threadId}/thread`);
-    return addDoc(messagesRef, message);
-  }
-
   async sendBroadcastMessage(recipients: any, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
     for (const r of recipients) {
       switch (r.type) {
@@ -74,16 +46,8 @@ export class ChatService {
         case 'user':
           await this.sendWhisperMessage(r.partnerChat, message);
           break;
-
-        case 'mail':
-          // await this.sendToMail(r.mail, message);
-          break;
       }
     }
-  }
-
-  private sendToMail(mail: string, message: any) {
-    console.log('Send mail to', mail, message);
   }
 
   async messageThreaded(channelId: string, threadId: string, amount: number, last: number ) {
@@ -149,6 +113,30 @@ export class ChatService {
     this.pendingUsers = [];
   }
 
+  async reactChannelMessage(channelId: string, messageId: string, emoji: string, add: boolean, userId: string): Promise<void> {
+    const ref = doc(
+      this.firestore,
+      `channels/${channelId}/messages/${messageId}`
+    );
+    return this.writeReactionSafe(ref, emoji, add, userId);
+  }
+
+  async reactWhisperMessage(whisperId: string, messageId: string, emoji: string, add: boolean, userId: string): Promise<void> {
+    const ref = doc(
+      this.firestore,
+      `whispers/${whisperId}/messages/${messageId}`
+    );
+    return this.writeReactionSafe(ref, emoji, add, userId);
+  }
+
+  async reactThreadMessage(channelId: string, threadId: string, messageId: string, emoji: string, add: boolean, userId: string): Promise<void> {
+    const ref = doc(
+      this.firestore,
+      `channels/${channelId}/messages/${threadId}/thread/${messageId}`
+    );
+    return this.writeReactionSafe(ref, emoji, add, userId);
+  }
+
   async searchInConversation(type: 'channel' | 'user', id: string, term: string): Promise<ChatMessage[]> {
     const basePath = type === 'channel' ? `channels/${id}/messages` : `whispers/${id}/messages`;
 
@@ -157,40 +145,89 @@ export class ChatService {
 
     const snap = await getDocs(q);
 
-    return snap.docs
-      .map(d => ({
+    return snap.docs.map(d => ({
         id: d.id, ...(d.data() as Omit<ChatMessage, 'id'>),
-      }))
-      .filter(msg =>
+      })).filter(msg =>
         msg.text?.toLowerCase().includes(term.toLowerCase())
       );
   }
 
   async searchGlobally(channelIds: string[], whisperIds: string[], term: string): Promise<GlobalSearchResult[]> {
-    const results: GlobalSearchResult[] = [];
     const lower = term.toLowerCase();
 
-    for (const id of channelIds) {
-      const ref = collection(this.firestore, `channels/${id}/messages`);
-      const snap = await getDocs(ref);
+    const channelResults = await Promise.all(
+      channelIds.map(id => this.searchChannelMessages(id, lower))
+    );
 
-      snap.docs.forEach(d => {
+    const whisperResults = await Promise.all(
+      whisperIds.map(id => this.searchWhisperMessages(id, lower))
+    );
+
+    return [...channelResults.flat(), ...whisperResults.flat()];
+  }
+
+  private async searchChannelMessages(channelId: string, lower: string): Promise<GlobalSearchResult[]> {
+    const ref = collection(this.firestore, `channels/${channelId}/messages`);
+    const snap = await getDocs(ref);
+
+    return snap.docs.map(d => {
         const data = d.data() as Omit<ChatMessage, 'id'>;
-        if (data.text?.toLowerCase().includes(lower)) results.push({id: d.id, ...data, channelId: id});
-      });
-    }
+        return data.text?.toLowerCase().includes(lower)
+          ? { id: d.id, ...data, channelId }
+          : null;
+      }).filter(Boolean) as GlobalSearchResult[];
+  }
 
-    for (const id of whisperIds) {
-      const ref = collection(this.firestore, `whispers/${id}/messages`);
-      const snap = await getDocs(ref);
+  private async searchWhisperMessages(whisperId: string, lower: string): Promise<GlobalSearchResult[]> {
+    const ref = collection(this.firestore, `whispers/${whisperId}/messages`);
+    const snap = await getDocs(ref);
 
-      snap.docs.forEach(d => {
+    return snap.docs.map(d => {
         const data = d.data() as Omit<ChatMessage, 'id'>;
-        if (data.text?.toLowerCase().includes(lower)) results.push({id: d.id, ...data, whisperId: id});
-      });
-    }
+        return data.text?.toLowerCase().includes(lower)
+          ? { id: d.id, ...data, whisperId }
+          : null;
+      }).filter(Boolean) as GlobalSearchResult[];
+  }
 
-    return results;
+  private async writeReactionSafe(ref: ReturnType<typeof doc>, emoji: string, add: boolean, userId: string) {
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      if (!add) return;
+      await setDoc(ref, { reactions: { [emoji]: [userId] } }, { merge: true });
+      return;
+    }
+    const data = snap.data() as any;
+    const current: string[] = data?.reactions?.[emoji] ?? [];
+    const next = add ? Array.from(new Set([...current, userId])) : current.filter((id) => id !== userId);
+    if (next.length === 0) {
+      await updateDoc(ref, { [`reactions.${emoji}`]: deleteField() });
+    } else {
+      await setDoc(ref, { reactions: { [emoji]: next } }, { merge: true });
+    }
+  }
+
+  setCurrentChat(chat: any, name: string, description: string, creator: string) {
+    this.currentChat = name;
+    this.currentChannel = chat;
+    this.currentCreator = creator;
+    this.currentDescription = description;
+    this.currentChat$.next(chat);
+  }
+
+  sendMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
+    const messagesRef = collection(this.firestore, `channels/${channelId}/messages`);
+    return addDoc(messagesRef, message);
+  }
+
+  sendWhisperMessage(channelId: string, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
+    const messagesRef = collection(this.firestore, `whispers/${channelId}/messages`);
+    return addDoc(messagesRef, message);
+  }
+
+  sendThreadMessage(channelId: string, threadId: string, message: {uid: string, text: string; user: string; timestamp: number; reaction: any }) {
+    const messagesRef = collection(this.firestore, `channels/${channelId}/messages/${threadId}/thread`);
+    return addDoc(messagesRef, message);
   }
 
   getChannelById(channelId: string): Observable<Channel | undefined> {
@@ -248,75 +285,5 @@ export class ChatService {
     const messagesRef = collection(this.firestore, `whispers/${channelId}/messages`);
     const q  = query(messagesRef, orderBy('timestamp', 'asc'));
     return collectionData(q, { idField: 'id' }) as Observable<any[]>;
-  }
-
-  private async writeReactionSafe(
-    ref: ReturnType<typeof doc>,
-    emoji: string,
-    add: boolean,
-    userId: string
-  ) {
-    const snap = await getDoc(ref);
-
-    if (!snap.exists()) {
-      if (!add) return;
-      await setDoc(ref, { reactions: { [emoji]: [userId] } }, { merge: true });
-      return;
-    }
-
-    const data = snap.data() as any;
-    const current: string[] = data?.reactions?.[emoji] ?? [];
-    const next = add
-      ? Array.from(new Set([...current, userId]))
-      : current.filter((id) => id !== userId);
-
-    if (next.length === 0) {
-      await updateDoc(ref, { [`reactions.${emoji}`]: deleteField() });
-    } else {
-      await setDoc(ref, { reactions: { [emoji]: next } }, { merge: true });
-    }
-  }
-
-  async reactChannelMessage(
-    channelId: string,
-    messageId: string,
-    emoji: string,
-    add: boolean,
-    userId: string
-  ): Promise<void> {
-    const ref = doc(
-      this.firestore,
-      `channels/${channelId}/messages/${messageId}`
-    );
-    return this.writeReactionSafe(ref, emoji, add, userId);
-  }
-
-  async reactWhisperMessage(
-    whisperId: string,
-    messageId: string,
-    emoji: string,
-    add: boolean,
-    userId: string
-  ): Promise<void> {
-    const ref = doc(
-      this.firestore,
-      `whispers/${whisperId}/messages/${messageId}`
-    );
-    return this.writeReactionSafe(ref, emoji, add, userId);
-  }
-
-  async reactThreadMessage(
-    channelId: string,
-    threadId: string,
-    messageId: string,
-    emoji: string,
-    add: boolean,
-    userId: string
-  ): Promise<void> {
-    const ref = doc(
-      this.firestore,
-      `channels/${channelId}/messages/${threadId}/thread/${messageId}`
-    );
-    return this.writeReactionSafe(ref, emoji, add, userId);
   }
 }

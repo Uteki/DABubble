@@ -508,7 +508,7 @@ export class ChatComponent implements OnInit {
   }
 
   keepMenuOpen() {
-   
+
   }
 
   editMessage(messageId: string) {

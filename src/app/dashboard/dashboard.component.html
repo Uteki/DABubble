@@ -1,6 +1,8 @@
 <app-header
   [users]="userList"
   [channels]="channelList"
+  (partnerSelected)="onPartnerSelected($event)"
+  (toggleRequest)="toggleDirect($event)"
 ></app-header>
 
 <section

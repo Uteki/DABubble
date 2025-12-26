@@ -700,7 +700,6 @@
         </div>
       </div>
       <div
-     
         [ngClass]="{
           'no-display': !viewMemberOverlay,
           'add-member-open': switchAddMemberOverlay,
@@ -982,7 +981,7 @@
               [(ngModel)]="editingMessageText"
               rows="3"
               class="message-edit-textarea"
-           
+
             ></textarea>
             <div class="message-edit-actions">
               <div class="button-group">
@@ -1004,10 +1003,10 @@
             </div>
           </div>
           } @else {
-          <!-- Normal Display Mode -->
           <div
             id="message-text-{{ msg.id }}"
             class="message-text"
+            [attr.data-message-id]="msg.id"
             (click)="
               openThread(msg.id, {
                 uid: msg.uid,

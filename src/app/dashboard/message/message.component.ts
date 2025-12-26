@@ -156,7 +156,6 @@ export class MessageComponent implements OnChanges {
   }
 
   onReactionToggle(msg: any, ev: { emoji: string; add: boolean }) {
-    // Optimistisch im UI
     msg.reactions = msg.reactions ?? {};
     const list: string[] =
       msg.reactions[ev.emoji] ?? (msg.reactions[ev.emoji] = []);
@@ -165,7 +164,6 @@ export class MessageComponent implements OnChanges {
     if (!ev.add && i !== -1) list.splice(i, 1);
     if (list.length === 0) delete msg.reactions[ev.emoji];
 
-    // *** WICHTIG: Direktnachricht => reactWhisperMessage + currentPartnerChat ***
     if (!this.currentPartnerChat || !msg?.id) return;
     this.chatService
       .reactWhisperMessage(this.currentPartnerChat, msg.id, ev.emoji, ev.add, this.meId)
@@ -204,7 +202,6 @@ export class MessageComponent implements OnChanges {
 
 
   openProfile() {
-
     if (this.currentPartner?.uid === this.currentWhisperer) {
       this.profileOverlayService.triggerOpenProfile();
     } else {
@@ -257,7 +254,6 @@ export class MessageComponent implements OnChanges {
   editMessage(messageId: string) {
     const message = this.messages.find((m) => m.id === messageId);
 
-    // Nur eigene Nachrichten können bearbeitet werden
     if (!message || message.uid !== this.getUserId()) {
       return;
     }
@@ -267,7 +263,6 @@ export class MessageComponent implements OnChanges {
     this.editMessageMenuOpen = null;
     this.editMessageIsOpen = true;
 
-    // Füge die Hover-Klasse hinzu (gleiches Element wie bei hoverMessage)
     const messageElement = document.getElementById('message-text-' + messageId);
     if (messageElement) {
       messageElement.classList.add('hovered-own-message');
@@ -275,7 +270,6 @@ export class MessageComponent implements OnChanges {
   }
 
   cancelEdit() {
-    // Entferne die Hover-Klasse
     if (this.editingMessageId) {
       const messageElement = document.getElementById(
         'message-text-' + this.editingMessageId
@@ -293,7 +287,6 @@ export class MessageComponent implements OnChanges {
   async saveEditedMessage(messageId: string) {
     if (!this.editingMessageText.trim()) return;
 
-    // Firestore-Update-Logik für Whisper-Nachrichten
     const messageRef = doc(
       this.firestore,
       `whispers/${this.currentPartnerChat}/messages/${messageId}`

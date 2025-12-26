@@ -233,8 +233,9 @@
             </div>
           </div>
           } @else {
-          <!-- Normal Display Mode -->
-          <div id="message-text-{{ msg.id }}" class="message-text">
+          <div
+            [attr.data-message-id]="msg.id"
+            id="message-text-{{ msg.id }}" class="message-text" >
             {{ msg.text }}
           </div>
           <app-reactions
