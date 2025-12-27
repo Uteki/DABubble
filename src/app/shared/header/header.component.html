@@ -151,7 +151,7 @@
       alt="Search"
       class="search-icon"
     />
-    <div id="search-results">
+    <div class="no-display" id="search-results">
       <ng-container *ngFor="let messages of foundMessages">
         <div (click)="openFoundMessage(messages)">
             <small *ngIf="messages.channelId">

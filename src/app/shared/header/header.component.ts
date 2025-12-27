@@ -116,12 +116,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   async searchMsg() {
     const term = this.getSearchTerm();
-    if (!term) return;
+    const searchResults = document.getElementById('search-results');
+
+    if (!term) return; this.resultNoDisplay();
 
     if (this.isGlobalSearch()) {
       await this.searchGlobal(term);
+      searchResults?.classList.remove('no-display');
     } else {
       await this.searchSingleRecipient(term);
+      searchResults?.classList.remove('no-display');
     }
   }
 
@@ -249,6 +253,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   openFoundMessage(result: GlobalSearchResult) {
+    const searchResults = document.getElementById('search-results');
+    searchResults?.classList.add('no-display');
+
     if (result.channelId || result.type === 'channel') {
       this.openChannelResult(result).then();
     } else {
@@ -323,31 +330,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.authService.signOut(); */
   }
 
+  resultNoDisplay(){
+    const searchResultsContacts = document.getElementById('search-results-contacts');
+    const searchResultsChannels = document.getElementById('search-results-channels');
+
+    searchResultsContacts?.classList.add('no-display');
+    searchResultsChannels?.classList.add('no-display');
+  }
+
   onInputChange(value: string) {
-    const searchResultsContacts = document.getElementById(
-      'search-results-contacts'
-    );
-    const searchResultsChannels = document.getElementById(
-      'search-results-channels'
-    );
+    const searchResults = document.getElementById('search-results');
+    searchResults?.classList.add('no-display');
     if (this.wasEmpty && value.length > 0) {
       this.searchBar(value);
       this.wasEmpty = false;
     }
     if (value.length === 0) {
       this.wasEmpty = true;
-      searchResultsContacts?.classList.add('no-display');
-      searchResultsChannels?.classList.add('no-display');
+      this.resultNoDisplay();
     }
   }
 
   searchBar(value: string) {
-    const searchResultsContacts = document.getElementById(
-      'search-results-contacts'
-    );
-    const searchResultsChannels = document.getElementById(
-      'search-results-channels'
-    );
+    const searchResultsContacts = document.getElementById('search-results-contacts');
+    const searchResultsChannels = document.getElementById('search-results-channels');
     if (value === '@') {
       searchResultsContacts?.classList.remove('no-display');
     } else if (value === '#') {
