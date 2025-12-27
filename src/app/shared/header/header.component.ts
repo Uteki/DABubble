@@ -135,13 +135,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
 
   async openChannelResult(result: GlobalSearchResult) {
+    const channelId = result.channelId ?? result.nativeId;
     this.toggleRequest.emit(false);
-    this.chatService.setCurrentChat(result.channelId, '', '', '');
+    this.chatService.setCurrentChat(channelId, '', '', '');
     this.scrollToMessage(result.id);
   }
 
   async openWhisperResult(result: GlobalSearchResult) {
-    await this.emitPartner(result.whisperId);
+    const whisperId = result.whisperId ?? result.nativeId;
+    await this.emitPartner(whisperId);
     this.scrollToMessage(result.id);
   }
 
@@ -247,9 +249,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   openFoundMessage(result: GlobalSearchResult) {
-    if (result.channelId) {
+    if (result.channelId || result.type === 'channel') {
       this.openChannelResult(result).then();
-    } else if (result.whisperId) {
+    } else {
       this.openWhisperResult(result).then();
     }
   }

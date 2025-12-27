@@ -146,7 +146,7 @@ export class ChatService {
     const snap = await getDocs(q);
 
     return snap.docs.map(d => ({
-        id: d.id, ...(d.data() as Omit<ChatMessage, 'id'>),
+      type: type, nativeId: id, id: d.id, ...(d.data() as Omit<ChatMessage, 'id'>),
       })).filter(msg =>
         msg.text?.toLowerCase().includes(term.toLowerCase())
       );
