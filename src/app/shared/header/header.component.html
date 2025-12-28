@@ -138,6 +138,7 @@
     </div>
     <input
       [(ngModel)]="recipientInput"
+      (keyup.enter)="searchMsg()"
       (input)="onInputChange($any($event.target).value)"
       autocomplete="off"
       type="text"
@@ -151,9 +152,9 @@
       alt="Search"
       class="search-icon"
     />
-    <div class="no-display" id="search-results">
-      <ng-container *ngFor="let messages of foundMessages">
-        <div (click)="openFoundMessage(messages)">
+    <div #searchResult class="no-display" id="search-results">
+      <ng-container *ngIf="foundMessages.length > 0; else noResults" >
+        <div *ngFor="let messages of foundMessages" (click)="openFoundMessage(messages)">
             <small *ngIf="messages.channelId">
               #{{ getChannelName(messages.channelId)  }}
             </small>
@@ -165,6 +166,10 @@
           <p class="text">{{ messages.user + ": " + messages.text }}</p>
         </div>
       </ng-container>
+
+      <ng-template #noResults>
+        <p class="no-results">Keine Ergebnisse gefunden</p>
+      </ng-template>
     </div>
     <div class="no-display" id="search-results-contacts" *ngIf="recipient.length == 0">
       <ng-container *ngFor="let user of filteredUsers">

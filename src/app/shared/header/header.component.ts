@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { Router, RouterLink } from '@angular/router';
@@ -26,6 +27,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @Output() toggleRequest = new EventEmitter<boolean>();
   @Output() partnerSelected = new EventEmitter<User>();
+
+  @ViewChild('searchResult', { static: true }) searchWrapper!: ElementRef;
 
   recipientInput: string = "";
   foundMessages: any[] = [];
@@ -79,6 +82,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     window.removeEventListener('beforeunload', this.beforeUnloadHandler);
   }
 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = this.searchWrapper.nativeElement.contains(event.target);
+    if (!clickedInside) this.hideSearchResults()
+  }
+
   get searchTerm(): string {
     return this.recipientInput.replace(/^[@#]/, '').toLowerCase().trim();
   }
@@ -118,7 +127,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     const term = this.getSearchTerm();
     const searchResults = document.getElementById('search-results');
 
-    if (!term) return; this.resultNoDisplay();
+    if (!term) return; this.hideSearchResults();
 
     if (this.isGlobalSearch()) {
       await this.searchGlobal(term);
@@ -137,9 +146,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.toggleRequest.emit(true);
   }
 
-
   async openChannelResult(result: GlobalSearchResult) {
     const channelId = result.channelId ?? result.nativeId;
+    if (channelId != null) this.chatService.currentChannelID = channelId;
     this.toggleRequest.emit(false);
     this.chatService.setCurrentChat(channelId, '', '', '');
     this.scrollToMessage(result.id);
@@ -166,6 +175,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private async searchWhisper(whisperId: string, term: string) {
     this.foundMessages = await this.chatService.searchInConversation(
       'user', whisperId, term
+    );
+  }
+
+  private async searchGlobal(term: string) {
+    const channelIds = this.channels.map(c => c.id);
+    const whisperIds = this.users.map(u => this.buildPartnerChat(u.uid));
+
+    this.foundMessages = await this.chatService.searchGlobally(
+      channelIds, whisperIds, term
     );
   }
 
@@ -202,13 +220,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return uid1 === myUid ? uid2 : uid1;
   }
 
-  private async searchGlobal(term: string) {
-    const channelIds = this.channels.map(c => c.id);
-    const whisperIds = this.users.map(u => this.buildPartnerChat(u.uid));
-
-    this.foundMessages = await this.chatService.searchGlobally(
-      channelIds, whisperIds, term
-    );
+  private hideSearchResults() {
+    document.getElementById('search-results')?.classList.add('no-display');
+    document.getElementById('search-results-contacts')?.classList.add('no-display');
+    document.getElementById('search-results-channels')?.classList.add('no-display');
   }
 
   isUserRecipient(r: BroadcastRecipient): r is Extract<BroadcastRecipient, { type: 'user' }> {
@@ -330,14 +345,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.authService.signOut(); */
   }
 
-  resultNoDisplay(){
-    const searchResultsContacts = document.getElementById('search-results-contacts');
-    const searchResultsChannels = document.getElementById('search-results-channels');
-
-    searchResultsContacts?.classList.add('no-display');
-    searchResultsChannels?.classList.add('no-display');
-  }
-
   onInputChange(value: string) {
     const searchResults = document.getElementById('search-results');
     searchResults?.classList.add('no-display');
@@ -347,7 +354,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
     if (value.length === 0) {
       this.wasEmpty = true;
-      this.resultNoDisplay();
+      this.hideSearchResults();
     }
   }
 
