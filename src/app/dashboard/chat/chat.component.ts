@@ -73,6 +73,7 @@ export class ChatComponent implements OnInit {
   viewMemberOverlay: boolean = false;
   addMemberOverlay: boolean = false;
   viewMemberMobileOverlay: boolean = false;
+  viewMemberOverlayMobile: boolean = false;
   switchAddMemberOverlay: boolean = false;
   userInChannel: boolean = false;
   profileOverlay: boolean = false;
@@ -416,6 +417,7 @@ export class ChatComponent implements OnInit {
       this.switchAddMemberOverlay = overlayBoolean;
       this.viewMemberOverlay = overlayBoolean;
       this.viewMemberMobileOverlay = overlayBoolean;
+      this.viewMemberOverlayMobile
     }
   }
 
@@ -610,11 +612,14 @@ export class ChatComponent implements OnInit {
     this.overlayActivated = false;
     this.channelOverlay = false;
     this.viewMemberOverlay = false;
+    this.viewMemberOverlayMobile = false;
     this.addMemberOverlay = false;
     this.switchAddMemberOverlay = false;
     this.inputValue = '';
     this.channelName = '';
     this.selectedChannelUsers = [];
+    console.log(this.viewMemberOverlay);
+    
   }
 
   hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {
