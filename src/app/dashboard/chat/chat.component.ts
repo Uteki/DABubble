@@ -619,7 +619,7 @@ export class ChatComponent implements OnInit {
     this.channelName = '';
     this.selectedChannelUsers = [];
     console.log(this.viewMemberOverlay);
-    
+
   }
 
   hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {

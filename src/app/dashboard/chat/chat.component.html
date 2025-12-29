@@ -1355,14 +1355,6 @@
             id="message-text-{{ msg.id }}"
             class="message-text"
             [attr.data-message-id]="msg.id"
-            (click)="
-              openThread(msg.id, {
-                uid: msg.uid,
-                text: msg.text,
-                user: msg.user,
-                timestamp: msg.timestamp
-              })
-            "
           >
             {{ msg.text }}
           </div>
@@ -1423,7 +1415,17 @@
           <div>
             <img src="/assets/icons/reactions/addReaction.png" alt="" />
           </div>
-          <div><img src="/assets/icons/svgs/comment.svg" alt="" /></div>
+          <div
+            (click)="
+              openThread(msg.id, {
+                uid: msg.uid,
+                text: msg.text,
+                user: msg.user,
+                timestamp: msg.timestamp
+              })
+            "
+          >
+            <img src="/assets/icons/svgs/comment.svg" alt="" /></div>
           <div
             [ngClass]="{ 'no-display': msg.uid !== getUserId() }"
             class="more-vert-button"
