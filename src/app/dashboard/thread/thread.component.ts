@@ -11,7 +11,8 @@ import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { User } from '../../core/interfaces/user';
 import { AuthService } from '../../auth.service';
 import { ReactionsComponent } from './../../shared/reactions/reactions.component';
-import {AutoScrollDirective} from "../../auto-scroll.directive";
+import { AutoScrollDirective } from "../../auto-scroll.directive";
+import { LinkifyPipe } from "../../linkify.pipe";
 
 type ReactionsMap = Record<string, string[]>;
 
@@ -27,7 +28,7 @@ interface Message {
 @Component({
   selector: 'app-thread',
   standalone: true,
-  imports: [FormsModule, DatePipe, NgForOf, NgIf, NgClass, ReactionsComponent, AutoScrollDirective],
+  imports: [FormsModule, DatePipe, NgForOf, NgIf, NgClass, ReactionsComponent, AutoScrollDirective, LinkifyPipe],
   templateUrl: './thread.component.html',
   styleUrl: './thread.component.scss'
 })

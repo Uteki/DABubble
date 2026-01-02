@@ -36,6 +36,7 @@ import { User } from '../../core/interfaces/user';
 import { ProfileOverlayService } from '../../profile-overlay.service';
 import { ReactionsComponent } from './../../shared/reactions/reactions.component';
 import { AutoScrollDirective } from "../../auto-scroll.directive";
+import { LinkifyPipe } from "../../linkify.pipe";
 
 @Component({
   selector: 'app-chat',
@@ -49,6 +50,7 @@ import { AutoScrollDirective } from "../../auto-scroll.directive";
     NgIf,
     DatePipe,
     ReactionsComponent,
+    LinkifyPipe
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss',

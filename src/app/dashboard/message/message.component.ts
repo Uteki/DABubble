@@ -11,22 +11,24 @@ import { doc, updateDoc } from 'firebase/firestore';
 
 import { StopPropagationDirective } from "../../stop-propagation.directive";
 import { ProfileOverlayService } from "../../profile-overlay.service";
-import {AutoScrollDirective} from "../../auto-scroll.directive";
+import { AutoScrollDirective } from "../../auto-scroll.directive";
+import { LinkifyPipe } from "../../linkify.pipe";
 
 
 @Component({
   selector: 'app-message',
   standalone: true,
-  imports: [
-    DatePipe,
-    FormsModule,
-    NgForOf,
-    NgIf,
-    NgClass,
-    ReactionsComponent,
-    StopPropagationDirective,
-    AutoScrollDirective
-  ],
+    imports: [
+        DatePipe,
+        FormsModule,
+        NgForOf,
+        NgIf,
+        NgClass,
+        ReactionsComponent,
+        StopPropagationDirective,
+        AutoScrollDirective,
+        LinkifyPipe
+    ],
   templateUrl: './message.component.html',
   styleUrl: './message.component.scss'
 })

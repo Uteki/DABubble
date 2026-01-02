@@ -235,8 +235,8 @@
           } @else {
           <div
             [attr.data-message-id]="msg.id"
+            [innerHTML]="msg.text | linkify"
             id="message-text-{{ msg.id }}" class="message-text" >
-            {{ msg.text }}
           </div>
           <app-reactions
             [reactions]="msg.reactions || {}"
