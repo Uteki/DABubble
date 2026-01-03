@@ -37,6 +37,7 @@ import { ProfileOverlayService } from '../../profile-overlay.service';
 import { ReactionsComponent } from './../../shared/reactions/reactions.component';
 import { AutoScrollDirective } from "../../auto-scroll.directive";
 import { LinkifyPipe } from "../../linkify.pipe";
+import {MentionService} from "../../mention.service";
 
 @Component({
   selector: 'app-chat',
@@ -56,13 +57,15 @@ import { LinkifyPipe } from "../../linkify.pipe";
   styleUrl: './chat.component.scss',
 })
 export class ChatComponent implements OnInit {
+  @Output() partnerSelected = new EventEmitter<User>();
   @Output() threadSelected = new EventEmitter<string>();
   @Output() toggleRequest = new EventEmitter<boolean>();
   @Output() toggleRequestDirect = new EventEmitter<boolean>();
 
   @ViewChild('channelEdit') channelEdit!: ElementRef;
+
   @Input() users: any[] = [];
-  @Output() partnerSelected = new EventEmitter<User>();
+  @Input() channels: any[] = [];
 
   inputValue: string = '';
   messages: any[] = [];
@@ -111,7 +114,8 @@ export class ChatComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private firestore: Firestore,
     private authService: AuthService,
-    private profileOverlayService: ProfileOverlayService
+    private profileOverlayService: ProfileOverlayService,
+    private mentionService: MentionService
   ) {}
 
   ngOnInit(): void {
@@ -307,6 +311,11 @@ export class ChatComponent implements OnInit {
       this.editDescription = false;
       //TODO ?
     }
+  }
+
+  @HostListener('click', ['$event'])
+  onMessageClick(event: MouseEvent) {
+    this.mentionService.mentionClick(event, this.users)
   }
 
   async checkMeta(channel: any): Promise<void> {

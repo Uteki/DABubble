@@ -1355,7 +1355,7 @@
             id="message-text-{{ msg.id }}"
             class="message-text"
             [attr.data-message-id]="msg.id"
-            [innerHTML]="msg.text | linkify"
+            [innerHTML]="msg.text | linkify:users:channels"
           >
           </div>
           <app-reactions

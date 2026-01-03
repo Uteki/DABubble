@@ -235,7 +235,7 @@
           } @else {
           <div
             [attr.data-message-id]="msg.id"
-            [innerHTML]="msg.text | linkify"
+            [innerHTML]="msg.text | linkify:users:channels"
             id="message-text-{{ msg.id }}" class="message-text" >
           </div>
           <app-reactions

@@ -1,6 +1,6 @@
 import {
   Component,
-  EventEmitter,
+  EventEmitter, HostListener,
   Input,
   OnChanges,
   Output,
@@ -13,6 +13,7 @@ import { AuthService } from '../../auth.service';
 import { ReactionsComponent } from './../../shared/reactions/reactions.component';
 import { AutoScrollDirective } from "../../auto-scroll.directive";
 import { LinkifyPipe } from "../../linkify.pipe";
+import {MentionService} from "../../mention.service";
 
 type ReactionsMap = Record<string, string[]>;
 
@@ -37,6 +38,7 @@ export class ThreadComponent implements OnChanges {
 
   @Input() messageId!: string | null;
   @Input() users: any[] = [];
+  @Input() channels: any[] = [];
 
   today = new Date();
   currentThread: string = '';
@@ -54,8 +56,14 @@ export class ThreadComponent implements OnChanges {
 
   constructor(
     private chatService: ChatService,
-    private authService: AuthService
+    private authService: AuthService,
+    private mentionService: MentionService
   ) {}
+
+  @HostListener('click', ['$event'])
+  onMessageClick(event: MouseEvent) {
+    this.mentionService.mentionClick(event, this.users)
+  }
 
   get meId() {
     return this.authService.readCurrentUser();

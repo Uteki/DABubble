@@ -71,7 +71,7 @@
             <span class="timestamp">{{ msg.timestamp | date : 'HH:mm' }} Uhr</span>
           </div>
 
-          <div class="message-text" [innerHTML]="msg.text | linkify"></div>
+          <div class="message-text" [innerHTML]="msg.text | linkify:users:channels"></div>
 
           <app-reactions
             [reactions]="msg.reactions || {}"

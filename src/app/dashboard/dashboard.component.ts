@@ -10,6 +10,7 @@ import { User } from '../core/interfaces/user';
 import { ChatService } from '../chat.service';
 import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
+import { MentionService } from "../mention.service";
 
 @Component({
   selector: 'app-dashboard',
@@ -50,22 +51,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private chatService: ChatService,
-    private authService: AuthService
+    private authService: AuthService,
+    private mentionService: MentionService
   ) {}
 
   ngOnInit() {
-    this.subs.add(
-      this.userService.getUser().subscribe((data) => {
-        this.userList = data;
-      })
-    );
+    this.subs.add(this.userService.getUser().subscribe((data) => { this.userList = data }));
 
     this.chatService.getChannels(this.authService.readCurrentUser()).subscribe((data) => {
       const uid = this.authService.readCurrentUser();
-      this.channelList = data
-        .filter(channel => channel.users?.includes(uid) || channel.id === 'DALobby')
+      this.channelList = data.filter(channel => channel.users?.includes(uid) || channel.id === 'DALobby')
         .sort((a, b) => a.id === 'DALobby' ? -1 : b.id === 'DALobby' ? 1 : 0);
     });
+
+    this.globalScopeToggle()
   }
 
   ngOnDestroy(): void {
@@ -129,6 +128,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.isOpening = false;
     this.isClosing = false;
+  }
+
+  globalScopeToggle() {
+    this.mentionService.partnerSelected$.subscribe(user => this.onPartnerSelected(user));
+    this.mentionService.toggleRequest$.subscribe(b => this.toggleThread(b));
+    this.mentionService.toggleRequestDirect$.subscribe(b => this.toggleDirect(b));
   }
 
   private openThreadPane() {

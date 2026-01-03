@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, HostListener, Input, OnChanges, Output} from '@angular/core';
 import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { AuthService } from "../../auth.service";
@@ -13,6 +13,7 @@ import { StopPropagationDirective } from "../../stop-propagation.directive";
 import { ProfileOverlayService } from "../../profile-overlay.service";
 import { AutoScrollDirective } from "../../auto-scroll.directive";
 import { LinkifyPipe } from "../../linkify.pipe";
+import { MentionService } from "../../mention.service";
 
 
 @Component({
@@ -38,6 +39,7 @@ export class MessageComponent implements OnChanges {
 
   @Input() partner!: User | null;
   @Input() users: any[] = [];
+  @Input() channels: any[] = [];
 
   messages: any[] = [];
   messageText: string = '';
@@ -61,8 +63,14 @@ export class MessageComponent implements OnChanges {
 
   private msgSub?: Subscription;
 
-  constructor(private chatService: ChatService, private cd: ChangeDetectorRef, private authService: AuthService, private profileOverlayService: ProfileOverlayService, private firestore: Firestore) {}
-  //TODO: Editable messages
+  constructor(
+    private chatService: ChatService,
+    private cd: ChangeDetectorRef,
+    private authService: AuthService,
+    private profileOverlayService: ProfileOverlayService,
+    private firestore: Firestore,
+    private mentionService: MentionService
+  ) {}
 
   ngOnChanges() {
     if (this.partner) {
@@ -82,6 +90,11 @@ export class MessageComponent implements OnChanges {
           .sort((a: any, b: any) => a.timestamp - b.timestamp);
       });
     }
+  }
+
+  @HostListener('click', ['$event'])
+  onMessageClick(event: MouseEvent) {
+    this.mentionService.mentionClick(event, this.users)
   }
 
   private stripEmptyReactions(

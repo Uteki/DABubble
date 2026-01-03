@@ -18,6 +18,24 @@ body {
   background-color: $main-accent;
 }
 
+.mention {
+  color: $mention-color;
+  background-color: $mention-bg;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $mention-hover-bg;
+  }
+}
+
+.unknown {
+  color: $unknown-color;
+  background-color: $unknown-bg;
+  text-decoration: none;
+  cursor: not-allowed;
+}
+
 @font-face {
   font-family: "Nunito";
   src: url("./assets/fonts/Nunito-Regular.ttf") format("truetype");

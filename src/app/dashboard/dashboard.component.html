@@ -40,6 +40,7 @@
   </app-channels>
   <app-chat
     [users]="userList"
+    [channels]="channelList"
     [class.is-hidden]="chat"
     (partnerSelected)="onPartnerSelected($event)"
     (threadSelected)="onThreadSelected($event)"
@@ -48,11 +49,13 @@
   ></app-chat>
   <app-message
     [users]="userList"
+    [channels]="channelList"
     [partner]="selectedPartner"
     [class.is-hidden]="direct"
   ></app-message>
   <app-thread
     [users]="userList"
+    [channels]="channelList"
     [messageId]="selectedThreadId"
     (toggleRequest)="toggleThread($event)"
     [class.is-thread-opening]="isThreadOpening"
