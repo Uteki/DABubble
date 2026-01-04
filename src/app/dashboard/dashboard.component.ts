@@ -132,7 +132,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   globalScopeToggle() {
     this.mentionService.partnerSelected$.subscribe(user => this.onPartnerSelected(user));
-    this.mentionService.toggleRequest$.subscribe(b => this.toggleThread(b));
     this.mentionService.toggleRequestDirect$.subscribe(b => this.toggleDirect(b));
   }
 
