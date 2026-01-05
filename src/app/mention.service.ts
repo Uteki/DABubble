@@ -30,10 +30,6 @@ export class MentionService {
   }
 
   mentionChannel(channelId: string, name: string) {
-    this.chatService.destroy$.next();
-    this.chatService.destroy$.complete();
-    this.chatService.destroy$ = new Subject<void>();
-
     this.chatService.currentChannelID = channelId;
     this.chatService.setCurrentChat(channelId, name, '', '');
 
