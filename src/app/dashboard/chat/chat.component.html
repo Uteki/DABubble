@@ -1450,9 +1450,67 @@
   (submit)="sendMessage(); $event.preventDefault()"
 >
   <label for="message"></label>
-  <div id="search-chat-channels" class="text-channel-list no-display"></div>
-  <div id="search-chat-members" class="text-member-list no-display"></div>
+  <div id="search-chat-channels" class="text-channel-list no-display">
+    <ng-container *ngFor="let channel of filteredChannels">
+      <div
+        (click)="insertMention(channel.name, messageInput)"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <mask
+            id="mask0_157289_4664"
+            style="mask-type: alpha"
+            maskUnits="userSpaceOnUse"
+            x="0"
+            y="0"
+            width="24"
+            height="24"
+          >
+            <rect width="24" height="24" fill="#D9D9D9" />
+          </mask>
+          <g mask="url(#mask0_157289_4664)">
+            <path
+              d="M7.22504 20.325C6.7917 20.325 6.45004 20.1623 6.20004 19.837C5.95004 19.5123 5.87504 19.1417 5.97504 18.725L6.57504 16.325H4.77504C4.34171 16.325 3.9917 16.1583 3.72504 15.825C3.45837 15.4917 3.38337 15.1083 3.50004 14.675C3.58337 14.3917 3.7417 14.154 3.97504 13.962C4.20837 13.7707 4.47504 13.675 4.77504 13.675H7.25004L8.07504 10.325H5.77504C5.3417 10.325 4.9917 10.1583 4.72504 9.82499C4.45837 9.49165 4.38337 9.10832 4.50004 8.67499C4.58337 8.39165 4.7417 8.15432 4.97504 7.96299C5.20837 7.77099 5.47504 7.67499 5.77504 7.67499H8.75004L9.50004 4.64999C9.58337 4.36665 9.74171 4.13332 9.97504 3.94999C10.2084 3.76665 10.475 3.67499 10.775 3.67499C11.2084 3.67499 11.55 3.83732 11.8 4.16199C12.05 4.48732 12.125 4.85832 12.025 5.27499L11.425 7.67499H14.75L15.5 4.64999C15.5834 4.36665 15.7417 4.13332 15.975 3.94999C16.2084 3.76665 16.475 3.67499 16.775 3.67499C17.2084 3.67499 17.55 3.83732 17.8 4.16199C18.05 4.48732 18.125 4.85832 18.025 5.27499L17.425 7.67499H19.225C19.6584 7.67499 20.0084 7.84165 20.275 8.17499C20.5417 8.50832 20.6167 8.89165 20.5 9.32499C20.4167 9.60832 20.2584 9.84565 20.025 10.037C19.7917 10.229 19.525 10.325 19.225 10.325H16.75L15.925 13.675H18.225C18.6584 13.675 19.0084 13.8417 19.275 14.175C19.5417 14.5083 19.6167 14.8917 19.5 15.325C19.4167 15.6083 19.2584 15.846 19.025 16.038C18.7917 16.2293 18.525 16.325 18.225 16.325H15.25L14.5 19.35C14.4167 19.6333 14.2584 19.8667 14.025 20.05C13.7917 20.2333 13.525 20.325 13.225 20.325C12.7917 20.325 12.45 20.1623 12.2 19.837C11.95 19.5123 11.875 19.1417 11.975 18.725L12.575 16.325H9.25004L8.50004 19.35C8.4167 19.6333 8.25837 19.8667 8.02504 20.05C7.7917 20.2333 7.52504 20.325 7.22504 20.325ZM9.92504 13.675H13.25L14.075 10.325H10.75L9.92504 13.675Z"
+              fill="black"
+            />
+          </g>
+        </svg>
+
+        <h3>
+          {{ channel.name.charAt(0).toUpperCase() + channel.name.slice(1) }}
+        </h3>
+      </div>
+    </ng-container>
+  </div>
+  <div id="search-chat-members" class="text-member-list no-display">
+    <ng-container *ngFor="let user of filteredUsers">
+      <div
+        *ngIf="user.name"
+        (click)="insertMention(user.name, messageInput)"
+      >
+        <article>
+          <figure class="user-avatar">
+            <img [src]="user.avatar" [alt]="user.name" />
+
+            @if (user.status) {
+              <img src="./../../../assets/img/online.png" alt="" />
+            } @else {
+              <img src="./../../../assets/img/offline.svg" alt="" />
+            }
+          </figure>
+
+          <p>{{ user.name }}</p>
+        </article>
+      </div>
+    </ng-container>
+  </div>
   <textarea
+    #messageInput
     id="message"
     (input)="onInputChange($any($event.target).value)"
     name="message"

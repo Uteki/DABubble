@@ -23,7 +23,7 @@
           <span class="timestamp">{{ rootMessage.timestamp | date : "HH:mm" }} Uhr</span>
         </div>
 
-        <div class="message-text">{{ rootMessage.text }}</div>
+        <div class="message-text" [innerHTML]="rootMessage.text | linkify:users:channels"></div>
 
         <app-reactions
           [reactions]="rootMessage.reactions || {}"

@@ -10,10 +10,10 @@ import { ChatService } from '../../chat.service';
 import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { User } from '../../core/interfaces/user';
 import { AuthService } from '../../auth.service';
-import { ReactionsComponent } from './../../shared/reactions/reactions.component';
+import { ReactionsComponent } from '../../shared/reactions/reactions.component';
 import { AutoScrollDirective } from "../../auto-scroll.directive";
 import { LinkifyPipe } from "../../linkify.pipe";
-import {MentionService} from "../../mention.service";
+import { MentionService } from "../../mention.service";
 
 type ReactionsMap = Record<string, string[]>;
 

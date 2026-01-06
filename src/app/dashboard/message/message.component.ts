@@ -5,7 +5,7 @@ import { AuthService } from "../../auth.service";
 import { ChatService } from "../../chat.service";
 import { User } from "../../core/interfaces/user";
 import { Subscription } from 'rxjs';
-import { ReactionsComponent } from './../../shared/reactions/reactions.component';
+import { ReactionsComponent } from '../../shared/reactions/reactions.component';
 import { Firestore } from '@angular/fire/firestore';
 import { doc, updateDoc } from 'firebase/firestore';
 

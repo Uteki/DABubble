@@ -40,5 +40,36 @@ export class MentionService {
     this.partnerSelectedSubject.next(user);
     this.toggleRequestDirectSubject.next(true);
   }
+
+  parseMention(value: string, cursor: number) {
+    const before = value.slice(0, cursor);
+    const lastAt = before.lastIndexOf('@');
+    const lastHash = before.lastIndexOf('#');
+    const triggerIndex = Math.max(lastAt, lastHash);
+
+    if (triggerIndex === -1) return null
+    const trigger = before[triggerIndex] as '@' | '#';
+    if (triggerIndex > 0 && !/\s/.test(before[triggerIndex - 1])) return null
+    const rawQuery = before.slice(triggerIndex + 1);
+    const trimmed = rawQuery.trim();
+    const parts = trimmed.split(/\s+/).filter(Boolean);
+    if (parts.length > 2) return null;
+
+    return { trigger, rawQuery, query: trimmed, startIndex: triggerIndex, endIndex: cursor }
+  }
+
+  filterUsers(query: string, users: any[]) {
+    const q = query.toLowerCase();
+    return users.filter(u =>
+      u.name?.toLowerCase().startsWith(q)
+    );
+  }
+
+  filterChannels(query: string, channels: any[]) {
+    const q = query.toLowerCase();
+    return channels.filter(c =>
+      c.name?.toLowerCase().startsWith(q)
+    );
+  }
 }
 
