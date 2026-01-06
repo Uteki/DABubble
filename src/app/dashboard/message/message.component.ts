@@ -41,6 +41,8 @@ export class MessageComponent implements OnChanges {
   @Input() users: any[] = [];
   @Input() channels: any[] = [];
 
+  filteredChannels: any[] = [];
+  filteredUsers: any[] = [];
   messages: any[] = [];
   messageText: string = '';
   today = new Date();
@@ -58,6 +60,8 @@ export class MessageComponent implements OnChanges {
   editingMessageId: string | null = null;
   editingMessageText: string = '';
   editMessageIsOpen: boolean = false;
+
+  activeMention: { trigger: '@' | '#'; startIndex: number; endIndex: number; } | null = null;
 
   public Object = Object;
 
@@ -95,6 +99,36 @@ export class MessageComponent implements OnChanges {
   @HostListener('click', ['$event'])
   onMessageClick(event: MouseEvent) {
     this.mentionService.mentionClick(event, this.users)
+  }
+
+  private resetMentionUI() {
+    document.getElementById('search-chat-members2')?.classList.add('no-display');
+
+    document.getElementById('search-chat-channels2')?.classList.add('no-display');
+
+    this.filteredUsers = [];
+    this.filteredChannels = [];
+    this.activeMention = null;
+  }
+
+  private setActiveMention(mention: any) {
+    this.activeMention = { trigger: mention.trigger, startIndex: mention.startIndex, endIndex: mention.endIndex };
+  }
+
+  private handleUserMention(mention: any) {
+    this.filteredUsers = this.mentionService.filterUsers(mention.query, this.users);
+
+    if (this.filteredUsers.length === 0) return;
+
+    document.getElementById('search-chat-members2')?.classList.remove('no-display');
+  }
+
+  private handleChannelMention(mention: any) {
+    this.filteredChannels = this.mentionService.filterChannels(mention.query, this.channels);
+
+    if (this.filteredChannels.length === 0) return;
+
+    document.getElementById('search-chat-channels2')?.classList.remove('no-display');
   }
 
   private stripEmptyReactions(
@@ -313,5 +347,37 @@ export class MessageComponent implements OnChanges {
     });
 
     this.cancelEdit();
+  }
+
+  onInputChange(value: string, ev?: Event) {
+    console.log("tet")
+    const textarea = ev?.target as HTMLTextAreaElement;
+    const cursor = textarea?.selectionStart ?? value.length;
+
+    this.resetMentionUI();
+
+    const mention = this.mentionService.parseMention(value, cursor);
+    if (!mention) return;
+
+    this.setActiveMention(mention);
+
+    mention.trigger === '@' ? this.handleUserMention(mention) : this.handleChannelMention(mention);
+  }
+
+  insertMention(name: string, textarea: HTMLTextAreaElement) {
+    if (!this.activeMention) return;
+    const { trigger, startIndex, endIndex } = this.activeMention;
+    const before = textarea.value.slice(0, startIndex);
+    const after = textarea.value.slice(endIndex);
+    const mentionText = `${trigger}${name} `;
+    const updatedValue = before + mentionText + after;
+    textarea.value = updatedValue;
+    this.messageText = updatedValue;
+    const newCursor = before.length + mentionText.length;
+    textarea.setSelectionRange(newCursor, newCursor);
+    textarea.focus();
+    this.activeMention = null;
+    document.getElementById('search-chat-members2')?.classList.add('no-display');
+    document.getElementById('search-chat-channels2')?.classList.add('no-display');
   }
 }
