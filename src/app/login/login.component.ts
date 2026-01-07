@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private auth: Auth,
     private introService: IntroService,
-    private authService: AuthService 
+    private authService: AuthService
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -101,6 +101,7 @@ export class LoginComponent implements OnInit {
 
   async guestLogin(): Promise<void> {
     this.errorMessage = null;
+    this.saveSessionStorage('Guest');
     await this.authService.signInAsGuest();
 }
 

@@ -47,7 +47,6 @@ export class AuthService implements OnDestroy {
   async signInAsGuest(): Promise<void> {
     try {
       const credential = await signInAnonymously(this.auth);
-      console.log('Neuer Guest-User:', credential.user.uid);
       this.router.navigate(['/dashboard']);
     } catch (error) {
       console.error('Fehler beim Guest-SignIn:', error);

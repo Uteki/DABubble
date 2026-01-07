@@ -350,7 +350,6 @@ export class MessageComponent implements OnChanges {
   }
 
   onInputChange(value: string, ev?: Event) {
-    console.log("tet")
     const textarea = ev?.target as HTMLTextAreaElement;
     const cursor = textarea?.selectionStart ?? value.length;
 
