@@ -6,7 +6,7 @@ import {
   collectionData,
   docData,
   orderBy,
-  query,
+  query, getDoc,
 } from '@angular/fire/firestore';
 import { doc, setDoc } from 'firebase/firestore';
 import { Observable } from 'rxjs';
@@ -35,5 +35,10 @@ export class UserService {
   async updateUserName(uid: string, newName: string): Promise<void> {
   const userRef = doc(this.firestore, `users/${uid}`);
   await setDoc(userRef, { name: newName }, { merge: true });
-}
+  }
+
+  async checkGoogleUser(uid: string) {
+    const userRef = doc(this.firestore, `users/${uid}`);
+    return await getDoc(userRef);
+  }
 }
