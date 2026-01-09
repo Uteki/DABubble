@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, input, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 type ReMap = Record<string, string[]>;
@@ -18,6 +18,8 @@ export class ReactionsComponent {
   @Input() compact = false;
   @Input() maxDesktop = 20;
   @Input() maxCompact = 7;
+  @Input() externalPickerOpen = false;
+  @Input() addEmoji:string | undefined;
 
   @Output() toggled = new EventEmitter<{ emoji: string; add: boolean }>();
   @Output() addedNew = new EventEmitter<string>();
@@ -25,7 +27,7 @@ export class ReactionsComponent {
   expanded = false;
   pickerOpen = false;
 
-  quickEmojis = ['😀', '👍', '🎉', '❤️', '😊', '🙏', '🚀', '🤔', '😅', '🔥'];
+  quickEmojis = ['😀', '👍', '🎉', '❤️', '😊', '🙏', '🚀', '🤔', '😅', '🔥', '✓'];
 
   hintEmoji: string | null = null;
   private nameById = new Map<string, string>();
@@ -51,9 +53,16 @@ export class ReactionsComponent {
     ':-1': '👎',
   };
 
-  ngOnChanges() {
+  ngOnChanges(changes: any) {
     this.nameById.clear();
     for (const u of this.users) this.nameById.set(u.uid, u.name);
+    
+    if (changes.externalPickerOpen) {
+      if (this.addEmoji !== undefined) {
+       
+        this.add(this.addEmoji);
+      }
+    }
   }
 
   get all() {

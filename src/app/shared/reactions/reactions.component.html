@@ -10,11 +10,13 @@
       [attr.aria-pressed]="r.byMe"
       [attr.aria-label]="r.emoji + ': ' + r.count + ' Reaktionen'"
     >
-      <span class="emoji">{{ r.emoji }}</span>
+      <span class="emoji" *ngIf="r.emoji !== '✓'">{{ r.emoji }}</span>
+      <img *ngIf="r.emoji === '✓'" src="/assets/img/checkMark.svg" alt="✓" class="emoji-svg">
       <span class="count">{{ r.count }}</span>
 
       <div class="hint" *ngIf="hintEmoji === r.emoji">
-        <div class="hint-emoji">{{ r.emoji }}</div>
+        <div class="hint-emoji" *ngIf="r.emoji !== '✓'">{{ r.emoji }}</div>
+        <img *ngIf="r.emoji === '✓'" src="/assets/img/checkMark.svg" alt="✓" class="hint-emoji-svg">
         <div class="hint-title">{{ hintTitle(r.emoji) }}</div>
         <div class="hint-sub">{{ hintSubtitle(r.emoji) }}</div>
       </div>
@@ -43,6 +45,9 @@
     <span class="icon-add" aria-hidden="true"></span>
   </button>
   <div class="picker" *ngIf="pickerOpen" (mouseleave)="pickerOpen = false">
-    <button *ngFor="let e of quickEmojis" (click)="add(e)">{{ e }}</button>
+    <button *ngFor="let e of quickEmojis" (click)="add(e)">
+      <span *ngIf="e !== '✓'">{{ e }}</span>
+      <img *ngIf="e === '✓'" src="/assets/img/checkMark.svg" alt="✓" class="picker-emoji-svg">
+    </button>
   </div>
 </div>

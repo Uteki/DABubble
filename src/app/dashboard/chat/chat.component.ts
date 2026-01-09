@@ -85,6 +85,8 @@ export class ChatComponent implements OnInit {
   editChannelName: boolean = false;
   editDescription: boolean = false;
   showPicker = false;
+  showReactionPicker: { [messageId: string]: boolean } = {};
+  addEmojiToMessage: { [messageId: string]: string } = {};
   wasEmpty: boolean = true;
   inputFocused: boolean = false;
   selectedChannelUsers: any[] = [];
@@ -312,7 +314,6 @@ export class ChatComponent implements OnInit {
       !this.channelEdit.nativeElement.contains(event.target)
     ) {
       this.editDescription = false;
-      //TODO ?
     }
   }
 
@@ -739,4 +740,15 @@ export class ChatComponent implements OnInit {
       ta.setSelectionRange(pos, pos);
     });
   }
+
+  addEmojiToMessageField(emoji: string, messageId?: string) {
+    if (messageId) {
+      const message = this.messages.find((m) => m.id === messageId);
+      if (message) {
+        this.onReactionAdd(message, emoji);
+      }
+    } else {
+      this.insertEmojiIntoText(emoji);
+    }
+}
 }

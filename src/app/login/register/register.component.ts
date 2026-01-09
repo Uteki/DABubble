@@ -5,6 +5,8 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -31,11 +33,26 @@ export class RegisterComponent implements OnInit {
     private auth: Auth
   ) {
     this.registerForm = this.formBuilder.group({
-      fullName: ['', [Validators.required, Validators.minLength(3)]],
+      fullName: ['', [Validators.required, this.fullNameValidator]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       privacyAccepted: [false, [Validators.requiredTrue]],
     });
+  }
+
+  fullNameValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value?.trim();
+    if (!value) {
+      return null;
+    }
+    const words = value.split(/\s+/).filter((word: string) => word.length > 0);
+    if (words.length < 2) {
+      return { minWords: true };
+    }
+    if (words.length > 3) {
+      return { maxWords: true };
+    }
+    return null;
   }
 
   ngOnInit(): void {}
