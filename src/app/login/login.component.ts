@@ -15,6 +15,7 @@ import {
 } from '@angular/fire/auth';
 import { IntroService } from '../intro.service';
 import { AuthService } from '../auth.service';
+import {UserService} from "../user.service";
 
 @Component({
   selector: 'app-login',
@@ -36,7 +37,8 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private auth: Auth,
     private introService: IntroService,
-    private authService: AuthService
+    private authService: AuthService,
+    private userService: UserService
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -89,21 +91,28 @@ export class LoginComponent implements OnInit {
   }
 
   async loginWithGoogle(): Promise<void> {
-    try {
-      const provider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(this.auth, provider);
-      this.errorMessage = null;
-      this.router.navigate(['/dashboard']);
-    } catch (error: any) {
-      this.errorMessage = this.getErrorMessage(error.code);
+    const provider = new GoogleAuthProvider();
+    const userCredential = await signInWithPopup(this.auth, provider);
+    const uid = userCredential.user.uid;
+
+    let snap = await this.userService.checkGoogleUser(uid)
+    this.errorMessage = null;
+
+    if (!snap.exists()) {
+      //TODO
+      await this.router.navigate(['/avatar']);
+    } else {
+      this.saveSessionStorage(uid);
+      await this.router.navigate(['/dashboard']);
     }
   }
 
+  //TODO
   async guestLogin(): Promise<void> {
     this.errorMessage = null;
     this.saveSessionStorage('Guest');
     await this.authService.signInAsGuest();
-}
+  }
 
   goToRegister(): void {
     this.router.navigate(['/register']);
