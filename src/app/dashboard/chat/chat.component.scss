@@ -207,7 +207,7 @@
 
   > output {
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: visible;
     position: relative;
     flex: 1;
   }
@@ -271,7 +271,7 @@
 
     > .picker {
       position: absolute;
-      left: 12px;
+      left: 202px;
       bottom: 56px;
       padding: 8px;
       background: #fff;
@@ -281,7 +281,7 @@
       display: grid;
       grid-template-columns: repeat(10, 28px);
       gap: 6px;
-      z-index: 4;
+      z-index: 40000;
 
       > button {
         width: 28px;
@@ -361,6 +361,7 @@
   display: flex;
   margin: 10px 0;
   gap: 20px;
+  overflow: visible;
 
   @media (max-width: 768px) {
     padding: 0 10px 10px 0;

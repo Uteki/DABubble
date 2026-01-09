@@ -15,6 +15,7 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
   gap: 8px;
   margin-top: 6px;
   user-select: none;
+  overflow: visible;
 
   &.compact {
     gap: 6px;
@@ -150,6 +151,13 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
     transform: translateY(1px);
   }
 
+  .emoji-svg {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    transform: translateY(1px);
+  }
+
   .count {
     display: inline-grid;
     place-items: center;
@@ -165,7 +173,7 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
 
 .picker {
   position: absolute;
-  right: 0;
+  right: -240px;
   bottom: calc(100% + 8px);
   padding: 8px;
   background: #fff;
@@ -175,7 +183,7 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
   display: grid;
   grid-template-columns: repeat(10, 28px);
   gap: 6px;
-  z-index: 10;
+  z-index: 10000;
 
   button {
     width: 28px;
@@ -188,6 +196,9 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
     line-height: 1;
     transition: background 0.12s ease, border-color 0.12s ease,
       transform 0.05s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &:hover {
       background: #f7f8ff;
@@ -199,6 +210,11 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
     &:focus-visible {
       outline: none;
       box-shadow: 0 0 0 3px rgba($blue, 0.15);
+    }
+
+    .picker-emoji-svg {
+      width: 18px;
+      height: 18px;
     }
   }
 }
@@ -237,6 +253,12 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
 
   .hint-emoji {
     font-size: 18px;
+    margin-bottom: 6px;
+  }
+
+  .hint-emoji-svg {
+    width: 18px;
+    height: 18px;
     margin-bottom: 6px;
   }
   .hint-title {
