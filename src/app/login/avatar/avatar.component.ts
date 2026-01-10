@@ -4,17 +4,19 @@ import { Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import {ChatService} from "../../chat.service";
+import {FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-avatar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './avatar.component.html',
   styleUrls: ['./avatar.component.scss', './avatar.component.responsive.scss'],
 })
 export class AvatarComponent implements OnInit {
   userName: string = 'Frederik Beck';
   selectedAvatar: string = '';
+  fromGoogle: boolean = false;
   showError: boolean = false;
   showLogin = false;
   avatarOptions: string[] = [
@@ -33,8 +35,9 @@ export class AvatarComponent implements OnInit {
     private chat: ChatService,
   ) {
     const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras?.state?.['userName']) {
-      this.userName = navigation.extras.state['userName'];
+    if (navigation?.extras?.state) {
+      this.fromGoogle = !!navigation.extras.state['fromGoogle'];
+      this.userName = navigation.extras.state['userName'] ?? this.userName;
     }
   }
 
