@@ -20,6 +20,9 @@ export class ReactionsComponent {
   @Input() maxCompact = 7;
   @Input() externalPickerOpen = false;
   @Input() addEmoji:string | undefined;
+  @Input() isOwnMessage = false;
+  @Input() notOwnMessage = false;
+  
 
   @Output() toggled = new EventEmitter<{ emoji: string; add: boolean }>();
   @Output() addedNew = new EventEmitter<string>();
