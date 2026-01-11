@@ -1025,6 +1025,8 @@
             [compact]="false"
             [externalPickerOpen]="showReactionPicker[msg.id] || false"
             [addEmoji]="addEmojiToMessage[msg.id] || undefined"
+            [isOwnMessage]="msg.uid === meId"
+            [notOwnMessage]="msg.uid !== meId"
             (toggled)="onReactionToggle(msg, $event)"
             (addedNew)="onReactionAdd(msg, $event)"
             [class.is-empty]="

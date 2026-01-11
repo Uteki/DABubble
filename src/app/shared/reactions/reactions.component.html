@@ -44,7 +44,7 @@
   <button type="button" class="chip add" (click)="openPicker()">
     <span class="icon-add" aria-hidden="true"></span>
   </button>
-  <div class="picker" *ngIf="pickerOpen" (mouseleave)="pickerOpen = false">
+  <div [ngClass]="{'own-message-picker': isOwnMessage, 'not-own-message-picker': notOwnMessage}" class="picker" *ngIf="pickerOpen" (mouseleave)="pickerOpen = false">
     <button *ngFor="let e of quickEmojis" (click)="add(e)">
       <span *ngIf="e !== '✓'">{{ e }}</span>
       <img *ngIf="e === '✓'" src="/assets/img/checkMark.svg" alt="✓" class="picker-emoji-svg">

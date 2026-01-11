@@ -16,7 +16,7 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
   margin-top: 6px;
   user-select: none;
   overflow: visible;
-
+width: 450px;
   &.compact {
     gap: 6px;
 
@@ -173,7 +173,7 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
 
 .picker {
   position: absolute;
-  right: -240px;
+  right: 0px;
   bottom: calc(100% + 8px);
   padding: 8px;
   background: #fff;
@@ -286,4 +286,12 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
 
 :host(.is-empty) .reactions .chip:not(.add) {
   display: none;
+}
+
+.own-message-picker {
+  right: 0px;
+}
+
+.not-own-message-picker {
+  right: 100px;
 }

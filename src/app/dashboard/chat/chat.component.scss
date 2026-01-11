@@ -207,7 +207,7 @@
 
   > output {
     overflow-y: auto;
-    overflow-x: visible;
+    overflow-x: hidden;
     position: relative;
     flex: 1;
   }
@@ -271,7 +271,7 @@
 
     > .picker {
       position: absolute;
-      left: 202px;
+      left: 20px;
       bottom: 56px;
       padding: 8px;
       background: #fff;
