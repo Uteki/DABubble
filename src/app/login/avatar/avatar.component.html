@@ -62,7 +62,19 @@
         </div>
       </div>
 
-      <h3 class="user-name">{{ userName }}</h3>
+      <div *ngIf="fromGoogle">
+        <p class="subtitle-google">Vor- und Nachname eingeben</p>
+        <input
+          class="user-name-input"
+          type="text"
+          [(ngModel)]="userName"
+          placeholder="Dein Name"
+        />
+      </div>
+
+      <h3 *ngIf="!fromGoogle" class="user-name">
+        {{ userName }}
+      </h3>
       <p class="subtitle">Aus der Liste wählen</p>
       <div class="avatar-options">
         <button
@@ -78,7 +90,7 @@
       <button
         type="button"
         class="btn-continue"
-        [disabled]="!selectedAvatar"
+        [disabled]="!selectedAvatar && userName == ''"
         (click)="onContinue()"
       >
         Weiter

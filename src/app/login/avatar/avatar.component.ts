@@ -84,7 +84,7 @@ export class AvatarComponent implements OnInit {
           { name: this.userName, uid: this.auth.currentUser.uid },
           { user: 'Willkommen zu DABubble ', system: true, timestamp: Date.now() }
         )
-        this.router.navigate(['/login']);
+        await this.router.navigate(['/login'], {state: {accountCreated: true}});
       } catch (error) {
         console.error('Fehler beim Speichern des Avatars:', error);
       }

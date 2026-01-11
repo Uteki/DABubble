@@ -30,6 +30,7 @@ export class LoginComponent implements OnInit {
   showIntroStep = false;
   noAnimation = false;
   showFinal = false;
+  accountCreated = false;
   errorMessage: string | null = null;
 
   constructor(
@@ -40,14 +41,19 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService
   ) {
+    const navigation = this.router.getCurrentNavigation();
+
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
+
+    if (navigation?.extras?.state?.['accountCreated']) {
+      this.accountCreated = true;
+      setTimeout(()=> { this.accountCreated = false },2500 )}
   }
 
   ngOnInit(): void {
-    console.log('Intro shown status:', this.introService.getIntroShown());
     if (this.introService.getIntroShown()) {
       this.showIntroStep = true;
       this.showFinal = true;
@@ -93,20 +99,17 @@ export class LoginComponent implements OnInit {
     const provider = new GoogleAuthProvider();
     const userCredential = await signInWithPopup(this.auth, provider);
     const uid = userCredential.user.uid;
-
-    let snap = await this.userService.checkGoogleUser(uid)
+    const snap = await this.userService.checkGoogleUser(uid)
     this.errorMessage = null;
-
     if (!snap.exists()) {
-      //TODO
-      await this.router.navigate(['/avatar']);
+      await this.router.navigate(['/avatar'], { state: { fromGoogle: true, userName: userCredential.user.displayName }});
     } else {
       this.saveSessionStorage(uid);
       await this.router.navigate(['/dashboard']);
     }
   }
 
-  //TODO
+  //TODO create singular unqie guest
   async guestLogin(): Promise<void> {
     this.errorMessage = null;
     this.saveSessionStorage('Guest');

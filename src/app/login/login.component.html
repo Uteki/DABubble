@@ -24,6 +24,9 @@
     <span class="signup-text">Neu bei DABubble?</span>
     <a (click)="goToRegister()" class="signup-link">Konto erstellen</a>
   </div>
+  <div *ngIf="accountCreated && showLogin" class="success-creation">
+    Konto erfolgreich erstellt. Du kannst dich jetzt anmelden.
+  </div>
   <div
     class="login-form-wrapper"
     [class.show]="showLogin"
