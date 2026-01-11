@@ -63,7 +63,6 @@ export class LoginComponent implements OnInit {
       setTimeout(() => {
         this.showLogin = true;
         this.introService.setIntroShown(true);
-        console.log('Intro animation completed, status set to true');
       }, 3500);
     }
   }
