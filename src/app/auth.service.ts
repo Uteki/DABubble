@@ -6,7 +6,7 @@ import {
   browserSessionPersistence,
   setPersistence,
   signInAnonymously,
-  user,
+  user, signInWithEmailAndPassword,
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -46,8 +46,12 @@ export class AuthService implements OnDestroy {
 
   async signInAsGuest(): Promise<void> {
     try {
-      const credential = await signInAnonymously(this.auth);
-      this.router.navigate(['/dashboard']);
+      await signInWithEmailAndPassword(
+        this.auth,
+        'guest@dabubble.de',
+        '12345678'
+      );
+      await this.router.navigate(['/dashboard']);
     } catch (error) {
       console.error('Fehler beim Guest-SignIn:', error);
     }

@@ -32,6 +32,7 @@ export class LoginComponent implements OnInit {
   showFinal = false;
   accountCreated = false;
   errorMessage: string | null = null;
+  private guestId: string = "FXtCqE0SQjTI7Lc9JzvARWEMy9T2";
 
   constructor(
     private formBuilder: FormBuilder,
@@ -109,10 +110,9 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  //TODO create singular unqie guest
   async guestLogin(): Promise<void> {
     this.errorMessage = null;
-    this.saveSessionStorage('Guest');
+    this.saveSessionStorage(this.guestId);
     await this.authService.signInAsGuest();
   }
 
@@ -149,5 +149,10 @@ export class LoginComponent implements OnInit {
 
   saveSessionStorage(uid: string) {
     sessionStorage.setItem('sessionData', uid);
+    if (uid === this.guestId) {
+      sessionStorage.setItem('role', 'guest');
+    } else {
+      sessionStorage.setItem('role', 'user');
+    }
   }
 }

@@ -335,7 +335,7 @@
       } @else {
       <div class="edit-profile">
         <h3>{{ username }}</h3>
-        <h4 (click)="editProfile()">Bearbeiten</h4>
+        <h4 (click)="editProfile()" *ngIf="isGuest">Bearbeiten</h4>
         <svg
         class="edit-icon"
         [ngClass]="{'edit-active': edit}"

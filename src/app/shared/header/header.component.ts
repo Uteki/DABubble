@@ -42,6 +42,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   userStatus: boolean = false;
   edit: boolean = false;
   sessionData = sessionStorage.getItem('sessionData');
+  isGuest = sessionStorage.getItem('role') === 'guest';
   private wasEmpty = true;
 
   isUserAbsent: boolean = false;
