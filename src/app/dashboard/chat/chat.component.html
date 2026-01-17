@@ -1015,10 +1015,11 @@
             [currentUserId]="meId"
             [users]="users"
             [compact]="false"
-            [externalPickerOpen]="showReactionPicker[msg.id] || false"
             [addEmoji]="addEmojiToMessage[msg.id] || undefined"
             [isOwnMessage]="msg.uid === meId"
             [notOwnMessage]="msg.uid !== meId"
+            [externalPickerOpen]="showReactionPicker[msg.id] || false"
+            [(externalPickerOpen)]="showReactionPicker[msg.id]"
             (toggled)="onReactionToggle(msg, $event)"
             (addedNew)="onReactionAdd(msg, $event)"
             [class.is-empty]="
@@ -1072,7 +1073,7 @@
           <div (click)="addEmojiToMessageField('👍', msg.id)">
             <img src="/assets/img/capa.svg" alt="Daumen hoch" />
           </div>
-          <div>
+          <div (click)="openReactionPicker(msg.id)">
             <img src="/assets/icons/reactions/addReaction.png" alt="" />
           </div>
           <div

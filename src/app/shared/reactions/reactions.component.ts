@@ -22,8 +22,8 @@ export class ReactionsComponent {
   @Input() addEmoji:string | undefined;
   @Input() isOwnMessage = false;
   @Input() notOwnMessage = false;
-  
 
+  @Output() externalPickerOpenChange = new EventEmitter<boolean>();
   @Output() toggled = new EventEmitter<{ emoji: string; add: boolean }>();
   @Output() addedNew = new EventEmitter<string>();
 
@@ -59,10 +59,11 @@ export class ReactionsComponent {
   ngOnChanges(changes: any) {
     this.nameById.clear();
     for (const u of this.users) this.nameById.set(u.uid, u.name);
-    
+
     if (changes.externalPickerOpen) {
+      this.pickerOpen = this.externalPickerOpen;
+
       if (this.addEmoji !== undefined) {
-       
         this.add(this.addEmoji);
       }
     }
@@ -111,11 +112,13 @@ export class ReactionsComponent {
 
   openPicker() {
     this.pickerOpen = !this.pickerOpen;
+    this.externalPickerOpenChange.emit(this.pickerOpen);
   }
 
   add(emoji: string) {
     const e = this.normalizeEmoji(emoji);
     this.pickerOpen = false;
+    this.externalPickerOpenChange.emit(false);
     this.addedNew.emit(e);
     this.toggled.emit({ emoji: e, add: true });
   }

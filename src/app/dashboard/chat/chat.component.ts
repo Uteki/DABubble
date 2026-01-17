@@ -750,5 +750,9 @@ export class ChatComponent implements OnInit {
     } else {
       this.insertEmojiIntoText(emoji);
     }
-}
+  }
+
+  openReactionPicker(msgId: string) {
+    this.showReactionPicker[msgId] = true;
+  }
 }
