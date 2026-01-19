@@ -36,8 +36,11 @@
   }
 
   > output {
-    overflow-y: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
+    overflow-y: auto;
     flex: 1;
   }
 
@@ -257,6 +260,48 @@
       }
       &:focus {
         outline: none;
+      }
+    }
+
+    > div {
+      display: flex;
+      align-items: center;
+      background-color: $main-accent;
+      width: 210px;
+      padding: 2px 10px;
+      border-radius: 30px;
+      gap: 4px;
+
+      > img:nth-child(1) {
+        width: 25px;
+        height: 25px;
+      }
+
+      > p {
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      > div:last-child {
+        display: flex;
+        align-items: center;
+
+        &:hover {
+          > svg path {
+            fill: $purple-font !important;
+          }
+        }
+
+        > svg {
+          width: 15px;
+          &:hover {
+            > path {
+              fill: $purple-font !important;
+            }
+          }
+        }
       }
     }
   }
