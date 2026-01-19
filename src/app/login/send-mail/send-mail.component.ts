@@ -37,11 +37,6 @@ export class SendMailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(
-      'SendMail Intro shown status:',
-      this.introService.getIntroShown()
-    );
-
     if (this.introService.getIntroShown()) {
       this.showForm = true;
       this.noAnimation = true;
@@ -51,7 +46,6 @@ export class SendMailComponent implements OnInit {
         this.showForm = true;
         this.showLogin = true;
         this.introService.setIntroShown(true);
-        console.log('SendMail animation completed, status set to true');
       }, 2500);
     }
   }

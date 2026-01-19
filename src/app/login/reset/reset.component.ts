@@ -74,11 +74,9 @@ export class ResetComponent implements OnInit {
         this.errorMessage = 'Der Reset-Link ist ungültig oder abgelaufen.';
         console.error('Fehler bei der Code-Verifizierung:', error);
       });
-    console.log('Initial form valid:', this.resetForm.valid);
   }
 
   async onSubmit(): Promise<void> {
-    console.log('Form submitted, valid:', this.resetForm.valid);
     if (this.resetForm.invalid) {
       this.resetForm.markAllAsTouched();
       return;

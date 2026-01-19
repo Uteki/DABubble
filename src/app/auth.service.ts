@@ -22,21 +22,13 @@ export class AuthService implements OnDestroy {
     this.user$ = user(this.auth);
 
     setPersistence(this.auth, browserSessionPersistence)
-      .then(() => console.log('Auth Persistence auf SESSION gesetzt'))
+      .then()
       .catch((error) =>
         console.error('Fehler beim Setzen der Persistence:', error)
       );
 
     onAuthStateChanged(this.auth, (user) => {
       this.currentUser = user;
-
-      if (user && user.isAnonymous) {
-        console.log('Guest-User aktiv (Session-only)');
-      } else if (!user) {
-        console.log('Kein User eingeloggt');
-      } else {
-        console.log('Nicht-Guest-User aktiv');
-      }
     });
   }
 
@@ -61,7 +53,6 @@ export class AuthService implements OnDestroy {
     this.auth
       .signOut()
       .then(() => {
-        console.log('User ausgeloggt');
         sessionStorage.removeItem('sessionData');
         this.router.navigate(['/login']);
       })
@@ -73,9 +64,7 @@ export class AuthService implements OnDestroy {
   signOutOnTabClose(): void {
     this.auth
       .signOut()
-      .then(() => {
-        console.log('User beim Tab-Schließen ausgeloggt');
-      })
+      .then(() => {})
       .catch((error) => {
         console.error('Fehler beim SignOut beim Tab-Schließen:', error);
       });

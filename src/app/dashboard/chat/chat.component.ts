@@ -454,10 +454,6 @@ export class ChatComponent implements OnInit {
     this.nameInputValue = false;
     memberInputREF.value = '';
     this.inputValue = '';
-
-    console.log(
-      this.selectedChannelUsers.length + '' + this.selectedChannelUsers
-    );
   }
 
   deleteMember(index: number) {
@@ -596,19 +592,14 @@ export class ChatComponent implements OnInit {
 
   async saveEditedMessage(messageId: string) {
     if (!this.editingMessageText.trim()) return;
-
-    console.log('Nachricht speichern:', messageId, this.editingMessageText);
-
     const messageRef = doc(
       this.firestore,
       `channels/${this.chatService.currentChannel}/messages/${messageId}`
     );
-
     await updateDoc(messageRef, {
       text: this.editingMessageText.trim(),
       edited: true,
     });
-
     this.cancelEdit();
   }
 
@@ -666,8 +657,6 @@ export class ChatComponent implements OnInit {
     this.inputValue = '';
     this.channelName = '';
     this.selectedChannelUsers = [];
-    console.log(this.viewMemberOverlay);
-
   }
 
   hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {
