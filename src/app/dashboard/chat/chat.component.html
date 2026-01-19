@@ -1006,9 +1006,9 @@
           <div
             id="message-text-{{ msg.id }}"
             class="message-text"
+            [innerHTML]="msg.text | linkify:users:channels"
             [attr.data-message-id]="msg.id"
           >
-            {{ msg.text }}
           </div>
           <app-reactions
             [reactions]="msg.reactions || {}"
