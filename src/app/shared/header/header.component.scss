@@ -115,12 +115,13 @@
     width: 300px;
     height: 400px;
     border: 1px solid $light-purple;
-    border-radius: 0 30px 30px 30px;
+    border-radius: 8px 8px 8px 8px;
     background-color: white;
     z-index: 200;
   }
 
-  > div:last-child {
+  > #search-results-channels, #search-results-contacts {
+    overflow-y: auto;
     position: absolute;
     top: 45px;
     left: 30px;
