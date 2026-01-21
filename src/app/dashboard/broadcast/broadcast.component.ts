@@ -6,10 +6,9 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../chat.service';
-import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { User } from '../../core/interfaces/user';
 import { BroadcastRecipient } from '../../core/type/recipient';
-import { ReactionsComponent } from '../../shared/reactions/reactions.component';
 import { AuthService } from '../../auth.service';
 
 type ReactionsMap = Record<string, string[]>;
@@ -38,7 +37,7 @@ interface Message {
 @Component({
   selector: 'app-broadcast',
   standalone: true,
-  imports: [FormsModule, DatePipe, NgForOf, NgIf, NgClass, ReactionsComponent],
+  imports: [FormsModule, NgForOf, NgIf, NgClass],
   templateUrl: './broadcast.component.html',
   styleUrl: './broadcast.component.scss',
 })
