@@ -78,13 +78,11 @@ export class BroadcastComponent {
     const isUserSearch = this.recipientInput.startsWith('@');
     const isChannelSearch = this.recipientInput.startsWith('#');
     const isEmailSearch = !isUserSearch && !isChannelSearch && this.recipientInput.length > 0;
-
     if (!isUserSearch && !isEmailSearch) return [];
 
     const usedPartnerChats = new Set(
       this.recipients.filter(this.isUserRecipient).map(r => r.partnerChat)
     );
-
     return this.users.filter(user => !this.isAlreadyAdded(user, usedPartnerChats))
       .filter(user => this.isUserMatch(user, isUserSearch, isEmailSearch, this.recipientInput))
       .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
