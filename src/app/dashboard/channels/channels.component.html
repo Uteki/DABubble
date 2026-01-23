@@ -3,7 +3,6 @@
   class="overlay"
   [ngClass]="{ 'd-none': !overlayActivated }"
 >
-  <!-- Desktop Version -->
   <div
     [ngClass]="{ 'd-none-desktop': switchOverlay }"
     click-stop-propagation
@@ -77,7 +76,7 @@
     click-stop-propagation
     class="create-channel create-channel-mobile"
   >
-  
+
     <div>
       <h3>Channel erstellen</h3>
       <div>
@@ -147,7 +146,6 @@
     class="add-channel-member"
   >
   <svg
-    
     class="svg-dropdown-mobile"
     (click)="switchOverlay = false"
       width="62"

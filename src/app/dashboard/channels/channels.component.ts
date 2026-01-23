@@ -231,18 +231,13 @@ export class ChannelsComponent implements OnInit {
       const currentUid = this.authService.readCurrentUser();
       const currentUser = this.users.find((user) => user.uid === currentUid);
 
-      this.chatService
-        .createChannel({
-          creator: currentUser.name,
-          description: this.newChannelDescription,
-          name: this.newChannel,
-          users: [currentUser.uid],
-        })
-        .then(() => {
+      this.chatService.createChannel({
+          creator: currentUser.name, description: this.newChannelDescription,
+          name: this.newChannel, users: [currentUser.uid],
+        }).then(() => {
           this.newChannelDescription = '';
           this.newChannel = '';
         });
-
     }
   }
 
@@ -251,22 +246,16 @@ export class ChannelsComponent implements OnInit {
       const currentUid = this.authService.readCurrentUser();
       const currentUser = this.users.find((user) => user.uid === currentUid);
 
-      this.chatService
-        .createChannel({
-          creator: currentUser.name,
-          description: this.newChannelDescriptionMobile,
-          name: this.newChannelMobile,
-          users: [currentUser.uid],
-        })
-        .then(() => {});
+      this.chatService.createChannel({
+          creator: currentUser.name, description: this.newChannelDescriptionMobile,
+          name: this.newChannelMobile, users: [currentUser.uid],
+        }).then(() => {});
     }
   }
 
   isSelected(channel: any): boolean {
     return this.chatService.currentChannelID === channel.id;
   }
-
-
 
   isSelectedUser(user: any): boolean {
     return this.selectedPartner?.uid === user.uid;
