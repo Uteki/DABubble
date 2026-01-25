@@ -16,7 +16,7 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
   margin-top: 6px;
   user-select: none;
   overflow: visible;
-width: 450px;
+//width: 450px;
   &.compact {
     gap: 6px;
 
@@ -194,8 +194,7 @@ width: 450px;
     cursor: pointer;
     font-size: 18px;
     line-height: 1;
-    transition: background 0.12s ease, border-color 0.12s ease,
-      transform 0.05s ease;
+    transition: background 0.12s ease, border-color 0.12s ease, transform 0.05s ease;
     display: flex;
     align-items: center;
     justify-content: center;
