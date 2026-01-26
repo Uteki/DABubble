@@ -15,7 +15,7 @@ import {
 } from '@angular/fire/auth';
 import { IntroService } from '../intro.service';
 import { AuthService } from '../auth.service';
-import {UserService} from "../user.service";
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-login',
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
   showFinal = false;
   accountCreated = false;
   errorMessage: string | null = null;
-  private guestId: string = "FXtCqE0SQjTI7Lc9JzvARWEMy9T2";
+  private guestId: string = 'FXtCqE0SQjTI7Lc9JzvARWEMy9T2';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
     private auth: Auth,
     private introService: IntroService,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
   ) {
     const navigation = this.router.getCurrentNavigation();
 
@@ -51,59 +51,76 @@ export class LoginComponent implements OnInit {
 
     if (navigation?.extras?.state?.['accountCreated']) {
       this.accountCreated = true;
-      setTimeout(()=> { this.accountCreated = false },2500 )}
+      setTimeout(() => {
+        this.accountCreated = false;
+      }, 2500);
+    }
   }
 
   ngOnInit(): void {
     if (this.introService.getIntroShown()) {
-      this.showIntroStep = true;
-      this.showFinal = true;
-      this.showLogin = true;
-      this.noAnimation = true;
+      this.skipIntroAnimation();
     } else {
-      setTimeout(() => {
-        this.showIntroStep = true;
-      }, 1500);
-      setTimeout(() => {
-        this.showFinal = true;
-      }, 2500);
-      setTimeout(() => {
-        this.showLogin = true;
-        this.introService.setIntroShown(true);
-      }, 3500);
+      this.playIntroAnimation();
     }
+  }
+
+  skipIntroAnimation(): void {
+    this.showIntroStep = true;
+    this.showFinal = true;
+    this.showLogin = true;
+    this.noAnimation = true;
+  }
+
+  playIntroAnimation(): void {
+    setTimeout(() => (this.showIntroStep = true), 1500);
+    setTimeout(() => (this.showFinal = true), 2500);
+    setTimeout(() => {
+      this.showLogin = true;
+      this.introService.setIntroShown(true);
+    }, 3500);
   }
 
   async onSubmit(): Promise<void> {
     if (this.loginForm.valid) {
-      const { email, password } = this.loginForm.value;
-      try {
-        const userCredential = await signInWithEmailAndPassword(
-          this.auth,
-          email,
-          password
-        );
-        this.errorMessage = null;
-        this.router.navigate(['/dashboard']);
-        this.saveSessionStorage(userCredential.user.uid);
-      } catch (error: any) {
-        this.errorMessage = this.getErrorMessage(error.code);
-      }
+      await this.performLogin();
     } else {
-      Object.keys(this.loginForm.controls).forEach((key) => {
-        this.loginForm.get(key)?.markAsTouched();
-      });
+      this.markFormAsTouched();
     }
+  }
+
+  async performLogin(): Promise<void> {
+    const { email, password } = this.loginForm.value;
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        this.auth,
+        email,
+        password,
+      );
+      this.errorMessage = null;
+      this.saveSessionStorage(userCredential.user.uid);
+      this.router.navigate(['/dashboard']);
+    } catch (error: any) {
+      this.errorMessage = this.getErrorMessage(error.code);
+    }
+  }
+
+  markFormAsTouched(): void {
+    Object.keys(this.loginForm.controls).forEach((key) => {
+      this.loginForm.get(key)?.markAsTouched();
+    });
   }
 
   async loginWithGoogle(): Promise<void> {
     const provider = new GoogleAuthProvider();
     const userCredential = await signInWithPopup(this.auth, provider);
     const uid = userCredential.user.uid;
-    const snap = await this.userService.checkGoogleUser(uid)
+    const snap = await this.userService.checkGoogleUser(uid);
     this.errorMessage = null;
     if (!snap.exists()) {
-      await this.router.navigate(['/avatar'], { state: { fromGoogle: true, userName: userCredential.user.displayName }});
+      await this.router.navigate(['/avatar'], {
+        state: { fromGoogle: true, userName: userCredential.user.displayName },
+      });
     } else {
       this.saveSessionStorage(uid);
       await this.router.navigate(['/dashboard']);

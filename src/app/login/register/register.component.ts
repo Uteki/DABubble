@@ -20,7 +20,10 @@ import {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss', './register.component.responsive.scss'],
+  styleUrls: [
+    './register.component.scss',
+    './register.component.responsive.scss',
+  ],
 })
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
@@ -30,7 +33,7 @@ export class RegisterComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private auth: Auth
+    private auth: Auth,
   ) {
     this.registerForm = this.formBuilder.group({
       fullName: ['', [Validators.required, this.fullNameValidator]],
@@ -59,26 +62,32 @@ export class RegisterComponent implements OnInit {
 
   async onSubmit(): Promise<void> {
     if (this.registerForm.valid) {
-      const { fullName, email, password } = this.registerForm.value;
-      try {
-        const userCredential = await createUserWithEmailAndPassword(
-          this.auth,
-          email,
-          password
-        );
-        await updateProfile(userCredential.user, { displayName: fullName });
-        this.errorMessage = null;
-        this.router.navigate(['/avatar'], {
-          state: { userName: fullName },
-        });
-      } catch (error: any) {
-        this.errorMessage = this.getErrorMessage(error.code);
-      }
+      await this.performRegistration();
     } else {
-      Object.keys(this.registerForm.controls).forEach((key) => {
-        this.registerForm.get(key)?.markAsTouched();
-      });
+      this.markFormAsTouched();
     }
+  }
+
+  async performRegistration(): Promise<void> {
+    const { fullName, email, password } = this.registerForm.value;
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        this.auth,
+        email,
+        password,
+      );
+      await updateProfile(userCredential.user, { displayName: fullName });
+      this.errorMessage = null;
+      this.router.navigate(['/avatar'], { state: { userName: fullName } });
+    } catch (error: any) {
+      this.errorMessage = this.getErrorMessage(error.code);
+    }
+  }
+
+  markFormAsTouched(): void {
+    Object.keys(this.registerForm.controls).forEach((key) => {
+      this.registerForm.get(key)?.markAsTouched();
+    });
   }
 
   goBack(): void {

@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
-import {ChatService} from "../../chat.service";
-import {FormsModule} from "@angular/forms";
+import { ChatService } from '../../chat.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-avatar',
@@ -64,33 +64,44 @@ export class AvatarComponent implements OnInit {
 
   async onContinue(): Promise<void> {
     if (this.selectedAvatar && this.auth.currentUser) {
-      try {
-        const userDoc = doc(
-          this.firestore,
-          `users/${this.auth.currentUser.uid}`
-        );
-        await setDoc(
-          userDoc,
-          {
-            name: this.userName,
-            avatar: this.selectedAvatar,
-            email: this.auth.currentUser.email,
-            uid: this.auth.currentUser.uid,
-            status: false,
-          },
-          { merge: true }
-        );
-        await this.chat.addNewUser(
-          { name: this.userName, uid: this.auth.currentUser.uid },
-          { user: 'Willkommen zu DABubble ', system: true, timestamp: Date.now() }
-        )
-        await this.router.navigate(['/login'], {state: {accountCreated: true}});
-      } catch (error) {
-        console.error('Fehler beim Speichern des Avatars:', error);
-      }
+      await this.saveUserData();
     } else {
       this.showError = true;
     }
+  }
+
+  async saveUserData(): Promise<void> {
+    try {
+      await this.saveUserDocument();
+      await this.addUserToChannel();
+      await this.router.navigate(['/login'], {
+        state: { accountCreated: true },
+      });
+    } catch (error) {
+      console.error('Fehler beim Speichern des Avatars:', error);
+    }
+  }
+
+  async saveUserDocument(): Promise<void> {
+    const userDoc = doc(this.firestore, `users/${this.auth.currentUser!.uid}`);
+    await setDoc(
+      userDoc,
+      {
+        name: this.userName,
+        avatar: this.selectedAvatar,
+        email: this.auth.currentUser!.email,
+        uid: this.auth.currentUser!.uid,
+        status: false,
+      },
+      { merge: true },
+    );
+  }
+
+  async addUserToChannel(): Promise<void> {
+    await this.chat.addNewUser(
+      { name: this.userName, uid: this.auth.currentUser!.uid },
+      { user: 'Willkommen zu DABubble ', system: true, timestamp: Date.now() },
+    );
   }
 
   sessionStorageSave(uid: string) {
