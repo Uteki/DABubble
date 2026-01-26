@@ -159,6 +159,8 @@ export class ChannelsComponent implements OnInit {
   toggleOverlay() {
     this.overlayActivated = !this.overlayActivated;
     this.newChannel = '';
+    this.newChannelMobile = '';
+    this.newChannelDescription = '';
     this.selectedChannelUsers = [];
     this.switchOverlay = false;
   }

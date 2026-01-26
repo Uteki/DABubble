@@ -369,26 +369,33 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleDropdown() {
-    if (this.toggleDropdownMenu) {
-      const dropdown = document.querySelector('.dropdown-item-mobile');
-      if (dropdown) {
-        dropdown.classList.add('no-display');
-        setTimeout(() => {
-          this.toggleDropdownMenu = false;
-        }, 200);
-      }
-    } else {
-
-      this.toggleDropdownMenu = true;
-      setTimeout(() => {
-        const dropdown = document.querySelector('.dropdown-item-mobile');
-        if (dropdown) {
-          dropdown.classList.remove('no-display');
-        }
-      }, 10);
-    }
+toggleDropdown() {
+  if (this.toggleDropdownMenu) {
+    this.closeDropdown();
+  } else {
+    this.openDropdown();
   }
+}
+
+closeDropdown() {
+  const dropdown = document.querySelector('.dropdown-item-mobile');
+  if (dropdown) {
+    dropdown.classList.add('no-display');
+    setTimeout(() => {
+      this.toggleDropdownMenu = false;
+    }, 200);
+  }
+}
+
+openDropdown() {
+  this.toggleDropdownMenu = true;
+  setTimeout(() => {
+    const dropdown = document.querySelector('.dropdown-item-mobile');
+    if (dropdown) {
+      dropdown.classList.remove('no-display');
+    }
+  }, 10);
+}
 
   stopPropagation(event: Event) {
     event.stopPropagation();
