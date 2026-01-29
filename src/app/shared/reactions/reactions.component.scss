@@ -88,6 +88,7 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
     gap: 0;
     justify-content: center;
     align-items: center;
+    position: relative;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
@@ -172,8 +173,10 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
 }
 
 .picker {
+  left: 50%;
   position: absolute;
-  right: 0px;
+  transform: translateX(-50%);
+  max-width: calc(100vw - 16px);
   bottom: calc(100% + 8px);
   padding: 8px;
   background: #fff;
@@ -181,7 +184,9 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
   border-radius: 12px;
   box-shadow: 0 10px 24px rgba(12, 15, 30, 0.12);
   display: grid;
-  grid-template-columns: repeat(10, 28px);
+  grid-template-columns: repeat(6, 28px);
+  justify-content: start;
+  align-content: start;
   gap: 6px;
   z-index: 10000;
 
@@ -287,10 +292,9 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
   display: none;
 }
 
-.own-message-picker {
-  right: 0px;
-}
-
-.not-own-message-picker {
-  right: 100px;
+@media (max-height: 420px) {
+  .picker {
+    bottom: auto;
+    top: calc(100% + 8px);
+  }
 }
