@@ -239,7 +239,7 @@ section.thread-closed app-message {
 .workspace-toggle .label {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  font-family: "Nunito";
+  font-family: "Nunito", serif;
   font-weight: 500;
   font-style: normal;
   font-size: 20px;
@@ -261,4 +261,11 @@ section.thread-closed app-message {
 
 .workspace-toggle.is-open {
   transform: translateY(-50%) translateX(0);
+}
+
+@media (max-width: 1440px) {
+  app-thread {
+    flex: 1;
+    margin-left: 20px;
+  }
 }

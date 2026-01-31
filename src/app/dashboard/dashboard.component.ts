@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {Component, OnInit, OnDestroy, HostListener} from '@angular/core';
 import { HeaderComponent } from '../shared/header/header.component';
 import { ThreadComponent } from './thread/thread.component';
 import { ChannelsComponent } from './channels/channels.component';
@@ -55,7 +55,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private mentionService: MentionService
   ) {}
 
+  @HostListener('window:resize')
+  onResize() {
+    this.checkThreadWidth();
+  }
+
   ngOnInit() {
+    this.checkThreadWidth();
     this.subs.add(this.userService.getUser().subscribe((data) => { this.userList = data }));
 
     this.chatService.getChannels(this.authService.readCurrentUser()).subscribe((data) => {
@@ -91,6 +97,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   toggleDirect($event: boolean) {
+    if (window.innerWidth < 1440) this.closeThreadPane();
     this.chat = $event;
     this.thread = true;
     this.broadcast = true;
@@ -136,6 +143,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private openThreadPane() {
+    if (window.innerWidth < 1440) {
+      this.isThreadOpening = false;
+      this.chat = true;
+    }
+
     this.thread = false;
     if (!this.threadHidden) return;
     this.isThreadOpening = true;
@@ -145,11 +157,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private closeThreadPane() {
+    window.innerWidth < 1440 ? this.isThreadClosing = false : this.isThreadClosing = true;
     this.thread = true;
     if (this.threadHidden) return;
-    this.isThreadClosing = true;
     this.isThreadOpening = false;
     this.threadHidden = true;
     setTimeout(() => (this.isThreadClosing = false), 420);
+  }
+
+  private checkThreadWidth() {
+    const isDesktop = window.innerWidth >= 1440;
+
+    if (!isDesktop && !this.chat) this.closeThreadPane();
+    if (isDesktop && !this.threadHidden) {
+      this.chat = false;
+      this.isThreadOpening = true;
+    }
   }
 }
