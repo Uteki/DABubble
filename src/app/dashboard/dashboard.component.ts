@@ -171,7 +171,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (!isDesktop && !this.chat) this.closeThreadPane();
     if (isDesktop && !this.threadHidden) {
       this.chat = false;
-      this.isThreadOpening = true;
     }
   }
 }

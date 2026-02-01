@@ -632,6 +632,8 @@
 
 #search-results {
   height: max-content;
+  overflow-y: scroll;
+  max-height: 300px;
 
   > div {
     padding: 10px 12px;

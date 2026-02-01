@@ -236,3 +236,9 @@
     align-self: flex-end;
   }
 }
+
+@media (max-width: 1440px) {
+  .thread-close-icon {
+    display: none;
+  }
+}
