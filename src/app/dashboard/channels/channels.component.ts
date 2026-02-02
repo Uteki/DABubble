@@ -17,6 +17,8 @@ import { AuthService } from '../../auth.service';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { IdleTrackerService } from '../../idle-tracker.service';
+import { GlobalSearchResult } from "../../core/interfaces/global-search-result";
+import { BroadcastRecipient } from "../../core/type/recipient";
 
 @Component({
   selector: 'app-channels',
@@ -96,7 +98,8 @@ export class ChannelsComponent implements OnInit {
     }
   }
 
-  async emitPartner(partnerUid: string) {
+  async emitPartner(partnerUid: string | undefined) {
+    if (!partnerUid) return;
     const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
     this.partnerSelected.emit(partnerObj);
     this.toggleRequest.emit(true);
@@ -261,5 +264,206 @@ export class ChannelsComponent implements OnInit {
 
   isSelectedUser(user: any): boolean {
     return this.selectedPartner?.uid === user.uid;
+  }
+
+  //todo
+
+  async searchMsg() {
+    const term = this.getSearchTerm();
+    const searchResults = document.getElementById('search-results');
+
+    if (!term) return; this.hideSearchResults();
+
+    if (this.isGlobalSearch()) {
+      await this.searchGlobal(term);
+      searchResults?.classList.remove('no-display');
+    } else {
+      await this.searchSingleRecipient(term);
+      searchResults?.classList.remove('no-display');
+    }
+  }
+
+  private getSearchTerm(): string {
+    return this.recipientInput.trim();
+  }
+
+  private isGlobalSearch(): boolean {
+    return this.recipient.length === 0;
+  }
+
+  private hideSearchResults() {
+    document.getElementById('search-results')?.classList.add('no-display');
+    document.getElementById('search-results-contacts')?.classList.add('no-display');
+    document.getElementById('search-results-channels')?.classList.add('no-display');
+  }
+
+  private async searchGlobal(term: string) {
+    const channelIds = this.channels.map(c => c.id);
+    const whisperIds = this.users.map(u => this.buildPartnerChat(u.uid));
+
+    this.foundMessages = await this.chatService.searchGlobally(
+      channelIds, whisperIds, term
+    );
+  }
+
+  private async searchSingleRecipient(term: string) {
+    const r = this.recipient[0];
+    if (r.type === 'channel') await this.searchChannel(r.channelId, term)
+    if (r.type === 'user') await this.searchWhisper(r.partnerChat, term)
+  }
+
+  recipientInput: string = "";
+  recipient: any[] = [];
+  foundMessages: any[] = [];
+
+  private buildPartnerChat(uid: string): string {
+    return [uid, this.authService.readCurrentUser()].sort().join('_');
+  }
+
+  private async searchChannel(channelId: string, term: string) {
+    this.foundMessages = await this.chatService.searchInConversation(
+      'channel', channelId, term
+    );
+  }
+
+  private async searchWhisper(whisperId: string, term: string) {
+    this.foundMessages = await this.chatService.searchInConversation(
+      'user', whisperId, term
+    );
+  }
+
+  openFoundMessage(result: GlobalSearchResult) {
+    const searchResults = document.getElementById('search-results');
+    searchResults?.classList.add('no-display');
+
+    if (result.channelId || result.type === 'channel') {
+      this.openChannelResult(result).then();
+    } else {
+      this.openWhisperResult(result).then();
+    }
+  }
+
+  getChannelName(channelId: string): string {
+    const channel = this.channels.find(c => c.id === channelId);
+    return channel?.name ?? 'Unbekannter Channel';
+  }
+
+  getWhisperName(whisperId: string): string {
+    let test = this.getPartnerUidFromWhisper(whisperId, this.authService.readCurrentUser());
+    const user = this.users.find(u => u.uid === test);
+    return user?.name ?? 'Unknown user';
+  }
+
+  async openChannelResult(result: GlobalSearchResult) {
+    const channelId = result.channelId ?? result.nativeId;
+    if (channelId != null) this.chatService.currentChannelID = channelId;
+    this.toggleRequest.emit(false);
+    this.chatService.setCurrentChat(channelId, '', '', '');
+    this.scrollToMessage(result.id);
+  }
+
+  async openWhisperResult(result: GlobalSearchResult) {
+    const whisperId = result.whisperId ?? result.nativeId;
+    await this.emitPartner(whisperId);
+    this.scrollToMessage(result.id);
+  }
+
+  removeRecipient() {
+    this.recipient = [];
+  }
+
+  private getPartnerUidFromWhisper(whisperId: string, myUid: string): string | undefined {
+    const [uid1, uid2] = whisperId.split('_');
+    return uid1 === myUid ? uid2 : uid1;
+  }
+
+  addRecipient(userid: string, name: string, mail: string, avatar: string) {
+    const partnerChat = this.buildPartnerChat(userid);
+
+    if (this.recipient.some(r => r.type === 'user' && r.partnerChat === partnerChat)) return
+
+    this.recipient = [{type: 'user', partnerChat, name: name, mail: mail, avatar: avatar}];
+    this.recipientInput = "";
+    this.onInputChange(this.recipientInput);
+  }
+
+  addChannelRecipient(channelId: string, name: string) {
+    if (this.recipient.some(r => r.type === 'channel' && r.channelId === channelId)) return
+
+    this.recipient = [{type: 'channel', channelId, name}];
+    this.recipientInput = "";
+    this.onInputChange(this.recipientInput);
+  }
+
+  get filteredUsers() {
+    const isUserSearch = this.recipientInput.startsWith('@');
+    const isChannelSearch = this.recipientInput.startsWith('#');
+    const isEmailSearch = !isUserSearch && !isChannelSearch && this.recipientInput.length > 0;
+
+    if (!isUserSearch && !isEmailSearch) return [];
+
+    const usedPartnerChats = new Set(
+      this.recipient.filter(this.isUserRecipient).map(r => r.partnerChat)
+    );
+
+    return this.users.filter(user => !this.isAlreadyAdded(user, usedPartnerChats))
+      .filter(user => this.isUserMatch(user, isUserSearch, isEmailSearch, this.recipientInput))
+      .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
+  }
+
+  private isAlreadyAdded(user: any, usedPartnerChats: Set<string>): boolean {
+    const partnerChat = this.buildPartnerChat(user.uid);
+    return usedPartnerChats.has(partnerChat);
+  }
+
+  private isUserMatch(user: any, isUserSearch: boolean, isEmailSearch: boolean, value: string): boolean {
+    if (isUserSearch) {
+      if (!this.searchTerm) return true;
+      return user.name?.toLowerCase().includes(this.searchTerm);
+    }
+
+    if (isEmailSearch) return user.email?.toLowerCase().includes(value.toLowerCase())
+
+    return false;
+  }
+
+  get searchTerm(): string {
+    return this.recipientInput.replace(/^[@#]/, '').toLowerCase().trim();
+  }
+
+  get filteredChannels() {
+    if (!this.recipientInput.startsWith('#')) return [];
+
+    const usedChannelIds = new Set(
+      this.recipient.filter(this.isChannelRecipient).map(r => r.channelId)
+    );
+    let filtered = this.channels.filter(channel => !usedChannelIds.has(channel.id));
+    let term = this.searchTerm;
+
+    if (term) {
+      filtered = filtered.filter(channel => channel.name.toLowerCase().includes(term));
+    }
+    return filtered.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  isUserRecipient(r: BroadcastRecipient): r is Extract<BroadcastRecipient, { type: 'user' }> {
+    return r.type === 'user';
+  }
+
+  isChannelRecipient(r: BroadcastRecipient): r is Extract<BroadcastRecipient, { type: 'channel' }> {
+    return r.type === 'channel';
+  }
+
+  scrollToMessage(messageId: string) {
+    setTimeout(() => {
+      const el = document.querySelector(
+        `[data-message-id="${messageId}"]`
+      );
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('highlight');
+        setTimeout(() => el.classList.remove('highlight'), 2000);
+      }
+    }, 300);
   }
 }
