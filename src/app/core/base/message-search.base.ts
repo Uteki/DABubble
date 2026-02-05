@@ -26,8 +26,7 @@ export abstract class MessageSearchBase {
       await this.searchSingleRecipient(term);
     }
 
-    document.getElementById('search-results')?.classList.remove('no-display');
-    document.getElementById('search-results-2')?.classList.remove('no-display');
+    ['search-results', 'search-results-2'].forEach(id => document.getElementById(id)?.classList.remove('no-display'));
   }
 
   protected get searchTerm(): string {
@@ -73,9 +72,8 @@ export abstract class MessageSearchBase {
   protected hideSearchResults() {
     ['search-results', 'search-results-2',
       'search-results-contacts', 'search-results-channels',
-      'search-results-contacts-2', 'search-results-channels-2'].forEach(id =>
-        document.getElementById(id)?.classList.add('no-display')
-      );
+        'search-results-contacts-2', 'search-results-channels-2'].forEach(id =>
+          document.getElementById(id)?.classList.add('no-display'));
   }
 
   protected buildPartnerChat(uid: string): string {

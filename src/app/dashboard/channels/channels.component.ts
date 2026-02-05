@@ -16,6 +16,7 @@ import { StopPropagationDirective } from '../../stop-propagation.directive';
 import { AuthService } from '../../auth.service';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
+import { MessageSearchBase } from "../../core/base/message-search.base";
 import { IdleTrackerService } from '../../idle-tracker.service';
 import { GlobalSearchResult } from "../../core/interfaces/global-search-result";
 import { BroadcastRecipient } from "../../core/type/recipient";
@@ -27,7 +28,7 @@ import { BroadcastRecipient } from "../../core/type/recipient";
   templateUrl: './channels.component.html',
   styleUrl: './channels.component.scss',
 })
-export class ChannelsComponent implements OnInit {
+export class ChannelsComponent extends MessageSearchBase implements OnInit {
   @Output() partnerSelected = new EventEmitter<User>();
   @Output() toggleRequest = new EventEmitter<boolean>();
   @Output() broadcast = new EventEmitter<void>();
@@ -44,31 +45,32 @@ export class ChannelsComponent implements OnInit {
   foundIndexes: number[] = [];
   channelUsers: any[] = [];
   userAtIndex: any = {};
-  inputValue: string = '';
 
   isUserAbsent: boolean = false;
-
-
-  channelsShown: boolean = true;
+  inputFocused: boolean = false;
   channelsNone: boolean = false;
-  directMessagesShown: boolean = true;
-  directMessagesNone: boolean = false;
-  overlayActivated: boolean = false;
   switchOverlay: boolean = false;
   nameInputValue: boolean = false;
-  inputFocused: boolean = false;
+  overlayActivated: boolean = false;
+  directMessagesNone: boolean = false;
+  directMessagesShown: boolean = true;
+  channelsShown: boolean = true;
+  wasEmpty: boolean = true;
 
   newChannel: string = '';
-  newChannelDescription: string = '';
+  inputValue: string = '';
   newChannelMobile: string = '';
+  newChannelDescription: string = '';
   newChannelDescriptionMobile: string = '';
   selectedValue: string = 'all-members';
 
   constructor(
-    private chatService: ChatService,
-    private authService: AuthService,
+    chatService: ChatService,
+    authService: AuthService,
     private idleTracker: IdleTrackerService
-  ) {}
+  ) {
+    super(chatService, authService);
+  }
 
   ngOnInit(): void {
     this.trackIdle();
@@ -182,20 +184,12 @@ export class ChannelsComponent implements OnInit {
   }
 
   onInputChange(value: string) {
-    if (value.length > 0) {
-      this.foundIndexes = this.channelUsers
-        .map((user, index) =>
-          user?.name && user.name.toLowerCase().includes(value.toLowerCase())
-            ? index
-            : -1
-        )
-        .filter((index) => index !== -1);
-
-      this.nameInputValue = this.foundIndexes.length > 0;
-    } else {
-      this.nameInputValue = false;
-      this.foundIndexes = [];
+    if (this.isEmpty(value)) {
+      this.resetSearch();
+      return;
     }
+    this.handleSearchStart(value);
+    this.filterUsers(value);
   }
 
   addUserToChannel(index: number) {
@@ -266,74 +260,48 @@ export class ChannelsComponent implements OnInit {
     return this.selectedPartner?.uid === user.uid;
   }
 
-  //todo
+  private isEmpty(value: string): boolean {
+    return value.trim().length === 0;
+  }
 
-  async searchMsg() {
-    const term = this.getSearchTerm();
-    const searchResults = document.getElementById('search-results');
+  private resetSearch() {
+    this.wasEmpty = true;
+    this.nameInputValue = false;
+    this.foundIndexes = [];
+    this.hideSearchResults();
+  }
 
-    if (!term) return; this.hideSearchResults();
+  private handleSearchStart(value: string) {
+    const trimmed = value.trim();
 
-    if (this.isGlobalSearch()) {
-      await this.searchGlobal(term);
-      searchResults?.classList.remove('no-display');
-    } else {
-      await this.searchSingleRecipient(term);
-      searchResults?.classList.remove('no-display');
+    if (this.wasEmpty) {
+      this.searchBar(trimmed);
+      this.wasEmpty = false;
     }
   }
 
-  private getSearchTerm(): string {
-    return this.recipientInput.trim();
+  private filterUsers(value: string) {
+    const term = value.toLowerCase();
+
+    this.foundIndexes = this.channelUsers
+      .map((user, index) => user?.name?.toLowerCase().includes(term) ? index : -1)
+      .filter(index => index !== -1);
+
+    this.nameInputValue = this.foundIndexes.length > 0;
   }
 
-  private isGlobalSearch(): boolean {
-    return this.recipient.length === 0;
-  }
-
-  private hideSearchResults() {
-    document.getElementById('search-results')?.classList.add('no-display');
-    document.getElementById('search-results-contacts')?.classList.add('no-display');
-    document.getElementById('search-results-channels')?.classList.add('no-display');
-  }
-
-  private async searchGlobal(term: string) {
-    const channelIds = this.channels.map(c => c.id);
-    const whisperIds = this.users.map(u => this.buildPartnerChat(u.uid));
-
-    this.foundMessages = await this.chatService.searchGlobally(
-      channelIds, whisperIds, term
-    );
-  }
-
-  private async searchSingleRecipient(term: string) {
-    const r = this.recipient[0];
-    if (r.type === 'channel') await this.searchChannel(r.channelId, term)
-    if (r.type === 'user') await this.searchWhisper(r.partnerChat, term)
-  }
-
-  recipientInput: string = "";
-  recipient: any[] = [];
-  foundMessages: any[] = [];
-
-  private buildPartnerChat(uid: string): string {
-    return [uid, this.authService.readCurrentUser()].sort().join('_');
-  }
-
-  private async searchChannel(channelId: string, term: string) {
-    this.foundMessages = await this.chatService.searchInConversation(
-      'channel', channelId, term
-    );
-  }
-
-  private async searchWhisper(whisperId: string, term: string) {
-    this.foundMessages = await this.chatService.searchInConversation(
-      'user', whisperId, term
-    );
+  searchBar(value: string) {
+    const searchResultsContacts = document.getElementById('search-results-contacts-2');
+    const searchResultsChannels = document.getElementById('search-results-channels-2');
+    if (value === '@') {
+      searchResultsContacts?.classList.remove('no-display');
+    } else if (value === '#') {
+      searchResultsChannels?.classList.remove('no-display');
+    }
   }
 
   openFoundMessage(result: GlobalSearchResult) {
-    const searchResults = document.getElementById('search-results');
+    const searchResults = document.getElementById('search-results-2');
     searchResults?.classList.add('no-display');
 
     if (result.channelId || result.type === 'channel') {
@@ -372,11 +340,6 @@ export class ChannelsComponent implements OnInit {
     this.recipient = [];
   }
 
-  private getPartnerUidFromWhisper(whisperId: string, myUid: string): string | undefined {
-    const [uid1, uid2] = whisperId.split('_');
-    return uid1 === myUid ? uid2 : uid1;
-  }
-
   addRecipient(userid: string, name: string, mail: string, avatar: string) {
     const partnerChat = this.buildPartnerChat(userid);
 
@@ -402,9 +365,7 @@ export class ChannelsComponent implements OnInit {
 
     if (!isUserSearch && !isEmailSearch) return [];
 
-    const usedPartnerChats = new Set(
-      this.recipient.filter(this.isUserRecipient).map(r => r.partnerChat)
-    );
+    const usedPartnerChats = new Set(this.recipient.filter(this.isUserRecipient).map(r => r.partnerChat));
 
     return this.users.filter(user => !this.isAlreadyAdded(user, usedPartnerChats))
       .filter(user => this.isUserMatch(user, isUserSearch, isEmailSearch, this.recipientInput))
@@ -421,28 +382,16 @@ export class ChannelsComponent implements OnInit {
       if (!this.searchTerm) return true;
       return user.name?.toLowerCase().includes(this.searchTerm);
     }
-
     if (isEmailSearch) return user.email?.toLowerCase().includes(value.toLowerCase())
-
     return false;
-  }
-
-  get searchTerm(): string {
-    return this.recipientInput.replace(/^[@#]/, '').toLowerCase().trim();
   }
 
   get filteredChannels() {
     if (!this.recipientInput.startsWith('#')) return [];
-
-    const usedChannelIds = new Set(
-      this.recipient.filter(this.isChannelRecipient).map(r => r.channelId)
-    );
+    const usedChannelIds = new Set(this.recipient.filter(this.isChannelRecipient).map(r => r.channelId));
     let filtered = this.channels.filter(channel => !usedChannelIds.has(channel.id));
     let term = this.searchTerm;
-
-    if (term) {
-      filtered = filtered.filter(channel => channel.name.toLowerCase().includes(term));
-    }
+    if (term) filtered = filtered.filter(channel => channel.name.toLowerCase().includes(term));
     return filtered.sort((a, b) => a.name.localeCompare(b.name));
   }
 
@@ -456,9 +405,7 @@ export class ChannelsComponent implements OnInit {
 
   scrollToMessage(messageId: string) {
     setTimeout(() => {
-      const el = document.querySelector(
-        `[data-message-id="${messageId}"]`
-      );
+      const el = document.querySelector(`[data-message-id="${messageId}"]`);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         el.classList.add('highlight');

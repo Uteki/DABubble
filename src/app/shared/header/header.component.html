@@ -138,7 +138,7 @@
     </div>
     <input
       [(ngModel)]="recipientInput"
-      (keyup.enter)="searchMsg()"
+      (keyup.enter)="searchMsg(this.users, this.channels)"
       (input)="onInputChange($any($event.target).value)"
       autocomplete="off"
       type="text"
@@ -147,7 +147,7 @@
     />
 
     <img
-      (click)="searchMsg()"
+      (click)="searchMsg(this.users, this.channels)"
       src="./../../../assets/img/search.svg"
       alt="Search"
       class="search-icon"

@@ -4,6 +4,7 @@ import { Auth } from '@angular/fire/auth';
 import { Firestore } from '@angular/fire/firestore';
 import { Router, RouterLink } from '@angular/router';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { MessageSearchBase } from "../../core/base/message-search.base";
 import { UserService } from '../../user.service';
 import { AuthService } from '../../auth.service';
 import { ChatService } from "../../chat.service";
@@ -21,7 +22,7 @@ import { User } from "../../core/interfaces/user";
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent extends MessageSearchBase implements OnInit, OnDestroy {
   @Input() users: any[] = [];
   @Input() channels: any[] = [];
 
@@ -29,10 +30,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @Output() partnerSelected = new EventEmitter<User>();
 
   @ViewChild('searchResult', { static: true }) searchWrapper!: ElementRef;
-
-  recipientInput: string = "";
-  foundMessages: any[] = [];
-  recipient: any[] = [];
 
   username: string = 'Frederik Beck';
   useremail: string = ' fred.back@email.com ';
@@ -61,9 +58,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private idleTracker: IdleTrackerService,
     private profileOverlayService: ProfileOverlayService,
-    private authService: AuthService,
-    private chatService: ChatService
+    authService: AuthService,
+    chatService: ChatService
   ) {
+    super(chatService, authService);
     this.getUserInformation();
     this.changeUserStatus();
   }
@@ -87,10 +85,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onDocumentClick(event: MouseEvent) {
     const clickedInside = this.searchWrapper.nativeElement.contains(event.target);
     if (!clickedInside) this.hideSearchResults()
-  }
-
-  get searchTerm(): string {
-    return this.recipientInput.replace(/^[@#]/, '').toLowerCase().trim();
   }
 
   get filteredUsers() {
@@ -124,21 +118,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return filtered.sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  async searchMsg() {
-    const term = this.getSearchTerm();
-    const searchResults = document.getElementById('search-results');
-
-    if (!term) return; this.hideSearchResults();
-
-    if (this.isGlobalSearch()) {
-      await this.searchGlobal(term);
-      searchResults?.classList.remove('no-display');
-    } else {
-      await this.searchSingleRecipient(term);
-      searchResults?.classList.remove('no-display');
-    }
-  }
-
   async emitPartner(whisperId: string | undefined) {
     if (!whisperId) return;
     let test = this.getPartnerUidFromWhisper(whisperId, this.authService.readCurrentUser());
@@ -161,33 +140,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.scrollToMessage(result.id);
   }
 
-  private async searchSingleRecipient(term: string) {
-    const r = this.recipient[0];
-    if (r.type === 'channel') await this.searchChannel(r.channelId, term)
-    if (r.type === 'user') await this.searchWhisper(r.partnerChat, term)
-  }
-
-  private async searchChannel(channelId: string, term: string) {
-    this.foundMessages = await this.chatService.searchInConversation(
-      'channel', channelId, term
-    );
-  }
-
-  private async searchWhisper(whisperId: string, term: string) {
-    this.foundMessages = await this.chatService.searchInConversation(
-      'user', whisperId, term
-    );
-  }
-
-  private async searchGlobal(term: string) {
-    const channelIds = this.channels.map(c => c.id);
-    const whisperIds = this.users.map(u => this.buildPartnerChat(u.uid));
-
-    this.foundMessages = await this.chatService.searchGlobally(
-      channelIds, whisperIds, term
-    );
-  }
-
   private isAlreadyAdded(user: any, usedPartnerChats: Set<string>): boolean {
     const partnerChat = this.buildPartnerChat(user.uid);
     return usedPartnerChats.has(partnerChat);
@@ -202,29 +154,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (isEmailSearch) return user.email?.toLowerCase().includes(value.toLowerCase())
 
     return false;
-  }
-
-  private buildPartnerChat(uid: string): string {
-    return [uid, this.authService.readCurrentUser()].sort().join('_');
-  }
-
-  private getSearchTerm(): string {
-    return this.recipientInput.trim();
-  }
-
-  private isGlobalSearch(): boolean {
-    return this.recipient.length === 0;
-  }
-
-  private getPartnerUidFromWhisper(whisperId: string, myUid: string): string | undefined {
-    const [uid1, uid2] = whisperId.split('_');
-    return uid1 === myUid ? uid2 : uid1;
-  }
-
-  private hideSearchResults() {
-    document.getElementById('search-results')?.classList.add('no-display');
-    document.getElementById('search-results-contacts')?.classList.add('no-display');
-    document.getElementById('search-results-channels')?.classList.add('no-display');
   }
 
   isUserRecipient(r: BroadcastRecipient): r is Extract<BroadcastRecipient, { type: 'user' }> {

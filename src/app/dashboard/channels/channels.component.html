@@ -303,7 +303,7 @@
   </div>
 </section>
 
-<div class="d-none search-bar-channels">
+<div class="d-none search-bar-channels search-wrapper">
   <div
     *ngFor="let recipient of recipient; let i = index"
   >
@@ -344,7 +344,7 @@
   </div>
   <input
     [(ngModel)]="recipientInput"
-    (keyup.enter)="searchMsg()"
+    (keyup.enter)="searchMsg(users, channels)"
     (input)="onInputChange($any($event.target).value)"
     autocomplete="off"
     type="text"
@@ -353,12 +353,12 @@
   />
 
   <img
-    (click)="searchMsg()"
+    (click)="searchMsg(users, channels)"
     src="./../../../assets/img/search.svg"
     alt="Search"
     class="search-icon"
   />
-  <div #searchResult class="no-display" id="search-results">
+  <div #searchResult class="no-display" id="search-results-2">
     <ng-container *ngIf="foundMessages.length > 0; else noResults" >
       <div *ngFor="let messages of foundMessages" (click)="openFoundMessage(messages)">
         <small *ngIf="messages.channelId">
@@ -377,7 +377,7 @@
       <p class="no-results">Keine Ergebnisse gefunden</p>
     </ng-template>
   </div>
-  <div class="no-display" id="search-results-contacts" *ngIf="recipient.length == 0">
+  <div class="no-display" id="search-results-contacts-2" *ngIf="recipient.length == 0">
     <ng-container *ngFor="let user of filteredUsers">
       <div
         *ngIf="user.name"
@@ -399,7 +399,7 @@
       </div>
     </ng-container>
   </div>
-  <div class="no-display" id="search-results-channels" *ngIf="recipient.length == 0">
+  <div class="no-display" id="search-results-channels-2" *ngIf="recipient.length == 0">
     <ng-container *ngFor="let channel of filteredChannels">
       <div
         (click)="addChannelRecipient(channel.id, channel.name)"
