@@ -555,16 +555,18 @@
 }
 
 .search-wrapper {
-  position: relative;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 0 30px;
-  width: 100%;
-  max-width: 989px;
-  height: 70px;
+  justify-content: space-between;
+  border: 1px solid #ADB0D9;
   background-color: white;
   border-radius: 42px;
+  align-items: center;
+  position: relative;
+  padding: 8px 24px;
+  max-height: 48px;
+  max-width: 398px;
+  display: flex;
+  height: 70px;
+  width: 100%;
 
   > div:first-child {
     display: flex;
@@ -635,8 +637,8 @@
     overflow-y: scroll;
     max-height: 300px;
     position: absolute;
-    top: 45px;
-    left: 30px;
+    top: 50px;
+    left: 5px;
     width: 300px;
     border: 1px solid $light-purple;
     border-radius: 8px 8px 8px 8px;
@@ -678,8 +680,8 @@
   > #search-results-channels-2, #search-results-contacts-2 {
     overflow-y: auto;
     position: absolute;
-    top: 45px;
-    left: 30px;
+    top: 50px;
+    left: 5px;
     width: 300px;
     height: 200px;
     border: 1px solid $light-purple;
@@ -883,6 +885,12 @@
 }
 
 @media (max-width: 1024px) {
+  :host {
+    > header {
+      margin-top: 15px;
+    }
+  }
+
   .search-bar-channels {
     display: flex !important;
   }
