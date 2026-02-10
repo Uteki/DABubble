@@ -460,6 +460,12 @@
 
     > svg {
       cursor: pointer;
+
+      &:hover {
+        > path {
+          fill: $purple-font;
+        }
+      }
     }
   }
 
@@ -497,6 +503,12 @@
 
       > svg {
         cursor: pointer;
+
+        &:hover {
+          > path {
+            fill: $purple-font;
+          }
+        }
       }
     }
   }
@@ -891,7 +903,27 @@
     }
   }
 
+  .channel-wrapper {
+    > div:first-child {
+      > div {
+        > h3 {
+          font-size: 17px;
+        }
+      }
+    }
+
+    > div:nth-child(2) {
+      margin-top: 0;
+    }
+  }
+
   .search-bar-channels {
     display: flex !important;
   }
+
+  .direct-messages {
+    padding-left: 0;
+  }
 }
+
+//hover + und so
