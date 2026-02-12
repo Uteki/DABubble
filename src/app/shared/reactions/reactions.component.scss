@@ -51,6 +51,10 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
   transition: background 0.15s ease, border-color 0.15s ease,
     transform 0.05s ease, box-shadow 0.15s ease;
 
+  @media (max-width: 1024px) {
+    padding: 0 6px;
+  }
+
   &:active {
     transform: translateY(1px);
   }
@@ -235,6 +239,10 @@ $shadow: 0 2px 6px rgba(12, 15, 30, 0.08);
 .chip.me {
   background: $blue-ghost;
   border-color: rgba($blue, 0.35);
+
+  @media (max-width: 1024px) {
+    padding: 0 6px;
+  }
 }
 
 .chip { position: relative; }
