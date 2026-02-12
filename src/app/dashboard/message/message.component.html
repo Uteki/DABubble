@@ -101,10 +101,17 @@
 
 <header>
   <div (click)="openProfile()">
-    <img
-      [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'"
-      [alt]="currentPartner?.name ?? 'Anon'"
-    />
+    <figure>
+      <img
+        [src]="currentPartner?.avatar ?? 'assets/avatars/profile.png'"
+        [alt]="currentPartner?.name ?? 'Anon'"
+      />
+      @if (currentPartner?.status) {
+        <img src="./../../../assets/img/online.png" alt="" />
+      } @else {
+        <img src="./../../../assets/img/offline.svg" alt="" />
+      }
+    </figure>
     <h2>
       {{ currentPartner?.name ?? "Anon" }} @if(currentPartner?.uid ===
       currentWhisperer) { (Du) }
@@ -243,6 +250,8 @@
             [currentUserId]="meId"
             [users]="users"
             [compact]="false"
+            [externalPickerOpen]="showReactionPicker[msg.id] || false"
+            [(externalPickerOpen)]="showReactionPicker[msg.id]"
             (toggled)="onReactionToggle(msg, $event)"
             (addedNew)="onReactionAdd(msg, $event)"
             [class.is-empty]="
@@ -269,12 +278,15 @@
             'no-display': editMessageIsOpen && editingMessageId === msg.id
           }"
         >
-          <div><img src="/assets/img/checkMark.svg" alt="" /></div>
-          <div><img src="/assets/img/capa.svg" alt="" /></div>
-          <div>
+          <div (click)="addEmojiToMessageField('✓', msg.id)">
+            <img src="/assets/img/checkMark.svg" alt="" />
+          </div>
+          <div (click)="addEmojiToMessageField('👍', msg.id)">
+            <img src="/assets/img/capa.svg" alt="" />
+          </div>
+          <div (click)="openReactionPicker(msg.id)">
             <img src="/assets/icons/reactions/addReaction.png" alt="" />
           </div>
-          <div><img src="/assets/icons/svgs/comment.svg" alt="" /></div>
           <div
             [ngClass]="{ 'no-display': msg.uid !== getUserId() }"
             class="more-vert-button"

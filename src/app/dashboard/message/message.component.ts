@@ -55,6 +55,7 @@ export class MessageComponent implements OnChanges {
   currentWhisperer: string = "";
   currentPartner: any;
   showPicker = false;
+  showReactionPicker: { [messageId: string]: boolean } = {};
 
   editMessageMenuOpen: string | null = null;
   editingMessageId: string | null = null;
@@ -378,5 +379,20 @@ export class MessageComponent implements OnChanges {
     this.activeMention = null;
     document.getElementById('search-chat-members2')?.classList.add('no-display');
     document.getElementById('search-chat-channels2')?.classList.add('no-display');
+  }
+
+  addEmojiToMessageField(emoji: string, messageId?: string) {
+    if (messageId) {
+      const message = this.messages.find((m) => m.id === messageId);
+      if (message) {
+        this.onReactionAdd(message, emoji);
+      }
+    } else {
+      this.insertEmojiIntoText(emoji);
+    }
+  }
+
+  openReactionPicker(msgId: string) {
+    this.showReactionPicker[msgId] = true;
   }
 }
