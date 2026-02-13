@@ -120,8 +120,8 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
 
   async emitPartner(whisperId: string | undefined) {
     if (!whisperId) return;
-    let test = this.getPartnerUidFromWhisper(whisperId, this.authService.readCurrentUser());
-    const partnerObj: User = this.users.find((user) => user.uid === test);
+    let whisperChat = this.getPartnerUidFromWhisper(whisperId, this.authService.readCurrentUser());
+    const partnerObj: User = this.users.find((user) => user.uid === whisperChat);
     this.partnerSelected.emit(partnerObj);
     this.toggleRequest.emit(true);
   }
