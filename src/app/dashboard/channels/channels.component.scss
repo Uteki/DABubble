@@ -433,11 +433,22 @@
   padding: 32px 30px;
   border-radius: 30px;
 
+  @media (max-width: 768px) {
+    flex: 0 0 100% !important;
+    border-radius: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
   > header {
     display: flex;
     align-items: center;
     flex-direction: row;
     justify-content: space-between;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
 
     > div {
       display: flex;
@@ -489,6 +500,10 @@
     flex-direction: column;
     margin-left: 50px;
 
+    @media (max-width: 768px) {
+      margin-left: 60px;
+    }
+
     > div {
       display: flex;
       align-items: center;
@@ -536,6 +551,10 @@
 .direct-messages {
   position: relative;
   padding-left: 5px;
+
+  @media (max-width: 768px) {
+    padding-bottom: 80px;
+  }
 }
 
 .direct-messages-list {
@@ -549,6 +568,13 @@
   overflow-y: auto;
   max-width: 500px;
   transition: all 0.3s ease-in-out;
+
+  @media (max-width: 768px) {
+    max-width: none;
+    max-height: none;
+    overflow-y: unset;
+  }
+
   &.deactive {
     opacity: 0;
     transition: all 0.2s ease-in-out;
@@ -561,6 +587,11 @@
     border-radius: 50px;
     padding: 0 25px;
     cursor: pointer;
+
+    @media (max-width: 768px) {
+      padding: 0 10px;
+    }
+
     > figure {
       position: relative;
       height: 55px;
@@ -676,6 +707,10 @@
     background-color: white;
     z-index: 200;
 
+    @media (max-width: 1024px) {
+      width: 250px;
+    }
+
     > div {
       padding: 10px 12px;
       border-radius: 8px;
@@ -719,6 +754,45 @@
     border-radius: 0 30px 30px 30px;
     background-color: white;
     z-index: 200;
+
+    @media (max-width: 1024px) {
+      width: 250px;
+    }
+
+    > div > article {
+      display: flex;
+      align-items: center;
+
+      > p {
+        font-size: 15px;
+        margin-left: 10px;
+      }
+
+      > figure {
+        position: relative;
+
+        > img:first-child {
+          width: 50px;
+        };
+
+        > img:last-child {
+          position: absolute;
+          right: 0;
+          bottom: 10%;
+        }
+      }
+    }
+  }
+
+  > #search-results-channels-2 {
+    > div {
+      display: flex;
+
+      > h3 {
+        margin-left: 10px;
+        font-size: 17px;
+      }
+    }
   }
 }
 
@@ -938,10 +1012,18 @@
 
   .direct-messages-list {
     transform: translate(-10px, 0px);
+
+    @media (max-width: 768px) {
+      transform: translate(-15px, 0px);
+    }
   }
 
   .search-bar-channels {
     display: flex !important;
+
+    @media (max-width: 768px) {
+      max-width: 100%;
+    }
   }
 
   .direct-messages {

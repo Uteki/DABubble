@@ -42,6 +42,7 @@
 
   > output {
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
     flex: 1;
   }
@@ -206,7 +207,13 @@
     > div:first-child {
       gap: 20px;
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      flex-direction: row;
+
+      > .timestamp {
+        font-size: 14px;
+        color: $text-gray;
+      }
     }
   }
 
