@@ -52,6 +52,12 @@
     height: 145px;
     position: relative;
 
+    @media (max-width: 768px) {
+      margin-bottom: 125px;
+      margin-top: 5px;
+      height: 125px;
+    }
+
     > .emoji-insert {
       position: absolute;
       left: 16px;

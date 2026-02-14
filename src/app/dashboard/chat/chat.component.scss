@@ -228,6 +228,12 @@
     height: 145px;
     position: relative;
 
+    @media (max-width: 768px) {
+      margin-bottom: 125px;
+      margin-top: 5px;
+      height: 125px;
+    }
+
     .text-member-list {
       position: absolute;
       top: -265px;
