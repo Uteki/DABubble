@@ -1,8 +1,10 @@
 <app-header
+  [menu]="channels"
   [users]="userList"
   [channels]="channelList"
-  (partnerSelected)="onPartnerSelected($event)"
+  (channelsMenu)="mobileMenuOn()"
   (toggleRequest)="toggleDirect($event)"
+  (partnerSelected)="onPartnerSelected($event)"
 ></app-header>
 
 <section
@@ -30,8 +32,10 @@
     [users]="userList"
     [channels]="channelList"
     [selectedPartner]="selectedPartner"
+    [class.is-hidden]="channels"
     (partnerSelected)="onPartnerSelected($event)"
     (toggleRequest)="toggleDirect($event)"
+    (channelsMenu)="mobileMenuOff()"
     (broadcast)="toggleBroadcast()"
     [class.is-hidden-final]="channelsHidden"
     [class.is-closing]="isClosing"

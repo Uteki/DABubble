@@ -25,7 +25,9 @@ import { User } from "../../core/interfaces/user";
 export class HeaderComponent extends MessageSearchBase implements OnInit, OnDestroy {
   @Input() users: any[] = [];
   @Input() channels: any[] = [];
+  @Input() menu: boolean = false;
 
+  @Output() channelsMenu = new EventEmitter<void>();
   @Output() toggleRequest = new EventEmitter<boolean>();
   @Output() partnerSelected = new EventEmitter<User>();
 
@@ -40,6 +42,7 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   edit: boolean = false;
   sessionData = sessionStorage.getItem('sessionData');
   isGuest = sessionStorage.getItem('role') === 'guest';
+  isMobile = window.innerWidth < 768;
   private wasEmpty = true;
 
   isUserAbsent: boolean = false;
@@ -79,6 +82,11 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
 
   ngOnDestroy(): void {
     window.removeEventListener('beforeunload', this.beforeUnloadHandler);
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth < 768;
   }
 
   @HostListener('document:click', ['$event'])
@@ -231,6 +239,10 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
         this.isUserAbsent = false;
       }
     });
+  }
+
+  menuOn() {
+    this.channelsMenu.emit()
   }
 
   getUserInformation() {

@@ -30,21 +30,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
   userList: any[] = [];
   channelList: any[] = [];
 
-  chat = false;
+  threadHidden = true;
   thread = true;
   direct = true;
   broadcast = true;
-
-  selectedThreadId: string | null = null;
-  selectedPartner: User | null = null;
-
+  chat = false;
+  channels = false;
   channelsHidden = false;
   isClosing = false;
   isOpening = false;
-
-  threadHidden = true;
   isThreadOpening = false;
   isThreadClosing = false;
+
+  selectedThreadId: string | null = null;
+  selectedPartner: User | null = null;
 
   private subs = new Subscription();
 
@@ -142,6 +141,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.mentionService.toggleRequestDirect$.subscribe(b => this.toggleDirect(b));
   }
 
+  mobileMenuOff() {
+    this.channels = true;
+    this.channelsHidden = true;
+  }
+
+  mobileMenuOn() {
+    this.chat = true;
+    this.direct = true;
+    this.thread = true;
+    this.threadHidden = true;
+
+    this.channels = false;
+    this.channelsHidden = false;
+  }
+
   private openThreadPane() {
     if (window.innerWidth < 1440) {
       this.isThreadOpening = false;
@@ -167,10 +181,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private checkThreadWidth() {
     const isDesktop = window.innerWidth >= 1440;
+    const isMobile = window.innerWidth >= 768;
 
-    if (!isDesktop && !this.chat) this.closeThreadPane();
-    if (isDesktop && !this.threadHidden) {
-      this.chat = false;
-    }
+    if (!isDesktop && !this.chat) { this.channels = false; this.channelsHidden = false; this.closeThreadPane() }
+    if (!isMobile) this.chat = this.direct = this.thread = this.threadHidden = true;
+    if (isDesktop && !this.threadHidden) this.chat = false;
+    if (isMobile) this.channelsHidden = false;
   }
 }

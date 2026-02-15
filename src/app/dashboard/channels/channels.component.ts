@@ -31,6 +31,7 @@ import { BroadcastRecipient } from "../../core/type/recipient";
 export class ChannelsComponent extends MessageSearchBase implements OnInit {
   @Output() partnerSelected = new EventEmitter<User>();
   @Output() toggleRequest = new EventEmitter<boolean>();
+  @Output() channelsMenu = new EventEmitter<void>();
   @Output() broadcast = new EventEmitter<void>();
 
   @Input() users: any[] = [];
@@ -102,6 +103,7 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
 
   async emitPartner(partnerUid: string | undefined) {
     if (!partnerUid) return;
+    if (window.innerWidth < 768) this.channelsMenu.emit();
     let whisperUid = this.getPartnerUidFromWhisper(partnerUid, this.authService.readCurrentUser());
     const partnerObj: User = this.users.find((user) => user.uid === whisperUid);
     this.partnerSelected.emit(partnerObj);
@@ -128,12 +130,12 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
   }
 
   swapChannel(id: any, name: string, description: string, creator: string) {
+    if (window.innerWidth < 768) this.channelsMenu.emit();
     this.chatService.destroy$.next();
     this.chatService.destroy$.complete();
     this.chatService.destroy$ = new Subject<void>();
 
     this.chatService.currentChannelID = id;
-
     this.chatService.setCurrentChat(id, name, description, creator);
     this.toggleRequest.emit(false);
   }

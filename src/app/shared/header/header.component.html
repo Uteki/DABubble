@@ -90,13 +90,93 @@
   </div>
 </section>
 <section class="header-section">
-  <div class="logo-wrapper">
-    <img
-      src="./../../../assets/icons/logo-DABubble.png"
-      alt="DABubble"
-      class="logo"
-    />
-  </div>
+  @if (menu && isMobile) {
+    <div class="devspace-wrapper">
+      <div>
+        <svg (click)="menuOn()" xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
+          <path d="M8.17621e-05 5.80729C8.17682e-05 5.6684 0.0261242 5.53403 0.0782077 5.40417C0.130291 5.27361 0.199735 5.16493 0.286541 5.07812L5.07821 0.286458C5.26918 0.0954856 5.51223 -5.72953e-08 5.80737 -4.43943e-08C6.10251 -3.14934e-08 6.34557 0.0954857 6.53654 0.286458C6.72751 0.47743 6.823 0.720486 6.823 1.01562C6.823 1.31076 6.72751 1.55382 6.53654 1.74479L2.47404 5.80729L6.53654 9.86979C6.72751 10.0608 6.823 10.3038 6.823 10.599C6.823 10.8941 6.72751 11.1372 6.53654 11.3281C6.34557 11.5191 6.10251 11.6146 5.80737 11.6146C5.51223 11.6146 5.26918 11.5191 5.07821 11.3281L0.286541 6.53646C0.182374 6.43229 0.108763 6.31944 0.0657074 6.19792C0.0219576 6.07639 8.17561e-05 5.94618 8.17621e-05 5.80729Z" fill="black"/>
+        </svg>
+
+        <div>
+          <svg
+            width="36"
+            height="24"
+            viewBox="0 0 36 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M11.4 21.552L8.448 18.588L24.348 2.70001L27.3 5.65201L11.4 21.552Z"
+              fill="url(#paint0_linear_153722_8269)"
+            />
+            <path
+              d="M12.324 3.36L3.68397 12L0.719971 9.04799L9.35997 0.395996L12.324 3.36ZM9.35997 23.604L12.312 20.652L3.67197 12.012L0.719971 14.952L9.35997 23.604Z"
+              fill="url(#paint1_linear_153722_8269)"
+            />
+            <path
+              d="M35.28 9.04802L32.328 12L23.688 3.36002L26.64 0.40802L35.28 9.04802ZM35.28 14.952L32.328 12L23.688 20.64L26.64 23.592L35.28 14.952Z"
+              fill="url(#paint2_linear_153722_8269)"
+            />
+            <defs>
+              <linearGradient
+                id="paint0_linear_153722_8269"
+                x1="8.44904"
+                y1="12.1219"
+                x2="27.3014"
+                y2="12.1219"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#1381FF" />
+                <stop offset="0.0780981" stop-color="#1376FF" />
+                <stop offset="0.289" stop-color="#125CFF" />
+                <stop offset="0.5081" stop-color="#124AFF" />
+                <stop offset="0.7388" stop-color="#123FFF" />
+                <stop offset="1" stop-color="#123CFF" />
+              </linearGradient>
+              <linearGradient
+                id="paint1_linear_153722_8269"
+                x1="0.719455"
+                y1="12"
+                x2="12.3215"
+                y2="12"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#13E4E8" />
+                <stop offset="1" stop-color="#1381FF" />
+              </linearGradient>
+              <linearGradient
+                id="paint2_linear_153722_8269"
+                x1="23.6784"
+                y1="12"
+                x2="35.2805"
+                y2="12"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#1381FF" />
+                <stop offset="0.1287" stop-color="#4271FF" />
+                <stop offset="0.2599" stop-color="#6963FF" />
+                <stop offset="0.3956" stop-color="#8A58FF" />
+                <stop offset="0.5345" stop-color="#A44FFF" />
+                <stop offset="0.678" stop-color="#B649FF" />
+                <stop offset="0.8291" stop-color="#C045FF" />
+                <stop offset="1" stop-color="#C444FF" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <h2>Devspace</h2>
+    </div>
+  } @else {
+    <div class="logo-wrapper">
+      <img
+        src="./../../../assets/icons/logo-DABubble.png"
+        alt="DABubble"
+        class="logo"
+      />
+    </div>
+  }
   <div class="search-wrapper">
     <div
       *ngFor="let recipient of recipient; let i = index"
