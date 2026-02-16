@@ -418,6 +418,7 @@
         <h4 (click)="editProfile()" *ngIf="!isGuest">Bearbeiten</h4>
         <svg
         class="edit-icon"
+        *ngIf="!isGuest"
         [ngClass]="{'edit-active': edit}"
         (click)="editProfile()"
           width="30"

@@ -306,7 +306,7 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
   openFoundMessage(result: GlobalSearchResult) {
     const searchResults = document.getElementById('search-results-2');
     searchResults?.classList.add('no-display');
-
+    if (window.innerWidth < 768) this.channelsMenu.emit();
     if (result.channelId || result.type === 'channel') {
       this.openChannelResult(result).then();
     } else {
@@ -410,7 +410,8 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
     setTimeout(() => {
       const el = document.querySelector(`[data-message-id="${messageId}"]`);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const block: ScrollLogicalPosition = window.innerWidth < 768 ? 'nearest' : 'center';
+        el.scrollIntoView({ behavior: 'smooth', block: block });
         el.classList.add('highlight');
         setTimeout(() => el.classList.remove('highlight'), 2000);
       }
