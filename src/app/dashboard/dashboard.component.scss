@@ -346,3 +346,9 @@ section.thread-closed app-message {
     margin-left: 20px;
   }
 }
+
+@media (max-width: 768px) {
+  app-thread {
+    margin-left: 0;
+  }
+}
