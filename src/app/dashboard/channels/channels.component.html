@@ -305,6 +305,7 @@
 
 <div class="d-none search-bar-channels search-wrapper">
   <div
+    [ngClass]="{ 'd-none': inputFocused }"
     *ngFor="let recipient of recipient; let i = index"
   >
     @if (recipient.type === 'user') {
@@ -343,6 +344,8 @@
     </div>
   </div>
   <input
+    (focus)="onFocus()"
+    (blur)="onBlur()"
     [(ngModel)]="recipientInput"
     (keyup.enter)="searchMsg(users, channels)"
     (input)="onInputChange($any($event.target).value)"

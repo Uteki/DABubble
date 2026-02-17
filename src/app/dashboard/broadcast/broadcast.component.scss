@@ -17,9 +17,10 @@
     box-shadow: 0 2px 10px 0 #00000014;
 
     @media (max-width: 768px) {
+      height: 100%;
       max-height: 125px;
-      padding: 20px 16px 7px 16px;
       border-radius: unset;
+      padding: 20px 16px 7px 16px;
     }
 
     > h2 {
@@ -45,11 +46,14 @@
 
   > output {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow-y: auto;
     flex: 1;
+
+    gap: 10px;
 
     @media (max-width: 1024px) {
       font-size: 15px;
@@ -59,6 +63,56 @@
 
         > * {
           text-align: center;
+        }
+      }
+    }
+
+    > .recipients-area {
+      gap: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      overflow-x: auto;
+      justify-content: center;
+
+      > div {
+        display: flex;
+        align-items: center;
+        background-color: $main-accent;
+        width: max-content;
+        padding: 2px 10px;
+        border-radius: 30px;
+        gap: 4px;
+
+        > img:nth-child(1) {
+          width: 25px;
+          height: 25px;
+        }
+
+        > p {
+          font-size: 14px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        > div:last-child {
+          display: flex;
+          align-items: center;
+
+          &:hover {
+            > svg path {
+              fill: $purple-font !important;
+            }
+          }
+
+          > svg {
+            width: 15px;
+            &:hover {
+              > path {
+                fill: $purple-font !important;
+              }
+            }
+          }
         }
       }
     }
@@ -292,11 +346,16 @@
   transition: all 3s;
   overflow: auto;
 
+  @media (max-width: 768px) {
+    max-height: 51px;
+  }
+
   > div {
     display: flex;
     align-items: center;
     width: 100%;
     gap: 5px;
+
     > input {
       position: relative;
       width: 100%;
@@ -309,48 +368,6 @@
       }
       &:focus {
         outline: none;
-      }
-    }
-
-    > div {
-      display: flex;
-      align-items: center;
-      background-color: $main-accent;
-      width: 210px;
-      padding: 2px 10px;
-      border-radius: 30px;
-      gap: 4px;
-
-      > img:nth-child(1) {
-        width: 25px;
-        height: 25px;
-      }
-
-      > p {
-        font-size: 14px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      > div:last-child {
-        display: flex;
-        align-items: center;
-
-        &:hover {
-          > svg path {
-            fill: $purple-font !important;
-          }
-        }
-
-        > svg {
-          width: 15px;
-          &:hover {
-            > path {
-              fill: $purple-font !important;
-            }
-          }
-        }
       }
     }
   }
