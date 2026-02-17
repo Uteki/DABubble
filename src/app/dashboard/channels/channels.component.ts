@@ -141,6 +141,7 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
   }
 
   openBroadcast() {
+    if (window.innerWidth < 768) this.channelsMenu.emit();
     this.broadcast.emit();
   }
 
