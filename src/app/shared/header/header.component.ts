@@ -48,12 +48,12 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   isUserAbsent: boolean = false;
 
   private beforeUnloadHandler = () => {
-/*     if (this.sessionData) {
+   if (this.sessionData) {
       const url = `/api/updateStatus?uid=${this.sessionData}&active=false`;
       navigator.sendBeacon(url);
-    }
+   }
 
-    this.authService.signOutOnTabClose(); */
+   this.authService.signOutOnTabClose();
   };
 
   constructor(
@@ -70,9 +70,7 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   }
 
   ngOnInit(): void {
-    if (this.sessionData) {
-      window.addEventListener('beforeunload', this.beforeUnloadHandler);
-    }
+    if (this.sessionData) {window.addEventListener('beforeunload', this.beforeUnloadHandler);}
 
     this.profileOverlayService.openProfile$.subscribe(() => {
       this.openProfileMenu();
@@ -99,13 +97,8 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
     const isUserSearch = this.recipientInput.startsWith('@');
     const isChannelSearch = this.recipientInput.startsWith('#');
     const isEmailSearch = !isUserSearch && !isChannelSearch && this.recipientInput.length > 0;
-
     if (!isUserSearch && !isEmailSearch) return [];
-
-    const usedPartnerChats = new Set(
-      this.recipient.filter(this.isUserRecipient).map(r => r.partnerChat)
-    );
-
+    const usedPartnerChats = new Set(this.recipient.filter(this.isUserRecipient).map(r => r.partnerChat));
     return this.users.filter(user => !this.isAlreadyAdded(user, usedPartnerChats))
       .filter(user => this.isUserMatch(user, isUserSearch, isEmailSearch, this.recipientInput))
       .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
@@ -113,16 +106,10 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
 
   get filteredChannels() {
     if (!this.recipientInput.startsWith('#')) return [];
-
-    const usedChannelIds = new Set(
-      this.recipient.filter(this.isChannelRecipient).map(r => r.channelId)
-    );
+    const usedChannelIds = new Set(this.recipient.filter(this.isChannelRecipient).map(r => r.channelId));
     let filtered = this.channels.filter(channel => !usedChannelIds.has(channel.id));
     let term = this.searchTerm;
-
-    if (term) {
-      filtered = filtered.filter(channel => channel.name.toLowerCase().includes(term));
-    }
+    if (term) filtered = filtered.filter(channel => channel.name.toLowerCase().includes(term));
     return filtered.sort((a, b) => a.name.localeCompare(b.name));
   }
 
@@ -178,9 +165,7 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
 
   addRecipient(userid: string, name: string, mail: string, avatar: string) {
     const partnerChat = this.buildPartnerChat(userid);
-
     if (this.recipient.some(r => r.type === 'user' && r.partnerChat === partnerChat)) return
-
     this.recipient = [{type: 'user', partnerChat, name: name, mail: mail, avatar: avatar}];
     this.recipientInput = "";
     this.onInputChange(this.recipientInput);
@@ -188,7 +173,6 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
 
   addChannelRecipient(channelId: string, name: string) {
     if (this.recipient.some(r => r.type === 'channel' && r.channelId === channelId)) return
-
     this.recipient = [{type: 'channel', channelId, name}];
     this.recipientInput = "";
     this.onInputChange(this.recipientInput);
@@ -218,9 +202,7 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
 
   scrollToMessage(messageId: string) {
     setTimeout(() => {
-      const el = document.querySelector(
-        `[data-message-id="${messageId}"]`
-      );
+      const el = document.querySelector(`[data-message-id="${messageId}"]`);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         el.classList.add('highlight');
@@ -235,9 +217,7 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
     });
 
     this.idleTracker.isIdle$.subscribe((isIdle) => {
-      if (!isIdle) {
-        this.isUserAbsent = false;
-      }
+      if (!isIdle) this.isUserAbsent = false;
     });
   }
 
@@ -248,10 +228,8 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   getUserInformation() {
     if (this.sessionData) {
       this.userService.getUserByUid(this.sessionData).subscribe((user) => {
-        this.username = user.name;
-        this.useremail = user.email;
-        this.userStatus = user.status;
-        this.userAvatar = user.avatar;
+        this.username = user.name; this.useremail = user.email
+        this.userStatus = user.status; this.userAvatar = user.avatar
       });
     }
   }
@@ -271,20 +249,16 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
 
   changeUserStatus() {
     if (this.sessionData) {
-      this.userService
-        .updateUserStatus(this.sessionData, true)
-        .catch((err) => console.error(err));
+      this.userService.updateUserStatus(this.sessionData, true).catch((err) => console.error(err));
     }
   }
 
   logout() {
-   /*  if (this.sessionData) {
-      this.userService
-        .updateUserStatus(this.sessionData, false)
-        .catch((err) => console.error(err));
+    if (this.sessionData) {
+      this.userService.updateUserStatus(this.sessionData, false).catch((err) => console.error(err));
       sessionStorage.removeItem('sessionData');
     }
-    this.authService.signOut(); */
+    this.authService.signOut();
   }
 
   onInputChange(value: string) {
@@ -332,9 +306,7 @@ openDropdown() {
   this.toggleDropdownMenu = true;
   setTimeout(() => {
     const dropdown = document.querySelector('.dropdown-item-mobile');
-    if (dropdown) {
-      dropdown.classList.remove('no-display');
-    }
+    if (dropdown) dropdown.classList.remove('no-display');
   }, 10);
 }
 
@@ -349,7 +321,7 @@ openDropdown() {
 
   openProfileMenu() {
     this.edit = false;
-   this.toggleProfileMenu = !this.toggleProfileMenu;
+    this.toggleProfileMenu = !this.toggleProfileMenu;
   }
 
   editProfile() {
@@ -357,16 +329,10 @@ openDropdown() {
   }
 
   changeUserName() {
-    const inputNameElement = document.getElementById(
-      'input-name'
-    ) as HTMLInputElement;
+    const inputNameElement = document.getElementById('input-name') as HTMLInputElement;
     let inputName = inputNameElement ? inputNameElement.value : '';
 
-    if (this.sessionData) {
-      this.userService
-        .updateUserName(this.sessionData, inputName)
-        .catch((err) => console.error(err));
-    }
+    if (this.sessionData) this.userService.updateUserName(this.sessionData, inputName).catch((err) => console.error(err))
     inputName = '';
     this.edit = false;
   }
