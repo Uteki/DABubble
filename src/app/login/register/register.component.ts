@@ -15,6 +15,21 @@ import {
   updateProfile,
 } from '@angular/fire/auth';
 
+/**
+ * RegisterComponent
+ *
+ * Handles user account registration.
+ *
+ * Responsibilities:
+ * - Provides a reactive registration form
+ * - Validates user input (name, email, password, privacy acceptance)
+ * - Creates a Firebase Authentication account
+ * - Updates the user display name
+ * - Navigates to avatar setup after successful registration
+ *
+ * This component focuses purely on account creation
+ * and initial profile identity setup.
+ */
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -26,10 +41,21 @@ import {
   ],
 })
 export class RegisterComponent implements OnInit {
+
+  /** Reactive registration form instance. */
   registerForm: FormGroup;
+
+  /** Error message displayed when registration fails. */
   errorMessage: string | null = null;
+
+  /** Controls visibility of login link/section animations. */
   showLogin = false;
 
+  /**
+   * @param formBuilder Angular FormBuilder service
+   * @param router Angular Router for navigation
+   * @param auth Firebase Authentication instance
+   */
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
@@ -43,6 +69,16 @@ export class RegisterComponent implements OnInit {
     });
   }
 
+  /**
+   * Custom validator for full name input.
+   *
+   * Rules:
+   * - Must contain at least 2 words
+   * - Must not exceed 3 words
+   *
+   * @param control Form control instance
+   * @returns ValidationErrors | null
+   */
   fullNameValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value?.trim();
     if (!value) {
@@ -58,8 +94,15 @@ export class RegisterComponent implements OnInit {
     return null;
   }
 
+  /** Angular lifecycle hook (currently unused). */
   ngOnInit(): void {}
 
+  /**
+   * Handles form submission.
+   *
+   * - If valid → proceeds with registration
+   * - If invalid → marks fields as touched to show validation errors
+   */
   async onSubmit(): Promise<void> {
     if (this.registerForm.valid) {
       await this.performRegistration();
@@ -68,13 +111,20 @@ export class RegisterComponent implements OnInit {
     }
   }
 
+  /**
+   * Performs Firebase registration flow.
+   *
+   * Steps:
+   * 1. Creates Firebase auth account
+   * 2. Updates display name
+   * 3. Clears errors
+   * 4. Navigates to avatar setup
+   */
   async performRegistration(): Promise<void> {
     const { fullName, email, password } = this.registerForm.value;
     try {
       const userCredential = await createUserWithEmailAndPassword(
-        this.auth,
-        email,
-        password,
+        this.auth, email, password,
       );
       await updateProfile(userCredential.user, { displayName: fullName });
       this.errorMessage = null;
@@ -84,24 +134,38 @@ export class RegisterComponent implements OnInit {
     }
   }
 
+  /**
+   * Marks all form fields as touched
+   * to trigger validation UI messages.
+   */
   markFormAsTouched(): void {
     Object.keys(this.registerForm.controls).forEach((key) => {
       this.registerForm.get(key)?.markAsTouched();
     });
   }
 
+  /** Navigates back to the login page. */
   goBack(): void {
     this.router.navigate(['/login']);
   }
 
+  /** Navigates to the legal notice page. */
   goTolegalNotice(): void {
     this.router.navigate(['/legal-notice']);
   }
 
+  /** Navigates to the privacy policy page. */
   goToPrivacyPolicy(): void {
     this.router.navigate(['/privacy-policy']);
   }
 
+  /**
+   * Maps Firebase auth error codes
+   * to user-friendly messages.
+   *
+   * @param errorCode Firebase error code
+   * @returns Readable error message
+   */
   private getErrorMessage(errorCode: string): string {
     switch (errorCode) {
       case 'auth/email-already-in-use':
