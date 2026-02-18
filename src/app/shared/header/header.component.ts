@@ -1,20 +1,28 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ElementRef, HostListener, ViewChild } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
-import { Firestore } from '@angular/fire/firestore';
-import { Router, RouterLink } from '@angular/router';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { MessageSearchBase } from "../../core/base/message-search.base";
 import { UserService } from '../../user.service';
 import { AuthService } from '../../auth.service';
 import { ChatService } from "../../chat.service";
-import { IdleTrackerService } from '../../idle-tracker.service';
 import { ProfileOverlayService } from '../../profile-overlay.service';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { BroadcastRecipient } from "../../core/type/recipient";
 import { GlobalSearchResult } from "../../core/interfaces/global-search-result";
 import { User } from "../../core/interfaces/user";
+import { getLargeAvatar, returnAvatarPath, goToMessage, checkResultType } from './header.utils';
+import { FilterService } from "../../filter.service";
 
+/**
+ * HeaderComponent
+ * Standalone header component that coordinates:
+ * - Recipient selection UI (`@` users / email, `#` channels)
+ * - Global message search results (open channel/whisper + scroll to message)
+ * - Profile dropdown / profile overlay interactions
+ * - User presence handling (mark active on load, mark inactive on tab close)
+ * - Communication with parent layout (menu toggle, direct chat toggle, partner selection)
+ * This component extends {@link MessageSearchBase} to reuse shared searching
+ * and whisper/channel helper methods (e.g. building partner chat ids).
+ */
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -23,96 +31,141 @@ import { User } from "../../core/interfaces/user";
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent extends MessageSearchBase implements OnInit, OnDestroy {
+
+  /** Full user list used for filtering recipients and resolving whisper partner names. */
   @Input() users: any[] = [];
+  /** Channel list used for filtering recipients and resolving channel names. */
   @Input() channels: any[] = [];
+  /** Enables menu-specific UI mode (e.g. mobile header). */
   @Input() menu: boolean = false;
-
+  /** Emits when the channels menu button is clicked (parent controls layout). */
   @Output() channelsMenu = new EventEmitter<void>();
+  /** Emits whether the UI should switch to direct chat mode.`true` = direct chat view, `false` = channel view */
   @Output() toggleRequest = new EventEmitter<boolean>();
+  /** Emits the selected chat partner when opening a whisper result. */
   @Output() partnerSelected = new EventEmitter<User>();
-
+  /** Search wrapper element used to detect clicks outside of the search UI and close result dropdowns. */
   @ViewChild('searchResult', { static: true }) searchWrapper!: ElementRef;
-
+  /** Current user display name shown in the header. */
   username: string = 'Frederik Beck';
+  /** Current user email shown in the header. */
   useremail: string = ' fred.back@email.com ';
+  /** Avatar path of the current user (stored in DB). */
   userAvatar: string = '';
+  /** Controls the mobile dropdown menu visibility. */
   toggleDropdownMenu: boolean = false;
+  /** Controls the profile menu/overlay visibility. */
   toggleProfileMenu: boolean = false;
+  /** Current user presence/status from DB (e.g. online/offline). */
   userStatus: boolean = false;
+  /** Whether the profile name edit UI is active. */
   edit: boolean = false;
+  /** UID from session storage (app session identifier). */
   sessionData = sessionStorage.getItem('sessionData');
+  /** Whether the current session is a guest session. */
   isGuest = sessionStorage.getItem('role') === 'guest';
+  /** Responsive flag for mobile behavior (updated on resize). */
   isMobile = window.innerWidth < 768;
+  /**
+   * Tracks whether the recipient input was previously empty.
+   * Used to only open chooser lists (`@` / `#`) on the first character entry.
+   */
   private wasEmpty = true;
 
-  isUserAbsent: boolean = false;
-
+  /**
+   * beforeunload handler:
+   * - Marks the user inactive via `sendBeacon`
+   * - Signs out Firebase session on tab close
+   * Note: `sendBeacon` is used because it is more reliable during unload.
+   */
   private beforeUnloadHandler = () => {
    if (this.sessionData) {
       const url = `/api/updateStatus?uid=${this.sessionData}&active=false`;
       navigator.sendBeacon(url);
    }
-
    this.authService.signOutOnTabClose();
   };
 
+  /**
+   * Creates the HeaderComponent.
+   * @param userService Provides user profile + presence updates.
+   * @param profileOverlayService Emits events to open the profile overlay from elsewhere.
+   * @param filterService Encapsulates filtering logic for users/channels recipient dropdowns.
+   * @param authService Authentication facade (current uid, sign-out).
+   * @param chatService Chat facade used by {@link MessageSearchBase} and for opening results.
+   */
   constructor(
-    private router: Router, private auth: Auth, private firestore: Firestore,
-    private userService: UserService,
-    private idleTracker: IdleTrackerService,
-    private profileOverlayService: ProfileOverlayService,
-    authService: AuthService,
-    chatService: ChatService
+    private userService: UserService, private profileOverlayService: ProfileOverlayService, private filterService: FilterService,
+    authService: AuthService, chatService: ChatService
   ) {
     super(chatService, authService);
     this.getUserInformation();
     this.changeUserStatus();
   }
 
+  /**
+   * Angular lifecycle hook.
+   * Initializes:
+   * - beforeunload handler (only when session exists)
+   * - profile overlay open subscription
+   */
   ngOnInit(): void {
-    if (this.sessionData) {window.addEventListener('beforeunload', this.beforeUnloadHandler);}
-
+    if (this.sessionData) {window.addEventListener('beforeunload', this.beforeUnloadHandler)}
     this.profileOverlayService.openProfile$.subscribe(() => {
       this.openProfileMenu();
     });
-
   }
 
+  /**
+   * Angular lifecycle hook.
+   * Cleans up:
+   * - beforeunload handler
+   * Note: If you subscribe manually in this component, consider cleaning up subscriptions too.
+   */
   ngOnDestroy(): void {
     window.removeEventListener('beforeunload', this.beforeUnloadHandler);
   }
 
+  /** Updates {@link isMobile} when the window size changes. */
   @HostListener('window:resize')
   onResize() {
     this.isMobile = window.innerWidth < 768;
   }
 
+  /**
+   * Closes search dropdowns when a click happens outside the search wrapper.
+   * @param event Document click event.
+   */
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const clickedInside = this.searchWrapper.nativeElement.contains(event.target);
     if (!clickedInside) this.hideSearchResults()
   }
 
+  /**
+   * Returns the filtered/sorted list of users for the recipient dropdown.
+   * Delegates to {@link FilterService.getFilteredUsers}.
+   */
   get filteredUsers() {
-    const isUserSearch = this.recipientInput.startsWith('@');
-    const isChannelSearch = this.recipientInput.startsWith('#');
-    const isEmailSearch = !isUserSearch && !isChannelSearch && this.recipientInput.length > 0;
-    if (!isUserSearch && !isEmailSearch) return [];
-    const usedPartnerChats = new Set(this.recipient.filter(this.isUserRecipient).map(r => r.partnerChat));
-    return this.users.filter(user => !this.isAlreadyAdded(user, usedPartnerChats))
-      .filter(user => this.isUserMatch(user, isUserSearch, isEmailSearch, this.recipientInput))
-      .sort((a, b) => (a.name ?? '').localeCompare(b.name ?? ''));
+    return this.filterService.getFilteredUsers({
+      users: this.users, recipient: this.recipient, recipientInput: this.recipientInput, searchTerm: this.searchTerm, buildPartnerChat: (uid) => this.buildPartnerChat(uid),
+    });
   }
 
+  /**
+   * Returns the filtered/sorted list of channels for the recipient dropdown.
+   * Delegates to {@link FilterService.getFilteredChannels}.
+   */
   get filteredChannels() {
-    if (!this.recipientInput.startsWith('#')) return [];
-    const usedChannelIds = new Set(this.recipient.filter(this.isChannelRecipient).map(r => r.channelId));
-    let filtered = this.channels.filter(channel => !usedChannelIds.has(channel.id));
-    let term = this.searchTerm;
-    if (term) filtered = filtered.filter(channel => channel.name.toLowerCase().includes(term));
-    return filtered.sort((a, b) => a.name.localeCompare(b.name));
+    return this.filterService.getFilteredChannels({
+      channels: this.channels, recipient: this.recipient, recipientInput: this.recipientInput, searchTerm: this.searchTerm
+    });
   }
 
+  /**
+   * Emits the whisper partner to the parent and switches UI to direct chat mode.
+   * @param whisperId Whisper conversation id (format: `uidA_uidB`).
+   */
   async emitPartner(whisperId: string | undefined) {
     if (!whisperId) return;
     let whisperChat = this.getPartnerUidFromWhisper(whisperId, this.authService.readCurrentUser());
@@ -121,6 +174,13 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
     this.toggleRequest.emit(true);
   }
 
+  /**
+   * Opens a channel result from global search:
+   * - selects channel in chat service
+   * - switches UI to channel mode
+   * - scrolls to the target message
+   * @param result Search result pointing to a channel message.
+   */
   async openChannelResult(result: GlobalSearchResult) {
     const channelId = result.channelId ?? result.nativeId;
     if (channelId != null) this.chatService.currentChannelID = channelId;
@@ -129,40 +189,28 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
     this.scrollToMessage(result.id);
   }
 
+  /**
+   * Opens a whisper result from global search:
+   * - selects whisper partner
+   * - scrolls to the target message
+   * @param result Search result pointing to a whisper message.
+   */
   async openWhisperResult(result: GlobalSearchResult) {
     const whisperId = result.whisperId ?? result.nativeId;
     await this.emitPartner(whisperId);
     this.scrollToMessage(result.id);
   }
 
-  private isAlreadyAdded(user: any, usedPartnerChats: Set<string>): boolean {
-    const partnerChat = this.buildPartnerChat(user.uid);
-    return usedPartnerChats.has(partnerChat);
-  }
+  /** Clears the currently selected recipient. */
+  removeRecipient() { this.recipient = [] }
 
-  private isUserMatch(user: any, isUserSearch: boolean, isEmailSearch: boolean, value: string): boolean {
-    if (isUserSearch) {
-      if (!this.searchTerm) return true;
-      return user.name?.toLowerCase().includes(this.searchTerm);
-    }
-
-    if (isEmailSearch) return user.email?.toLowerCase().includes(value.toLowerCase())
-
-    return false;
-  }
-
-  isUserRecipient(r: BroadcastRecipient): r is Extract<BroadcastRecipient, { type: 'user' }> {
-    return r.type === 'user';
-  }
-
-  isChannelRecipient(r: BroadcastRecipient): r is Extract<BroadcastRecipient, { type: 'channel' }> {
-    return r.type === 'channel';
-  }
-
-  removeRecipient() {
-    this.recipient = [];
-  }
-
+  /**
+   * Adds a user recipient (direct/whisper) to the recipient selection.
+   * @param userid Target user uid.
+   * @param name Target user name.
+   * @param mail Target user email.
+   * @param avatar Target user avatar path.
+   */
   addRecipient(userid: string, name: string, mail: string, avatar: string) {
     const partnerChat = this.buildPartnerChat(userid);
     if (this.recipient.some(r => r.type === 'user' && r.partnerChat === partnerChat)) return
@@ -171,6 +219,11 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
     this.onInputChange(this.recipientInput);
   }
 
+  /**
+   * Adds a channel recipient to the recipient selection.
+   * @param channelId Target channel id.
+   * @param name Target channel name.
+   */
   addChannelRecipient(channelId: string, name: string) {
     if (this.recipient.some(r => r.type === 'channel' && r.channelId === channelId)) return
     this.recipient = [{type: 'channel', channelId, name}];
@@ -178,53 +231,52 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
     this.onInputChange(this.recipientInput);
   }
 
+  /**
+   * Resolves a channel display name by id.
+   * @param channelId Channel id.
+   * @returns Channel name or a fallback label.
+   */
   getChannelName(channelId: string): string {
     const channel = this.channels.find(c => c.id === channelId);
     return channel?.name ?? 'Unbekannter Channel';
   }
 
+  /**
+   * Resolves whisper partner display name by whisper id.
+   * @param whisperId Whisper id (format: `uidA_uidB`).
+   * @returns Partner name or fallback.
+   */
   getWhisperName(whisperId: string): string {
     let test = this.getPartnerUidFromWhisper(whisperId, this.authService.readCurrentUser());
     const user = this.users.find(u => u.uid === test);
     return user?.name ?? 'Unknown user';
   }
 
+  /**
+   * Opens a selected search result:
+   * - closes the search dropdown
+   * - routes the result to channel or whisper open logic
+   * @param result Global search result to open.
+   */
   openFoundMessage(result: GlobalSearchResult) {
     const searchResults = document.getElementById('search-results');
     searchResults?.classList.add('no-display');
-
     if (result.channelId || result.type === 'channel') {
       this.openChannelResult(result).then();
-    } else {
-      this.openWhisperResult(result).then();
-    }
+    } else { this.openWhisperResult(result).then() }
   }
 
-  scrollToMessage(messageId: string) {
-    setTimeout(() => {
-      const el = document.querySelector(`[data-message-id="${messageId}"]`);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.classList.add('highlight');
-        setTimeout(() => el.classList.remove('highlight'), 2000);
-      }
-    }, 300);
-  }
+  /**
+   * Scrolls to a message in the DOM and highlights it.
+   * Delegates to {@link goToMessage}.
+   * @param messageId Message id used in `[data-message-id="..."]`.
+   */
+  scrollToMessage(messageId: string) { goToMessage(messageId) }
 
-  trackIdle() {
-    this.idleTracker.idleTime$.subscribe((idleTime) => {
-      this.isUserAbsent = idleTime / 1000 > 30;
-    });
+  /** Emits the channels menu toggle request to the parent. */
+  menuOn() { this.channelsMenu.emit() }
 
-    this.idleTracker.isIdle$.subscribe((isIdle) => {
-      if (!isIdle) this.isUserAbsent = false;
-    });
-  }
-
-  menuOn() {
-    this.channelsMenu.emit()
-  }
-
+  /** Loads current user profile data into the header state. Reads from DB: name, email, status, avatar */
   getUserInformation() {
     if (this.sessionData) {
       this.userService.getUserByUid(this.sessionData).subscribe((user) => {
@@ -234,106 +286,113 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
     }
   }
 
-  getLargeAvatar(avatarPath: string | undefined): string {
-    if (!avatarPath) return 'assets/avatars/profile.png';
-    return avatarPath.replace('avatarSmall', 'avatar');
-  }
+  /**
+   * Returns the large avatar path variant.
+   * Delegates to {@link getLargeAvatar}.
+   * @param avatarPath Small avatar path.
+   * @returns Large avatar path (or default avatar).
+   */
+  getLargeAvatar(avatarPath: string | undefined): string { return getLargeAvatar(avatarPath) }
 
-  returnAvatarPath(): string {
-    if (this.userAvatar && this.userAvatar.length > 0) {
-      return this.userAvatar;
-    } else {
-      return 'assets/avatars/profile.png';
-    }
-  }
+  /**
+   * Returns a safe avatar path for display.
+   * Delegates to {@link returnAvatarPath}.
+   * @returns Avatar path or default avatar.
+   */
+  returnAvatarPath(): string  { return returnAvatarPath(this.userAvatar) }
 
+  /** Marks the current user as active in the database. */
   changeUserStatus() {
     if (this.sessionData) {
       this.userService.updateUserStatus(this.sessionData, true).catch((err) => console.error(err));
     }
   }
 
+  /**
+   * Logs out the current user:
+   * - marks user inactive
+   * - clears session data
+   * - signs out via {@link AuthService}
+   */
   logout() {
     if (this.sessionData) {
       this.userService.updateUserStatus(this.sessionData, false).catch((err) => console.error(err));
       sessionStorage.removeItem('sessionData');
-    }
-    this.authService.signOut();
+    } this.authService.signOut();
   }
 
+  /**
+   * Handles recipient input changes.
+   * Behavior:
+   * - Hides message search results immediately
+   * - Shows chooser dropdown on first character (`@` or `#`)
+   * - When cleared, hides all search result containers
+   * @param value Current input value.
+   */
   onInputChange(value: string) {
     const searchResults = document.getElementById('search-results');
     searchResults?.classList.add('no-display');
     if (this.wasEmpty && value.length > 0) {
-      this.searchBar(value);
-      this.wasEmpty = false;
+      this.searchBar(value); this.wasEmpty = false
     }
     if (value.length === 0) {
-      this.wasEmpty = true;
-      this.hideSearchResults();
+      this.wasEmpty = true; this.hideSearchResults()
     }
   }
 
-  searchBar(value: string) {
-    const searchResultsContacts = document.getElementById('search-results-contacts');
-    const searchResultsChannels = document.getElementById('search-results-channels');
-    if (value === '@') {
-      searchResultsContacts?.classList.remove('no-display');
-    } else if (value === '#') {
-      searchResultsChannels?.classList.remove('no-display');
-    }
-  }
+  /**
+   * Shows chooser lists based on trigger characters.
+   * Delegates to {@link checkResultType}.
+   * @param value Raw input value.
+   */
+  searchBar(value: string) { checkResultType(value) }
+  /** Toggles the mobile dropdown menu open/close. */
+  toggleDropdown() { this.toggleDropdownMenu ? this.closeDropdown() : this.openDropdown() }
 
-toggleDropdown() {
-  if (this.toggleDropdownMenu) {
-    this.closeDropdown();
-  } else {
-    this.openDropdown();
-  }
-}
-
-closeDropdown() {
-  const dropdown = document.querySelector('.dropdown-item-mobile');
-  if (dropdown) {
-    dropdown.classList.add('no-display');
-    setTimeout(() => {
-      this.toggleDropdownMenu = false;
-    }, 200);
-  }
-}
-
-openDropdown() {
-  this.toggleDropdownMenu = true;
-  setTimeout(() => {
+  /** Closes the dropdown menu using the `no-display` class (for animation). */
+  closeDropdown() {
     const dropdown = document.querySelector('.dropdown-item-mobile');
-    if (dropdown) dropdown.classList.remove('no-display');
-  }, 10);
-}
-
-  stopPropagation(event: Event) {
-    event.stopPropagation();
+    if (dropdown) {
+      dropdown.classList.add('no-display');
+      setTimeout(() => { this.toggleDropdownMenu = false }, 200)
+    }
   }
 
+  /** Opens the dropdown menu and removes the `no-display` class after a tick. */
+  openDropdown() {
+    this.toggleDropdownMenu = true;
+    setTimeout(() => {
+      const dropdown = document.querySelector('.dropdown-item-mobile');
+      if (dropdown) dropdown.classList.remove('no-display');
+    }, 10);
+  }
+
+  /**
+   * Prevents click event bubbling (useful for dropdown/menu interaction).
+   * @param event DOM event.
+   */
+  stopPropagation(event: Event) { event.stopPropagation() }
+
+  /** Toggles the profile menu and disables edit mode. */
   toggleProfile() {
     this.edit = false;
     this.toggleProfileMenu = !this.toggleProfileMenu;
   }
 
+  /** Opens the profile menu and disables edit mode. */
   openProfileMenu() {
     this.edit = false;
     this.toggleProfileMenu = !this.toggleProfileMenu;
   }
 
-  editProfile() {
-    this.edit = true;
-  }
+  /** Enables profile edit mode. */
+  editProfile() { this.edit = true }
 
+  /** Updates the user name in the database using the value from the input field. Disables edit mode afterwards. */
   changeUserName() {
     const inputNameElement = document.getElementById('input-name') as HTMLInputElement;
     let inputName = inputNameElement ? inputNameElement.value : '';
-
     if (this.sessionData) this.userService.updateUserName(this.sessionData, inputName).catch((err) => console.error(err))
-    inputName = '';
-    this.edit = false;
+    inputName = ''; this.edit = false
   }
 }
