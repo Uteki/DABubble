@@ -1,35 +1,11 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostListener,
-  Input,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../chat.service';
 import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { StopPropagationDirective } from '../../stop-propagation.directive';
-import {
-  addDoc,
-  collection,
-  Firestore,
-  getDocs,
-  updateDoc,
-} from '@angular/fire/firestore';
-import {
-  Subject,
-  distinctUntilChanged,
-  filter,
-  map,
-  switchMap,
-  takeUntil,
-  tap,
-} from 'rxjs';
+import { addDoc, collection, Firestore, getDocs, updateDoc } from '@angular/fire/firestore';
+import { Subject, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rxjs';
 import { doc } from 'firebase/firestore';
 import { AuthService } from '../../auth.service';
 import { User } from '../../core/interfaces/user';
@@ -37,21 +13,14 @@ import { ProfileOverlayService } from '../../profile-overlay.service';
 import { ReactionsComponent } from './../../shared/reactions/reactions.component';
 import { AutoScrollDirective } from "../../auto-scroll.directive";
 import { LinkifyPipe } from "../../linkify.pipe";
-import {MentionService} from "../../mention.service";
+import { MentionService } from "../../mention.service";
+import { ActionService } from "../../action.service";
 
 @Component({
   selector: 'app-chat',
   standalone: true,
   imports: [
-    FormsModule,
-    NgClass,
-    AutoScrollDirective,
-    StopPropagationDirective,
-    NgForOf,
-    NgIf,
-    DatePipe,
-    ReactionsComponent,
-    LinkifyPipe
+    FormsModule, NgClass, AutoScrollDirective, StopPropagationDirective, NgForOf, NgIf, DatePipe, ReactionsComponent, LinkifyPipe
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss',
@@ -120,7 +89,8 @@ export class ChatComponent implements OnInit {
     private firestore: Firestore,
     private authService: AuthService,
     private profileOverlayService: ProfileOverlayService,
-    private mentionService: MentionService
+    private mentionService: MentionService,
+    private actionService: ActionService,
   ) {}
 
   ngOnInit(): void {
@@ -151,13 +121,9 @@ export class ChatComponent implements OnInit {
       .subscribe(async (messages) => await this.changeMeta(messages));
   }
 
-  //TODO              reactions: this.stripEmptyReactions(m.reactions || {}),
-
   ngOnChanges(changes: SimpleChanges) {
     if (changes['users'] && changes['users'].currentValue) {
-      this.channelUsers = changes['users'].currentValue.map((u: User) => ({
-        ...u,
-      }));
+      this.channelUsers = changes['users'].currentValue.map((u: User) => ({...u,}));
     }
   }
 
@@ -175,17 +141,12 @@ export class ChatComponent implements OnInit {
   }
 
   filterMembersInChannel() {
-    this.missingIndices = this.users
-      .map((user, index) =>
+    this.missingIndices = this.users.map((user, index) =>
         this.chatService.usersInChannel.includes(user.uid) ? -1 : index
-      )
-      .filter((index) => index !== -1);
-
-    this.currentMemberIndices = this.users
-      .map((user, index) =>
+      ).filter((index) => index !== -1);
+    this.currentMemberIndices = this.users.map((user, index) =>
         this.chatService.usersInChannel.includes(user.uid) ? index : -1
-      )
-      .filter((index) => index !== -1);
+      ).filter((index) => index !== -1);
   }
 
   getLargeAvatar(avatarPath: string | undefined): string {
@@ -213,20 +174,7 @@ export class ChatComponent implements OnInit {
     return cleaned;
   }
 
-  private asciiToEmojiInText(s: string): string {
-    if (!s) return s;
-    return s
-      .replace(/:-?\)/g, '😀')
-      .replace(/:-?D/gi, '😃')
-      .replace(/;-?\)/g, '😉')
-      .replace(/:-?\(/g, '☹️')
-      .replace(/:-?P/gi, '😛')
-      .replace(/:o/gi, '😮')
-      .replace(/:'\(/g, '😢')
-      .replace(/\+1/g, '👍')
-      .replace(/-1/g, '👎')
-      .replace(/<3/g, '❤️');
-  }
+  private asciiToEmojiInText(s: string): string { return this.actionService.toEmoji(s) }
 
   async sendMessage() {
     const currentUserId = this.authService.readCurrentUser();
@@ -237,10 +185,8 @@ export class ChatComponent implements OnInit {
     const isMember = this.chatService.pendingUsers.includes(currentUserId);
     if (!isMember) {
       this.messages.push({
-        uid: logger.uid,
-        text: '⚠️ Sie können in diesem Kanal keine Nachrichten mehr senden.',
-        user: logger.name,
-        timestamp: Date.now(),
+        uid: logger.uid, text: '⚠️ Sie können in diesem Kanal keine Nachrichten mehr senden.',
+        user: logger.name, timestamp: Date.now(),
       });
       return;
     }
@@ -250,33 +196,17 @@ export class ChatComponent implements OnInit {
   async sendMessageExtension(logger: any) {
     const raw = (this.messageText || '').trim();
     const text = this.asciiToEmojiInText(raw);
-
-    await this.chatService.sendMessage(this.chatService.currentChannel, {
-      uid: logger.uid,
-      text: text,
-      user: logger.name,
-      timestamp: Date.now(),
-      reaction: {},
-    });
-
+    await this.chatService.sendMessage(this.chatService.currentChannel, {uid: logger.uid, text: text, user: logger.name, timestamp: Date.now(), reaction: {},});
     this.messageText = '';
   }
 
   async openThread(threadId: string, message: any) {
     this.toggleRequest.emit(true);
     this.threadSelected.emit(threadId);
-
-    const threadRef = collection(
-      this.firestore,
-      `channels/${this.chatService.currentChannel}/messages/${threadId}/thread`
-    );
-
+    const threadRef = collection(this.firestore, `channels/${this.chatService.currentChannel}/messages/${threadId}/thread`);
     const snapshot = await getDocs(threadRef);
     if (!snapshot.empty) return;
-    return addDoc(threadRef, {
-      ...message,
-      timestamp: message.timestamp || Date.now(),
-    });
+    return addDoc(threadRef, {...message, timestamp: message.timestamp || Date.now(),});
   }
 
   async updateChannelName(channelId: string, newName: string) {
@@ -293,28 +223,10 @@ export class ChatComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
-
-    if (
-      this.editMessageMenuOpen &&
-      !target.closest('.edit-message-menu') &&
-      !target.closest('.more-vert-button')
-    ) {
-      this.editMessageMenuOpen = null;
-    }
-
-    if (
-      this.editChannelName &&
-      this.channelEdit &&
-      !this.channelEdit.nativeElement.contains(event.target)
-    ) {
+    if (this.editMessageMenuOpen && !target.closest('.edit-message-menu') && !target.closest('.more-vert-button')) this.editMessageMenuOpen = null
+    if (this.editChannelName && this.channelEdit && !this.channelEdit.nativeElement.contains(event.target)) {
       this.editChannelName = false;
-    } else if (
-      this.editDescription &&
-      this.channelEdit &&
-      !this.channelEdit.nativeElement.contains(event.target)
-    ) {
-      this.editDescription = false;
-    }
+    } else if (this.editDescription && this.channelEdit && !this.channelEdit.nativeElement.contains(event.target)) this.editDescription = false
   }
 
   @HostListener('click', ['$event'])
@@ -328,40 +240,27 @@ export class ChatComponent implements OnInit {
     this.channelDescription = channel.description;
     this.channelFounder = channel.creator;
     await this.checkMembership();
-
     this.cd.detectChanges();
   }
 
-  getProfilePic(uid: string) {
-    return (
-      this.users.find((user) => user.uid === uid)?.avatar ||
-      'assets/avatars/profile.png'
-    );
-  }
+  getProfilePic(uid: string) { return (this.users.find((user) => user.uid === uid)?.avatar || 'assets/avatars/profile.png') }
 
-  getUserId() {
-    return this.authService.readCurrentUser();
-  }
+  getUserId() { return this.authService.readCurrentUser() }
 
   async leaveChannel() {
     const currentUserId = this.authService.readCurrentUser();
     const logger: User = this.users.find(user => user.uid === currentUserId);
-
     await this.chatService.leaveChannel(this.authService.readCurrentUser(), this.chatService.currentChannel, {user: logger.name + " hat den Kanal verlassen.", system: true, timestamp: Date.now()});
-
     await this.chatService.searchUsers(this.chatService.currentChannel)
     if (this.chatService.pendingUsers.length < 1) { await this.leaveChannelAsLastMember() }
     this.chatService.pendingUsers = [];
-
     setTimeout(() => this.resetSubscriptions(), 500);
   }
 
   async leaveChannelAsLastMember(): Promise<void> {
     await this.checkMeta({ name: "DALobby" });
-
     this.chatService.destroy$.next();
     this.chatService.destroy$.complete();
-
     this.chatService.currentChannelID = "DALobby";
     this.chatService.setCurrentChat("DALobby", "", "", "");
   }
@@ -375,11 +274,7 @@ export class ChatComponent implements OnInit {
   async checkMembership(): Promise<boolean> {
     const uid = this.authService.readCurrentUser();
     await this.chatService.searchUsers(this.chatService.currentChannel);
-
-    const isMember = this.chatService.pendingUsers.some(
-      (u) => (u?.uid ?? u) === uid
-    );
-
+    const isMember = this.chatService.pendingUsers.some((u) => (u?.uid ?? u) === uid);
     this.userInChannel = isMember;
     this.chatService.pendingUsers = [];
     return isMember;
@@ -389,14 +284,8 @@ export class ChatComponent implements OnInit {
     if (this.editChannelName) {
       const newName = this.channelName.trim();
       if (!newName) return;
-
-      this.updateChannelName(this.chatService.currentChannel, newName).then(
-        () => {}
-      );
-    } else {
-      this.channelName = this.currentChat;
-    }
-
+      this.updateChannelName(this.chatService.currentChannel, newName).then(() => {});
+    } else { this.channelName = this.currentChat }
     this.editChannelName = !this.editChannelName;
   }
 
@@ -404,21 +293,12 @@ export class ChatComponent implements OnInit {
     if (this.editDescription) {
       const newDesc = this.channelDescription.trim();
       if (!newDesc) return;
-
-      this.updateChannelDescription(
-        this.chatService.currentChannel,
-        newDesc
-      ).then(() => {});
+      this.updateChannelDescription(this.chatService.currentChannel, newDesc).then(() => {});
     }
-
     this.editDescription = !this.editDescription;
   }
 
-  overlayFunction(
-    darkOverlay: boolean,
-    overlay: string,
-    overlayBoolean: boolean
-  ) {
+  overlayFunction(darkOverlay: boolean, overlay: string, overlayBoolean: boolean) {
     this.overlayActivated = darkOverlay;
     this.cd.detectChanges();
     if (overlay == 'Entwicklung') {
@@ -429,25 +309,17 @@ export class ChatComponent implements OnInit {
       this.addMemberOverlay = overlayBoolean;
       this.viewMemberMobileOverlay = overlayBoolean;
     } else if (overlay == 'MitgliederWechseln') {
-      this.switchAddMemberOverlay = overlayBoolean;
-      this.viewMemberOverlay = overlayBoolean;
-      this.viewMemberMobileOverlay = overlayBoolean;
-      this.viewMemberOverlayMobile
+      this.switchAddMemberOverlay = overlayBoolean;this.viewMemberOverlay = overlayBoolean;
+      this.viewMemberMobileOverlay = overlayBoolean;this.viewMemberOverlayMobile = overlayBoolean;
     }
   }
 
-  onFocus() {
-    this.inputFocused = true;
-  }
+  onFocus() { this.inputFocused = true }
 
-  onBlur() {
-    this.inputFocused = false;
-  }
+  onBlur() { this.inputFocused = false }
 
   addUserToChannel(index: number) {
-    let memberInputREF = document.getElementById(
-      'member-input'
-    ) as HTMLInputElement;
+    let memberInputREF = document.getElementById('member-input') as HTMLInputElement;
     this.userAtIndex = this.channelUsers[index];
     this.selectedChannelUsers.push(this.userAtIndex);
     this.channelUsers.splice(index, 1);
@@ -466,14 +338,8 @@ export class ChatComponent implements OnInit {
     if (value.length > 0) {
       this.foundIndexes = this.channelUsers
         .map((user, index) =>
-          user?.name &&
-          user.name.toLowerCase().includes(value.toLowerCase()) &&
-          !this.currentMemberIndices.includes(index)
-            ? index
-            : -1
-        )
-        .filter((index) => index !== -1);
-
+          user?.name && user.name.toLowerCase().includes(value.toLowerCase()) && !this.currentMemberIndices.includes(index) ? index : -1
+        ).filter((index) => index !== -1);
       this.nameInputValue = this.foundIndexes.length > 0;
     } else {
       this.nameInputValue = false;
@@ -484,22 +350,16 @@ export class ChatComponent implements OnInit {
   onInputChange(value: string, ev?: Event) {
     const textarea = ev?.target as HTMLTextAreaElement;
     const cursor = textarea?.selectionStart ?? value.length;
-
     this.resetMentionUI();
-
     const mention = this.mentionService.parseMention(value, cursor);
     if (!mention) return;
-
     this.setActiveMention(mention);
-
     mention.trigger === '@' ? this.handleUserMention(mention) : this.handleChannelMention(mention);
   }
 
   private resetMentionUI() {
     document.getElementById('search-chat-members')?.classList.add('no-display');
-
     document.getElementById('search-chat-channels')?.classList.add('no-display');
-
     this.filteredUsers = [];
     this.filteredChannels = [];
     this.activeMention = null;
@@ -511,31 +371,22 @@ export class ChatComponent implements OnInit {
 
   private handleUserMention(mention: any) {
     this.filteredUsers = this.mentionService.filterUsers(mention.query, this.users);
-
     if (this.filteredUsers.length === 0) return;
-
     document.getElementById('search-chat-members')?.classList.remove('no-display');
   }
 
   private handleChannelMention(mention: any) {
     this.filteredChannels = this.mentionService.filterChannels(mention.query, this.channels);
-
     if (this.filteredChannels.length === 0) return;
-
     document.getElementById('search-chat-channels')?.classList.remove('no-display');
   }
 
   insertMention(name: string, textarea: HTMLTextAreaElement) {
-    if (!this.activeMention) return;
-    const { trigger, startIndex, endIndex } = this.activeMention;
-    const before = textarea.value.slice(0, startIndex);
-    const after = textarea.value.slice(endIndex);
-    const mentionText = `${trigger}${name} `;
-    const updatedValue = before + mentionText + after;
-    textarea.value = updatedValue;
-    this.messageText = updatedValue;
-    const newCursor = before.length + mentionText.length;
-    textarea.setSelectionRange(newCursor, newCursor);
+    const res = this.actionService.testInsertMention(name, this.messageText, this.activeMention);
+    if (!res) return;
+    this.messageText = res.nextText;
+    textarea.value = res.nextText;
+    textarea.setSelectionRange(res.nextCursor, res.nextCursor);
     textarea.focus();
     this.activeMention = null;
     document.getElementById('search-chat-members')?.classList.add('no-display');
@@ -553,38 +404,21 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  keepMenuOpen() {
-
-  }
+  keepMenuOpen() {}
 
   editMessage(messageId: string) {
-    const message = this.messages.find((m) => m.id === messageId);
-
-    if (!message || message.uid !== this.getUserId()) {
-      return;
-    }
-
-    this.editingMessageId = messageId;
-    this.editingMessageText = message.text;
-    this.editMessageMenuOpen = null;
-    this.editMessageIsOpen = true;
-
-    const messageElement = document.getElementById('message-text-' + messageId);
-    if (messageElement) {
-      messageElement.classList.add('hovered-own-message');
-    }
+    const upcoming = this.actionService.beginEdit(messageId, this.messages, this.getUserId());
+    if (!upcoming) return;
+    this.editingMessageId = upcoming.editingMessageId;this.editingMessageText = upcoming.editingMessageText;
+    this.editMessageMenuOpen = upcoming.editMessageMenuOpen;this.editMessageIsOpen = upcoming.editMessageIsOpen;
+    this.actionService.highlightOwnMessage(messageId);
   }
 
   cancelEdit() {
     if (this.editingMessageId) {
-      const messageElement = document.getElementById(
-        'message-text-' + this.editingMessageId
-      );
-      if (messageElement) {
-        messageElement.classList.remove('hovered-own-message');
-      }
+      const messageElement = document.getElementById('message-text-' + this.editingMessageId);
+      if (messageElement) messageElement.classList.remove('hovered-own-message')
     }
-
     this.editingMessageId = null;
     this.editingMessageText = '';
     this.editMessageIsOpen = false;
@@ -621,20 +455,13 @@ export class ChatComponent implements OnInit {
   async addMembersToChannel() {
     const usersToAdd = this.selectedChannelUsers;
     const newUids = usersToAdd
-      .filter((user) => !user?.guest)
-      .map((user) => ({ uid: user?.uid, name: user?.name }))
-      .filter(
-        (uidObj) =>
-          uidObj.uid &&
-          !this.chatService.pendingUsers.some((u) => u.uid === uidObj.uid)
-      );
+      .filter((user) => !user?.guest).map((user) => ({ uid: user?.uid, name: user?.name }))
+      .filter((uidObj) => uidObj.uid && !this.chatService.pendingUsers.some((u) => u.uid === uidObj.uid));
     await this.chatService.searchUsers(this.chatService.currentChannelID);
     this.chatService.pendingUsers.push(...newUids);
     await this.chatService.addUsers(
-      this.chatService.currentChannelID,
-      this.chatService.pendingUsers,
-      this.authService.readCurrentUser(),
-      { user: ' hat den Kanal betreten.', system: true, timestamp: Date.now() }
+      this.chatService.currentChannelID, this.chatService.pendingUsers,
+      this.authService.readCurrentUser(), { user: ' hat den Kanal betreten.', system: true, timestamp: Date.now() }
     );
     this.chatService.pendingUsers = [];
     this.clearSelectedUsers();
@@ -660,50 +487,24 @@ export class ChatComponent implements OnInit {
   }
 
   hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {
-    const messageElement = document.getElementById('message-text-' + messageId);
-    if (messageElement && event) {
-      const target = event.target as HTMLElement;
-      const messageEvent = target.closest('.message-event');
-
-      if (messageEvent) {
-        messageElement.classList.remove('hovered-message');
-        messageElement.classList.remove('hovered-own-message');
-      } else {
-        if (messageUid === this.getUserId()) {
-          messageElement.classList.add('hovered-own-message');
-        } else {
-          messageElement.classList.add('hovered-message');
-        }
-      }
-    }
+    this.actionService.hoverOnFocus(messageId, messageUid, this.getUserId(), event);
   }
 
   leaveMessage(messageId: string) {
     const messageElement = document.getElementById('message-text-' + messageId);
-
     if (messageElement) {
       messageElement.classList.remove('hovered-message');
       messageElement.classList.remove('hovered-own-message');
     }
   }
 
-  get meId() {
-    return this.authService.readCurrentUser();
-  }
+  get meId() { return this.authService.readCurrentUser() }
 
   onReactionToggle(msg: any, ev: { emoji: string; add: boolean }) {
-    msg.reactions = msg.reactions ?? {};
-    const list: string[] =
-      msg.reactions[ev.emoji] ?? (msg.reactions[ev.emoji] = []);
-    const i = list.indexOf(this.meId);
-    if (ev.add && i === -1) list.push(this.meId);
-    if (!ev.add && i !== -1) list.splice(i, 1);
-    if (list.length === 0) delete msg.reactions[ev.emoji];
+    this.actionService.emojiRow(msg, ev, this.meId)
     const channelId = this.chatService.currentChannel;
     if (!channelId || !msg?.id) return;
-    this.chatService
-      .reactChannelMessage(channelId, msg.id, ev.emoji, ev.add, this.meId)
-      .catch(console.error);
+    this.chatService.reactChannelMessage(channelId, msg.id, ev.emoji, ev.add, this.meId).catch(console.error);
   }
 
   onReactionAdd(msg: any, emoji: string) {
@@ -712,36 +513,15 @@ export class ChatComponent implements OnInit {
   }
 
   insertEmojiIntoText(emoji: string) {
-    const ta = document.getElementById(
-      'composer-chat'
-    ) as HTMLTextAreaElement | null;
-    const v = this.messageText || '';
-    if (!ta) {
-      this.messageText = v + emoji;
-      return;
-    }
-    const start = ta.selectionStart ?? v.length;
-    const end = ta.selectionEnd ?? v.length;
-    this.messageText = v.slice(0, start) + emoji + v.slice(end);
-    queueMicrotask(() => {
-      ta.focus();
-      const pos = start + emoji.length;
-      ta.setSelectionRange(pos, pos);
-    });
+    this.messageText = this.actionService.emojiTextarea(emoji, this.messageText);
   }
 
   addEmojiToMessageField(emoji: string, messageId?: string) {
     if (messageId) {
       const message = this.messages.find((m) => m.id === messageId);
-      if (message) {
-        this.onReactionAdd(message, emoji);
-      }
-    } else {
-      this.insertEmojiIntoText(emoji);
-    }
+      if (message) { this.onReactionAdd(message, emoji) }
+    } else { this.insertEmojiIntoText(emoji) }
   }
 
-  openReactionPicker(msgId: string) {
-    this.showReactionPicker[msgId] = true;
-  }
+  openReactionPicker(msgId: string) { this.showReactionPicker[msgId] = true }
 }

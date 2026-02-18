@@ -153,6 +153,7 @@
     name="message"
     placeholder="Antworten..."
     rows="2"
+    (keydown.enter)="$event.preventDefault(); sendBroadcastMessage()"
     [(ngModel)]="messageText"
   ></textarea>
 

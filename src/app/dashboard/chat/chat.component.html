@@ -1178,6 +1178,7 @@
       currentChat.charAt(0).toUpperCase() + currentChat.slice(1)
     }}"
     rows="2"
+    (keydown.enter)="$event.preventDefault(); sendMessage()"
     [(ngModel)]="messageText"
   ></textarea>
   <button

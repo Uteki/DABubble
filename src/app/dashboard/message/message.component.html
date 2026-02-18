@@ -379,6 +379,7 @@
       currentPartner?.uid === currentWhisperer ? 'mich' : currentPartner?.name
     }}"
     rows="2"
+    (keydown.enter)="$event.preventDefault(); sendMessage()"
     [(ngModel)]="messageText"
   ></textarea>
   <button
