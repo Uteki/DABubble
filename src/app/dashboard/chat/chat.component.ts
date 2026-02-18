@@ -512,9 +512,7 @@ export class ChatComponent implements OnInit {
     this.onReactionToggle(msg, { emoji, add: true });
   }
 
-  insertEmojiIntoText(emoji: string) {
-    this.messageText = this.actionService.emojiTextarea(emoji, this.messageText);
-  }
+  insertEmojiIntoText(emoji: string) { this.messageText = this.actionService.emojiTextarea(emoji, this.messageText) }
 
   addEmojiToMessageField(emoji: string, messageId?: string) {
     if (messageId) {
