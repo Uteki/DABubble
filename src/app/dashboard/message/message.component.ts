@@ -19,17 +19,9 @@ import { MentionService } from "../../mention.service";
 @Component({
   selector: 'app-message',
   standalone: true,
-    imports: [
-        DatePipe,
-        FormsModule,
-        NgForOf,
-        NgIf,
-        NgClass,
-        ReactionsComponent,
-        StopPropagationDirective,
-        AutoScrollDirective,
-        LinkifyPipe
-    ],
+  imports: [
+    DatePipe, FormsModule, NgForOf, NgIf, NgClass, ReactionsComponent, StopPropagationDirective, AutoScrollDirective, LinkifyPipe
+  ],
   templateUrl: './message.component.html',
   styleUrl: './message.component.scss'
 })
@@ -82,7 +74,6 @@ export class MessageComponent implements OnChanges {
       this.currentPartner = this.partner;
       this.currentWhisperer = this.authService.readCurrentUser();
       this.currentPartnerChat = [this.currentPartner.uid, this.currentWhisperer].sort().join('_');
-
       this.chatService.getWhisperMessage(this.currentPartnerChat).subscribe(messages => {
         this.messages = messages.sort((a:any, b:any) => a.timestamp - b.timestamp);
         const prevById = new Map(this.messages.map((m) => [m.id, m]));
@@ -104,9 +95,7 @@ export class MessageComponent implements OnChanges {
 
   private resetMentionUI() {
     document.getElementById('search-chat-members2')?.classList.add('no-display');
-
     document.getElementById('search-chat-channels2')?.classList.add('no-display');
-
     this.filteredUsers = [];
     this.filteredChannels = [];
     this.activeMention = null;
@@ -118,17 +107,13 @@ export class MessageComponent implements OnChanges {
 
   private handleUserMention(mention: any) {
     this.filteredUsers = this.mentionService.filterUsers(mention.query, this.users);
-
     if (this.filteredUsers.length === 0) return;
-
     document.getElementById('search-chat-members2')?.classList.remove('no-display');
   }
 
   private handleChannelMention(mention: any) {
     this.filteredChannels = this.mentionService.filterChannels(mention.query, this.channels);
-
     if (this.filteredChannels.length === 0) return;
-
     document.getElementById('search-chat-channels2')?.classList.remove('no-display');
   }
 
@@ -140,23 +125,14 @@ export class MessageComponent implements OnChanges {
     for (const k of Object.keys(src)) {
       const arr = src[k];
       if (Array.isArray(arr) && arr.length > 0) out[k] = arr;
-    }
-    return out;
+    } return out;
   }
 
   private asciiToEmojiInText(s: string): string {
     if (!s) return s;
-    return s
-      .replace(/:-?\)/g, '😀')
-      .replace(/:-?D/gi, '😃')
-      .replace(/;-?\)/g, '😉')
-      .replace(/:-?\(/g, '☹️')
-      .replace(/:-?P/gi, '😛')
-      .replace(/:o/gi, '😮')
-      .replace(/:'\(/g, '😢')
-      .replace(/\+1/g, '👍')
-      .replace(/-1/g, '👎')
-      .replace(/<3/g, '❤️');
+    return s.replace(/:-?\)/g, '😀').replace(/:-?D/gi, '😃').replace(/;-?\)/g, '😉').replace(/:-?\(/g, '☹️').replace(/:-?P/gi, '😛')
+      .replace(/:o/gi, '😮').replace(/:'\(/g, '😢').replace(/\+1/g, '👍')
+      .replace(/-1/g, '👎').replace(/<3/g, '❤️');
   }
 
   async sendMessage() {
@@ -166,11 +142,7 @@ export class MessageComponent implements OnChanges {
 
     const text = this.asciiToEmojiInText(raw);
     await this.chatService.sendWhisperMessage(this.currentPartnerChat, {
-      uid: logger.uid,
-      text: text,
-      user: logger.name,
-      timestamp: Date.now(),
-      reaction: {}
+      uid: logger.uid, text: text, user: logger.name, timestamp: Date.now(), reaction: {}
     });
 
     this.messageText = '';
@@ -207,17 +179,13 @@ export class MessageComponent implements OnChanges {
 
   onReactionToggle(msg: any, ev: { emoji: string; add: boolean }) {
     msg.reactions = msg.reactions ?? {};
-    const list: string[] =
-      msg.reactions[ev.emoji] ?? (msg.reactions[ev.emoji] = []);
+    const list: string[] = msg.reactions[ev.emoji] ?? (msg.reactions[ev.emoji] = []);
     const i = list.indexOf(this.meId);
     if (ev.add && i === -1) list.push(this.meId);
     if (!ev.add && i !== -1) list.splice(i, 1);
     if (list.length === 0) delete msg.reactions[ev.emoji];
-
     if (!this.currentPartnerChat || !msg?.id) return;
-    this.chatService
-      .reactWhisperMessage(this.currentPartnerChat, msg.id, ev.emoji, ev.add, this.meId)
-      .catch(console.error);
+    this.chatService.reactWhisperMessage(this.currentPartnerChat, msg.id, ev.emoji, ev.add, this.meId).catch(console.error);
   }
 
   onReactionAdd(msg: any, emoji: string) {
@@ -303,16 +271,11 @@ export class MessageComponent implements OnChanges {
 
   editMessage(messageId: string) {
     const message = this.messages.find((m) => m.id === messageId);
-
-    if (!message || message.uid !== this.getUserId()) {
-      return;
-    }
-
+    if (!message || message.uid !== this.getUserId()) return
     this.editingMessageId = messageId;
     this.editingMessageText = message.text;
     this.editMessageMenuOpen = null;
     this.editMessageIsOpen = true;
-
     const messageElement = document.getElementById('message-text-' + messageId);
     if (messageElement) {
       messageElement.classList.add('hovered-own-message');
@@ -328,7 +291,6 @@ export class MessageComponent implements OnChanges {
         messageElement.classList.remove('hovered-own-message');
       }
     }
-
     this.editingMessageId = null;
     this.editingMessageText = '';
     this.editMessageIsOpen = false;
@@ -336,31 +298,18 @@ export class MessageComponent implements OnChanges {
 
   async saveEditedMessage(messageId: string) {
     if (!this.editingMessageText.trim()) return;
-
-    const messageRef = doc(
-      this.firestore,
-      `whispers/${this.currentPartnerChat}/messages/${messageId}`
-    );
-
-    await updateDoc(messageRef, {
-      text: this.editingMessageText.trim(),
-      edited: true,
-    });
-
+    const messageRef = doc(this.firestore, `whispers/${this.currentPartnerChat}/messages/${messageId}`);
+    await updateDoc(messageRef, {text: this.editingMessageText.trim(), edited: true,});
     this.cancelEdit();
   }
 
   onInputChange(value: string, ev?: Event) {
     const textarea = ev?.target as HTMLTextAreaElement;
     const cursor = textarea?.selectionStart ?? value.length;
-
     this.resetMentionUI();
-
     const mention = this.mentionService.parseMention(value, cursor);
     if (!mention) return;
-
     this.setActiveMention(mention);
-
     mention.trigger === '@' ? this.handleUserMention(mention) : this.handleChannelMention(mention);
   }
 

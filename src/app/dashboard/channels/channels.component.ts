@@ -78,17 +78,13 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
   }
 
   trackIdle() {
-
     this.idleTracker.idleTime$.subscribe(idleTime => {
       this.isUserAbsent = (idleTime / 1000) > 30;
     });
-
     this.idleTracker.isIdle$.subscribe(isIdle => {
       if (!isIdle) {
         this.isUserAbsent = false;
-
       }
-
     });
   }
    getUserId() {
@@ -134,7 +130,6 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
     this.chatService.destroy$.next();
     this.chatService.destroy$.complete();
     this.chatService.destroy$ = new Subject<void>();
-
     this.chatService.currentChannelID = id;
     this.chatService.setCurrentChat(id, name, description, creator);
     this.toggleRequest.emit(false);
