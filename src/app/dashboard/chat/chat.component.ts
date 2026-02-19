@@ -10,11 +10,12 @@ import { doc } from 'firebase/firestore';
 import { AuthService } from '../../auth.service';
 import { User } from '../../core/interfaces/user';
 import { ProfileOverlayService } from '../../profile-overlay.service';
-import { ReactionsComponent } from './../../shared/reactions/reactions.component';
+import { ReactionsComponent } from '../../shared/reactions/reactions.component';
 import { AutoScrollDirective } from "../../auto-scroll.directive";
 import { LinkifyPipe } from "../../linkify.pipe";
 import { MentionService } from "../../mention.service";
 import { ActionService } from "../../action.service";
+import { ChatOverlayService } from "./chat-overlay.service";
 
 @Component({
   selector: 'app-chat',
@@ -24,6 +25,7 @@ import { ActionService } from "../../action.service";
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss',
+  providers: [ChatOverlayService]
 })
 export class ChatComponent implements OnInit {
   @Output() partnerSelected = new EventEmitter<User>();
@@ -42,13 +44,6 @@ export class ChatComponent implements OnInit {
   currentChat: string = '';
   today = new Date();
 
-  overlayActivated: boolean = false;
-  channelOverlay: boolean = false;
-  viewMemberOverlay: boolean = false;
-  addMemberOverlay: boolean = false;
-  viewMemberMobileOverlay: boolean = false;
-  viewMemberOverlayMobile: boolean = false;
-  switchAddMemberOverlay: boolean = false;
   userInChannel: boolean = false;
   profileOverlay: boolean = false;
   editChannelName: boolean = false;
@@ -73,12 +68,10 @@ export class ChatComponent implements OnInit {
   currentMemberIndices: number[] = [];
   missingIndices: number[] = [];
   nameInputValue: boolean = false;
-
   channelDescription: string = '';
   channelFounder: string = '';
   channelName: string = '';
   editMessageIsOpen: boolean = false;
-
   public Object = Object;
 
   clickedUser: any;
@@ -91,34 +84,23 @@ export class ChatComponent implements OnInit {
     private profileOverlayService: ProfileOverlayService,
     private mentionService: MentionService,
     private actionService: ActionService,
+    public chatOverlay: ChatOverlayService
   ) {}
 
   ngOnInit(): void {
-    this.chatService.currentChat$
-      .pipe(
-        distinctUntilChanged(),
-        filter((chat) => !!chat && chat.trim() !== ''),
+    this.chatService.currentChat$.pipe(distinctUntilChanged(), filter((chat) => !!chat && chat.trim() !== ''),
         switchMap((chat) => {
           this.messages = this.chatService.getCachedMessages(chat) || [];
           return this.chatService.getChannelById(chat).pipe(
             tap((channel) => {
               if (!channel) return;
-              this.checkMeta(channel);
+              this.checkMeta(channel).then();
             }),
-            switchMap(() =>
-              this.chatService
-                .getMessages(chat)
-                .pipe(
-                  map((messages) =>
-                    messages.sort((a, b) => a.timestamp - b.timestamp)
-                  )
-                )
-            ),
-            takeUntil(this.chatService.destroy$)
+            switchMap(() => this.chatService.getMessages(chat).pipe(map((messages) =>
+                    messages.sort((a, b) => a.timestamp - b.timestamp)))), takeUntil(this.chatService.destroy$)
           );
         })
-      )
-      .subscribe(async (messages) => await this.changeMeta(messages));
+      ).subscribe(async (messages) => await this.changeMeta(messages));
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -161,19 +143,6 @@ export class ChatComponent implements OnInit {
     this.toggleRequestDirect.emit(true);
   }
 
-  private stripEmptyReactions(
-    reactions: Record<string, string[]>
-  ): Record<string, string[]> {
-    const cleaned: Record<string, string[]> = {};
-    for (const key of Object.keys(reactions)) {
-      const arr = reactions[key];
-      if (Array.isArray(arr) && arr.length > 0) {
-        cleaned[key] = arr;
-      }
-    }
-    return cleaned;
-  }
-
   private asciiToEmojiInText(s: string): string { return this.actionService.toEmoji(s) }
 
   async sendMessage() {
@@ -185,12 +154,9 @@ export class ChatComponent implements OnInit {
     const isMember = this.chatService.pendingUsers.includes(currentUserId);
     if (!isMember) {
       this.messages.push({
-        uid: logger.uid, text: '⚠️ Sie können in diesem Kanal keine Nachrichten mehr senden.',
-        user: logger.name, timestamp: Date.now(),
-      });
-      return;
-    }
-    await this.sendMessageExtension(logger);
+        uid: logger.uid, text: '⚠️ Sie können in diesem Kanal keine Nachrichten mehr senden.', user: logger.name, timestamp: Date.now(),
+      }); return;
+    } await this.sendMessageExtension(logger);
   }
 
   async sendMessageExtension(logger: any) {
@@ -294,29 +260,9 @@ export class ChatComponent implements OnInit {
       const newDesc = this.channelDescription.trim();
       if (!newDesc) return;
       this.updateChannelDescription(this.chatService.currentChannel, newDesc).then(() => {});
-    }
-    this.editDescription = !this.editDescription;
+    } this.editDescription = !this.editDescription;
   }
 
-  overlayFunction(darkOverlay: boolean, overlay: string, overlayBoolean: boolean) {
-    this.overlayActivated = darkOverlay;
-    this.cd.detectChanges();
-    if (overlay == 'Entwicklung') {
-      this.channelOverlay = overlayBoolean;
-    } else if (overlay == 'Mitglieder') {
-      this.viewMemberOverlay = overlayBoolean;
-    } else if (overlay == 'Hinzufügen') {
-      this.addMemberOverlay = overlayBoolean;
-      this.viewMemberMobileOverlay = overlayBoolean;
-    } else if (overlay == 'MitgliederWechseln') {
-      this.switchAddMemberOverlay = overlayBoolean;this.viewMemberOverlay = overlayBoolean;
-      this.viewMemberMobileOverlay = overlayBoolean;this.viewMemberOverlayMobile = overlayBoolean;
-    }
-  }
-
-  onFocus() { this.inputFocused = true }
-
-  onBlur() { this.inputFocused = false }
 
   addUserToChannel(index: number) {
     let memberInputREF = document.getElementById('member-input') as HTMLInputElement;
@@ -393,8 +339,6 @@ export class ChatComponent implements OnInit {
     document.getElementById('search-chat-channels')?.classList.add('no-display');
   }
 
-  toggleProfile() {}
-
   toggleEditMessageMenu(messageId: string, event: Event) {
     event.stopPropagation();
     if (this.editMessageMenuOpen === messageId) {
@@ -403,8 +347,6 @@ export class ChatComponent implements OnInit {
       this.editMessageMenuOpen = messageId;
     }
   }
-
-  keepMenuOpen() {}
 
   editMessage(messageId: string) {
     const upcoming = this.actionService.beginEdit(messageId, this.messages, this.getUserId());
@@ -442,20 +384,19 @@ export class ChatComponent implements OnInit {
       this.profileOverlayService.triggerOpenProfile();
     } else {
       this.clickedUser = user;
-      this.overlayActivated = true;
+      this.chatOverlay.overlayActivated = true;
       this.profileOverlay = true;
     }
   }
 
   closeProfile() {
-    this.overlayActivated = false;
+    this.chatOverlay.overlayActivated = false;
     this.profileOverlay = false;
   }
 
   async addMembersToChannel() {
     const usersToAdd = this.selectedChannelUsers;
-    const newUids = usersToAdd
-      .filter((user) => !user?.guest).map((user) => ({ uid: user?.uid, name: user?.name }))
+    const newUids = usersToAdd.filter((user) => !user?.guest).map((user) => ({ uid: user?.uid, name: user?.name }))
       .filter((uidObj) => uidObj.uid && !this.chatService.pendingUsers.some((u) => u.uid === uidObj.uid));
     await this.chatService.searchUsers(this.chatService.currentChannelID);
     this.chatService.pendingUsers.push(...newUids);
@@ -469,22 +410,12 @@ export class ChatComponent implements OnInit {
 
   clearSelectedUsers() {
     this.selectedChannelUsers = [];
-    this.channelUsers = [];
-    this.channelUsers = [...this.users];
-    this.closeAllOverlays();
-  }
-
-  closeAllOverlays() {
-    this.overlayActivated = false;
-    this.channelOverlay = false;
-    this.viewMemberOverlay = false;
-    this.viewMemberOverlayMobile = false;
-    this.addMemberOverlay = false;
-    this.switchAddMemberOverlay = false;
-    this.inputValue = '';
-    this.channelName = '';
+    this.channelUsers = []; this.channelUsers = [...this.users]
+    this.chatOverlay.closeAllOverlays();
+    this.inputValue = ''; this.channelName = ''
     this.selectedChannelUsers = [];
   }
+
 
   hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {
     this.actionService.hoverOnFocus(messageId, messageUid, this.getUserId(), event);
@@ -511,6 +442,10 @@ export class ChatComponent implements OnInit {
     if (!emoji) return;
     this.onReactionToggle(msg, { emoji, add: true });
   }
+
+  onFocus() { this.inputFocused = true }
+
+  onBlur() { this.inputFocused = false }
 
   insertEmojiIntoText(emoji: string) { this.messageText = this.actionService.emojiTextarea(emoji, this.messageText) }
 
