@@ -911,10 +911,10 @@
   </div>
 </header>
 
-<output chat-scroll [messages]="messages">
-  <div *ngIf="messages.length > 0">
+<output chat-scroll [messages]="chatController.messages">
+  <div *ngIf="chatController.messages.length > 0">
     <div
-      *ngFor="let msg of messages; let i = index"
+      *ngFor="let msg of chatController.messages; let i = index"
       class="message"
       [ngClass]="{
         'own-message': msg.uid === getUserId(),
@@ -934,7 +934,7 @@
         *ngIf="
           i === 0 ||
           (msg.timestamp | date : 'yyyy-MM-dd') !==
-            (messages[i - 1].timestamp | date : 'yyyy-MM-dd')
+            (chatController.messages[i - 1].timestamp | date : 'yyyy-MM-dd')
         "
       >
         <div></div>
@@ -1057,7 +1057,7 @@
           'no-message-event':
             i !== 0 &&
             (msg.timestamp | date : 'yyyy-MM-dd') ===
-              (messages[i - 1].timestamp | date : 'yyyy-MM-dd')
+              (chatController.messages[i - 1].timestamp | date : 'yyyy-MM-dd')
         }"
       >
         <div
@@ -1107,7 +1107,7 @@
 
 <form
   aria-label="Nachricht senden"
-  (submit)="sendMessage(); $event.preventDefault()"
+  (submit)="chatController.sendMessage(users); $event.preventDefault()"
 >
   <label for="message"></label>
   <div id="search-chat-channels" class="text-channel-list no-display">
@@ -1178,8 +1178,8 @@
       currentChat.charAt(0).toUpperCase() + currentChat.slice(1)
     }}"
     rows="2"
-    (keydown.enter)="$event.preventDefault(); sendMessage()"
-    [(ngModel)]="messageText"
+    (keydown.enter)="$event.preventDefault(); chatController.sendMessage(users)"
+    [(ngModel)]="chatController.messageText"
   ></textarea>
   <button
     type="button"

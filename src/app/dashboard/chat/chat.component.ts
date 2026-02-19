@@ -15,6 +15,7 @@ import { LinkifyPipe } from "../../linkify.pipe";
 import { MentionService } from "../../mention.service";
 import { ActionService } from "../../action.service";
 import { ChatOverlayService } from "./chat-overlay.service";
+import { ChatControllerService } from "./chat-controller.service";
 
 @Component({
   selector: 'app-chat',
@@ -24,7 +25,7 @@ import { ChatOverlayService } from "./chat-overlay.service";
   ],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss',
-  providers: [ChatOverlayService]
+  providers: [ChatOverlayService, ChatControllerService]
 })
 export class ChatComponent implements OnInit {
   @Output() partnerSelected = new EventEmitter<User>();
@@ -38,8 +39,6 @@ export class ChatComponent implements OnInit {
   @Input() channels: any[] = [];
 
   inputValue: string = '';
-  messages: any[] = [];
-  messageText: string = '';
   currentChat: string = '';
   today = new Date();
 
@@ -78,13 +77,14 @@ export class ChatComponent implements OnInit {
     private authService: AuthService,
     private mentionService: MentionService,
     private actionService: ActionService,
-    public chatOverlay: ChatOverlayService
+    public chatOverlay: ChatOverlayService,
+    public chatController: ChatControllerService
   ) {}
 
   ngOnInit(): void {
     this.chatService.currentChat$.pipe(distinctUntilChanged(), filter((chat) => !!chat && chat.trim() !== ''),
         switchMap((chat) => {
-          this.messages = this.chatService.getCachedMessages(chat) || [];
+          this.chatController.messages = this.chatService.getCachedMessages(chat) || [];
           return this.chatService.getChannelById(chat).pipe(
             tap((channel) => {
               if (!channel) return;
@@ -104,7 +104,7 @@ export class ChatComponent implements OnInit {
   }
 
   async changeMeta(messages: string[]): Promise<void> {
-    this.messages = messages;
+    this.chatController.messages = messages;
     this.cd.detectChanges();
 
     if (this.chatService.currentChannelID) {
@@ -137,28 +137,6 @@ export class ChatComponent implements OnInit {
     this.toggleRequestDirect.emit(true);
   }
 
-  private asciiToEmojiInText(s: string): string { return this.actionService.toEmoji(s) }
-
-  async sendMessage() {
-    const currentUserId = this.authService.readCurrentUser();
-    const logger: User = this.users.find((user) => user.uid === currentUserId);
-    if (!logger) return;
-    if (!this.messageText.trim()) return;
-    await this.chatService.searchUsers(this.chatService.currentChannel);
-    const isMember = this.chatService.pendingUsers.includes(currentUserId);
-    if (!isMember) {
-      this.messages.push({
-        uid: logger.uid, text: '⚠️ Sie können in diesem Kanal keine Nachrichten mehr senden.', user: logger.name, timestamp: Date.now(),
-      }); return;
-    } await this.sendMessageExtension(logger);
-  }
-
-  async sendMessageExtension(logger: any) {
-    const raw = (this.messageText || '').trim();
-    const text = this.asciiToEmojiInText(raw);
-    await this.chatService.sendMessage(this.chatService.currentChannel, {uid: logger.uid, text: text, user: logger.name, timestamp: Date.now(), reaction: {},});
-    this.messageText = '';
-  }
 
   async openThread(threadId: string, message: any) {
     this.toggleRequest.emit(true);
@@ -190,9 +168,7 @@ export class ChatComponent implements OnInit {
   }
 
   @HostListener('click', ['$event'])
-  onMessageClick(event: MouseEvent) {
-    this.mentionService.mentionClick(event, this.users)
-  }
+  onMessageClick(event: MouseEvent) { this.mentionService.mentionClick(event, this.users) }
 
   async checkMeta(channel: any): Promise<void> {
     this.currentChat = channel.name;
@@ -322,9 +298,9 @@ export class ChatComponent implements OnInit {
   }
 
   insertMention(name: string, textarea: HTMLTextAreaElement) {
-    const res = this.actionService.testInsertMention(name, this.messageText, this.activeMention);
+    const res = this.actionService.testInsertMention(name, this.chatController.messageText, this.activeMention);
     if (!res) return;
-    this.messageText = res.nextText;
+    this.chatController.messageText = res.nextText;
     textarea.value = res.nextText;
     textarea.setSelectionRange(res.nextCursor, res.nextCursor);
     textarea.focus();
@@ -343,7 +319,7 @@ export class ChatComponent implements OnInit {
   }
 
   editMessage(messageId: string) {
-    const upcoming = this.actionService.beginEdit(messageId, this.messages, this.getUserId());
+    const upcoming = this.actionService.beginEdit(messageId, this.chatController.messages, this.getUserId());
     if (!upcoming) return;
     this.editingMessageId = upcoming.editingMessageId;this.editingMessageText = upcoming.editingMessageText;
     this.editMessageMenuOpen = upcoming.editMessageMenuOpen;this.editMessageIsOpen = upcoming.editMessageIsOpen;
@@ -369,10 +345,8 @@ export class ChatComponent implements OnInit {
     await updateDoc(messageRef, {
       text: this.editingMessageText.trim(),
       edited: true,
-    });
-    this.cancelEdit();
+    }); this.cancelEdit();
   }
-
 
   async addMembersToChannel() {
     const usersToAdd = this.selectedChannelUsers;
@@ -395,7 +369,6 @@ export class ChatComponent implements OnInit {
     this.inputValue = ''; this.channelName = ''
     this.selectedChannelUsers = [];
   }
-
 
   hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {
     this.actionService.hoverOnFocus(messageId, messageUid, this.getUserId(), event);
@@ -423,11 +396,11 @@ export class ChatComponent implements OnInit {
     this.onReactionToggle(msg, { emoji, add: true });
   }
 
-  insertEmojiIntoText(emoji: string) { this.messageText = this.actionService.emojiTextarea(emoji, this.messageText) }
+  insertEmojiIntoText(emoji: string) { this.chatController.messageText = this.actionService.emojiTextarea(emoji, this.chatController.messageText) }
 
   addEmojiToMessageField(emoji: string, messageId?: string) {
     if (messageId) {
-      const message = this.messages.find((m) => m.id === messageId);
+      const message = this.chatController.messages.find((m) => m.id === messageId);
       if (message) { this.onReactionAdd(message, emoji) }
     } else { this.insertEmojiIntoText(emoji) }
   }
