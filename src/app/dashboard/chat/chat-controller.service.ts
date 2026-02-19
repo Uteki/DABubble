@@ -3,19 +3,30 @@ import {User} from "../../core/interfaces/user";
 import {AuthService} from "../../auth.service";
 import {ActionService} from "../../action.service";
 import {ChatService} from "../../chat.service";
+import { MentionService } from "../../mention.service";
+import {doc} from "firebase/firestore";
+import {Firestore, updateDoc} from "@angular/fire/firestore";
 
 @Injectable()
 export class ChatControllerService {
   messages: any[] = [];
+  filteredUsers: any[] = [];
+  filteredChannels: any[] = [];
   messageText: string = '';
-
-  showReactionPicker: { [messageId: string]: boolean } = {};
+  editingMessageText: string = '';
+  showPicker: boolean = false;
+  editMessageIsOpen: boolean = false;
+  editingMessageId: string | null = null;
+  editMessageMenuOpen: string | null = null;
   addEmojiToMessage: { [messageId: string]: string } = {};
-  showPicker = false;
+  showReactionPicker: { [messageId: string]: boolean } = {};
+  activeMention: { trigger: '@' | '#'; startIndex: number; endIndex: number; } | null = null;
 
   constructor(
+    private firestore: Firestore,
     private authService: AuthService,
     private actionService: ActionService,
+    private mentionService: MentionService,
     private chatService: ChatService
   ) {}
 
@@ -40,6 +51,18 @@ export class ChatControllerService {
     const text = this.asciiToEmojiInText(raw);
     await this.chatService.sendMessage(this.chatService.currentChannel, {uid: logger.uid, text: text, user: logger.name, timestamp: Date.now(), reaction: {},});
     this.messageText = '';
+  }
+
+  async saveEditedMessage(messageId: string) {
+    if (!this.editingMessageText.trim()) return;
+    const messageRef = doc(
+      this.firestore,
+      `channels/${this.chatService.currentChannel}/messages/${messageId}`
+    );
+    await updateDoc(messageRef, {
+      text: this.editingMessageText.trim(),
+      edited: true,
+    }); this.cancelEdit();
   }
 
   insertEmojiIntoText(emoji: string) { this.messageText = this.actionService.emojiTextarea(emoji, this.messageText) }
@@ -75,6 +98,74 @@ export class ChatControllerService {
       messageElement.classList.remove('hovered-message');
       messageElement.classList.remove('hovered-own-message');
     }
+  }
+
+  toggleEditMessageMenu(messageId: string, event: Event) {
+    event.stopPropagation();
+    if (this.editMessageMenuOpen === messageId) {
+      this.editMessageMenuOpen = null;
+    } else {
+      this.editMessageMenuOpen = messageId;
+    }
+  }
+
+  editMessage(messageId: string) {
+    const upcoming = this.actionService.beginEdit(messageId, this.messages, this.meId);
+    if (!upcoming) return;
+    this.editingMessageId = upcoming.editingMessageId; this.editingMessageText = upcoming.editingMessageText;
+    this.editMessageMenuOpen = upcoming.editMessageMenuOpen; this.editMessageIsOpen = upcoming.editMessageIsOpen;
+    this.actionService.highlightOwnMessage(messageId);
+  }
+
+  cancelEdit() {
+    if (this.editingMessageId) {
+      const messageElement = document.getElementById('message-text-' + this.editingMessageId);
+      if (messageElement) messageElement.classList.remove('hovered-own-message')
+    }
+    this.editingMessageId = null;
+    this.editingMessageText = '';
+    this.editMessageIsOpen = false;
+  }
+
+  insertMention(name: string, textarea: HTMLTextAreaElement) {
+    const res = this.actionService.testInsertMention(name, this.messageText, this.activeMention);
+    if (!res) return;
+    this.messageText = res.nextText;
+    textarea.value = res.nextText;
+    textarea.setSelectionRange(res.nextCursor, res.nextCursor);
+    textarea.focus();
+    this.activeMention = null;
+    document.getElementById('search-chat-members')?.classList.add('no-display');
+    document.getElementById('search-chat-channels')?.classList.add('no-display');
+  }
+
+  resetMentionUI() {
+    document.getElementById('search-chat-members')?.classList.add('no-display');
+    document.getElementById('search-chat-channels')?.classList.add('no-display');
+    this.filteredUsers = [];
+    this.filteredChannels = [];
+    this.activeMention = null;
+  }
+
+  setActiveMention(mention: any) {
+    this.activeMention = { trigger: mention.trigger, startIndex: mention.startIndex, endIndex: mention.endIndex };
+  }
+
+  handleUserMention(mention: any, users: any) {
+    this.filteredUsers = this.mentionService.filterUsers(mention.query, users);
+    if (this.filteredUsers.length === 0) return;
+    document.getElementById('search-chat-members')?.classList.remove('no-display');
+  }
+
+  handleChannelMention(mention: any, channels: any) {
+    this.filteredChannels = this.mentionService.filterChannels(mention.query, channels);
+    if (this.filteredChannels.length === 0) return;
+    document.getElementById('search-chat-channels')?.classList.remove('no-display');
+  }
+
+  getLargeAvatar(avatarPath: string | undefined): string {
+    if (!avatarPath) return 'assets/avatars/profile.png';
+    return avatarPath.replace('avatarSmall', 'avatar');
   }
 
   private asciiToEmojiInText(s: string): string { return this.actionService.toEmoji(s) }

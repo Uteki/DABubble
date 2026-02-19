@@ -13,7 +13,6 @@ import { ReactionsComponent } from '../../shared/reactions/reactions.component';
 import { AutoScrollDirective } from "../../auto-scroll.directive";
 import { LinkifyPipe } from "../../linkify.pipe";
 import { MentionService } from "../../mention.service";
-import { ActionService } from "../../action.service";
 import { ChatOverlayService } from "./chat-overlay.service";
 import { ChatControllerService } from "./chat-controller.service";
 
@@ -48,14 +47,7 @@ export class ChatComponent implements OnInit {
   wasEmpty: boolean = true;
   selectedChannelUsers: any[] = [];
   channelUsers: any[] = [];
-  filteredUsers: any[] = [];
-  filteredChannels: any[] = [];
   userAtIndex: any = {};
-  activeMention: { trigger: '@' | '#'; startIndex: number; endIndex: number; } | null = null;
-
-  editMessageMenuOpen: string | null = null;
-  editingMessageId: string | null = null;
-  editingMessageText: string = '';
 
   foundIndexes: number[] = [];
   currentMemberIndices: number[] = [];
@@ -64,18 +56,16 @@ export class ChatComponent implements OnInit {
   channelDescription: string = '';
   channelFounder: string = '';
   channelName: string = '';
-  editMessageIsOpen: boolean = false;
   public Object = Object;
 
   constructor(
+    public chatOverlay: ChatOverlayService,
     private chatService: ChatService,
     private cd: ChangeDetectorRef,
     private firestore: Firestore,
     private authService: AuthService,
     private mentionService: MentionService,
-    private actionService: ActionService,
-    public chatOverlay: ChatOverlayService,
-    public chatController: ChatControllerService
+    protected chatController: ChatControllerService
   ) {}
 
   ngOnInit(): void {
@@ -100,6 +90,18 @@ export class ChatComponent implements OnInit {
     }
   }
 
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (this.chatController.editMessageMenuOpen && !target.closest('.edit-message-menu') && !target.closest('.more-vert-button')) this.chatController.editMessageMenuOpen = null
+    if (this.editChannelName && this.channelEdit && !this.channelEdit.nativeElement.contains(event.target)) {
+      this.editChannelName = false;
+    } else if (this.editDescription && this.channelEdit && !this.channelEdit.nativeElement.contains(event.target)) this.editDescription = false
+  }
+
+  @HostListener('click', ['$event'])
+  onMessageClick(event: MouseEvent) { this.mentionService.mentionClick(event, this.users) }
+
   async changeMeta(messages: string[]): Promise<void> {
     this.chatController.messages = messages;
     this.cd.detectChanges();
@@ -111,27 +113,6 @@ export class ChatComponent implements OnInit {
       this.chatService.pendingUsers = [];
       this.filterMembersInChannel();
     }
-  }
-
-  filterMembersInChannel() {
-    this.missingIndices = this.users.map((user, index) =>
-        this.chatService.usersInChannel.includes(user.uid) ? -1 : index
-      ).filter((index) => index !== -1);
-    this.currentMemberIndices = this.users.map((user, index) =>
-        this.chatService.usersInChannel.includes(user.uid) ? index : -1
-      ).filter((index) => index !== -1);
-  }
-
-  getLargeAvatar(avatarPath: string | undefined): string {
-    if (!avatarPath) return 'assets/avatars/profile.png';
-    return avatarPath.replace('avatarSmall', 'avatar');
-  }
-
-  emitPartner(partnerUid: string) {
-    const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
-    this.chatOverlay.clickedUser = partnerObj;
-    this.partnerSelected.emit(partnerObj);
-    this.toggleRequestDirect.emit(true);
   }
 
   async openThread(threadId: string, message: any) {
@@ -154,18 +135,6 @@ export class ChatComponent implements OnInit {
     await updateDoc(channelRef, { description: newDescription });
   }
 
-  @HostListener('document:click', ['$event'])
-  onClickOutside(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    if (this.editMessageMenuOpen && !target.closest('.edit-message-menu') && !target.closest('.more-vert-button')) this.editMessageMenuOpen = null
-    if (this.editChannelName && this.channelEdit && !this.channelEdit.nativeElement.contains(event.target)) {
-      this.editChannelName = false;
-    } else if (this.editDescription && this.channelEdit && !this.channelEdit.nativeElement.contains(event.target)) this.editDescription = false
-  }
-
-  @HostListener('click', ['$event'])
-  onMessageClick(event: MouseEvent) { this.mentionService.mentionClick(event, this.users) }
-
   async checkMeta(channel: any): Promise<void> {
     this.currentChat = channel.name;
     this.channelName = channel.name;
@@ -174,9 +143,6 @@ export class ChatComponent implements OnInit {
     await this.checkMembership();
     this.cd.detectChanges();
   }
-
-  getProfilePic(uid: string) { return (this.users.find((user) => user.uid === uid)?.avatar || 'assets/avatars/profile.png') }
-  getUserId() { return this.authService.readCurrentUser() }
 
   async leaveChannel() {
     const currentUserId = this.authService.readCurrentUser();
@@ -196,10 +162,18 @@ export class ChatComponent implements OnInit {
     this.chatService.setCurrentChat("DALobby", "", "", "");
   }
 
-  resetSubscriptions(): void {
-    this.chatService.destroy$.next();
-    this.chatService.destroy$.complete();
-    this.chatService.destroy$ = new Subject<void>();
+  async addMembersToChannel() {
+    const usersToAdd = this.selectedChannelUsers;
+    const newUids = usersToAdd.filter((user) => !user?.guest).map((user) => ({ uid: user?.uid, name: user?.name }))
+      .filter((uidObj) => uidObj.uid && !this.chatService.pendingUsers.some((u) => u.uid === uidObj.uid));
+    await this.chatService.searchUsers(this.chatService.currentChannelID);
+    this.chatService.pendingUsers.push(...newUids);
+    await this.chatService.addUsers(
+      this.chatService.currentChannelID, this.chatService.pendingUsers,
+      this.authService.readCurrentUser(), { user: ' hat den Kanal betreten.', system: true, timestamp: Date.now() }
+    );
+    this.chatService.pendingUsers = [];
+    this.clearSelectedUsers();
   }
 
   async checkMembership(): Promise<boolean> {
@@ -209,6 +183,31 @@ export class ChatComponent implements OnInit {
     this.userInChannel = isMember;
     this.chatService.pendingUsers = [];
     return isMember;
+  }
+
+  getProfilePic(uid: string) { return (this.users.find((user) => user.uid === uid)?.avatar || 'assets/avatars/profile.png') }
+  getUserId() { return this.authService.readCurrentUser() }
+
+  filterMembersInChannel() {
+    this.missingIndices = this.users.map((user, index) =>
+      this.chatService.usersInChannel.includes(user.uid) ? -1 : index
+    ).filter((index) => index !== -1);
+    this.currentMemberIndices = this.users.map((user, index) =>
+      this.chatService.usersInChannel.includes(user.uid) ? index : -1
+    ).filter((index) => index !== -1);
+  }
+
+  emitPartner(partnerUid: string) {
+    const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
+    this.chatOverlay.clickedUser = partnerObj;
+    this.partnerSelected.emit(partnerObj);
+    this.toggleRequestDirect.emit(true);
+  }
+
+  resetSubscriptions(): void {
+    this.chatService.destroy$.next();
+    this.chatService.destroy$.complete();
+    this.chatService.destroy$ = new Subject<void>();
   }
 
   saveEditedName() {
@@ -228,7 +227,6 @@ export class ChatComponent implements OnInit {
     } this.editDescription = !this.editDescription;
   }
 
-
   addUserToChannel(index: number) {
     let memberInputREF = document.getElementById('member-input') as HTMLInputElement;
     this.userAtIndex = this.channelUsers[index];
@@ -247,8 +245,7 @@ export class ChatComponent implements OnInit {
 
   onMemberInputChange(value: string) {
     if (value.length > 0) {
-      this.foundIndexes = this.channelUsers
-        .map((user, index) =>
+      this.foundIndexes = this.channelUsers.map((user, index) =>
           user?.name && user.name.toLowerCase().includes(value.toLowerCase()) && !this.currentMemberIndices.includes(index) ? index : -1
         ).filter((index) => index !== -1);
       this.nameInputValue = this.foundIndexes.length > 0;
@@ -261,100 +258,12 @@ export class ChatComponent implements OnInit {
   onInputChange(value: string, ev?: Event) {
     const textarea = ev?.target as HTMLTextAreaElement;
     const cursor = textarea?.selectionStart ?? value.length;
-    this.resetMentionUI();
+    this.chatController.resetMentionUI();
     const mention = this.mentionService.parseMention(value, cursor);
     if (!mention) return;
-    this.setActiveMention(mention);
-    mention.trigger === '@' ? this.handleUserMention(mention) : this.handleChannelMention(mention);
-  }
-
-  private resetMentionUI() {
-    document.getElementById('search-chat-members')?.classList.add('no-display');
-    document.getElementById('search-chat-channels')?.classList.add('no-display');
-    this.filteredUsers = [];
-    this.filteredChannels = [];
-    this.activeMention = null;
-  }
-
-  private setActiveMention(mention: any) {
-    this.activeMention = { trigger: mention.trigger, startIndex: mention.startIndex, endIndex: mention.endIndex };
-  }
-
-  private handleUserMention(mention: any) {
-    this.filteredUsers = this.mentionService.filterUsers(mention.query, this.users);
-    if (this.filteredUsers.length === 0) return;
-    document.getElementById('search-chat-members')?.classList.remove('no-display');
-  }
-
-  private handleChannelMention(mention: any) {
-    this.filteredChannels = this.mentionService.filterChannels(mention.query, this.channels);
-    if (this.filteredChannels.length === 0) return;
-    document.getElementById('search-chat-channels')?.classList.remove('no-display');
-  }
-
-  insertMention(name: string, textarea: HTMLTextAreaElement) {
-    const res = this.actionService.testInsertMention(name, this.chatController.messageText, this.activeMention);
-    if (!res) return;
-    this.chatController.messageText = res.nextText;
-    textarea.value = res.nextText;
-    textarea.setSelectionRange(res.nextCursor, res.nextCursor);
-    textarea.focus();
-    this.activeMention = null;
-    document.getElementById('search-chat-members')?.classList.add('no-display');
-    document.getElementById('search-chat-channels')?.classList.add('no-display');
-  }
-
-  toggleEditMessageMenu(messageId: string, event: Event) {
-    event.stopPropagation();
-    if (this.editMessageMenuOpen === messageId) {
-      this.editMessageMenuOpen = null;
-    } else {
-      this.editMessageMenuOpen = messageId;
-    }
-  }
-
-  editMessage(messageId: string) {
-    const upcoming = this.actionService.beginEdit(messageId, this.chatController.messages, this.getUserId());
-    if (!upcoming) return;
-    this.editingMessageId = upcoming.editingMessageId;this.editingMessageText = upcoming.editingMessageText;
-    this.editMessageMenuOpen = upcoming.editMessageMenuOpen;this.editMessageIsOpen = upcoming.editMessageIsOpen;
-    this.actionService.highlightOwnMessage(messageId);
-  }
-
-  cancelEdit() {
-    if (this.editingMessageId) {
-      const messageElement = document.getElementById('message-text-' + this.editingMessageId);
-      if (messageElement) messageElement.classList.remove('hovered-own-message')
-    }
-    this.editingMessageId = null;
-    this.editingMessageText = '';
-    this.editMessageIsOpen = false;
-  }
-
-  async saveEditedMessage(messageId: string) {
-    if (!this.editingMessageText.trim()) return;
-    const messageRef = doc(
-      this.firestore,
-      `channels/${this.chatService.currentChannel}/messages/${messageId}`
-    );
-    await updateDoc(messageRef, {
-      text: this.editingMessageText.trim(),
-      edited: true,
-    }); this.cancelEdit();
-  }
-
-  async addMembersToChannel() {
-    const usersToAdd = this.selectedChannelUsers;
-    const newUids = usersToAdd.filter((user) => !user?.guest).map((user) => ({ uid: user?.uid, name: user?.name }))
-      .filter((uidObj) => uidObj.uid && !this.chatService.pendingUsers.some((u) => u.uid === uidObj.uid));
-    await this.chatService.searchUsers(this.chatService.currentChannelID);
-    this.chatService.pendingUsers.push(...newUids);
-    await this.chatService.addUsers(
-      this.chatService.currentChannelID, this.chatService.pendingUsers,
-      this.authService.readCurrentUser(), { user: ' hat den Kanal betreten.', system: true, timestamp: Date.now() }
-    );
-    this.chatService.pendingUsers = [];
-    this.clearSelectedUsers();
+    this.chatController.setActiveMention(mention);
+    mention.trigger === '@' ? this.chatController.handleUserMention(mention, this.users)
+      : this.chatController.handleChannelMention(mention, this.channels);
   }
 
   clearSelectedUsers() {

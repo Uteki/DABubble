@@ -40,7 +40,7 @@
         </svg>
       </button>
     </div>
-    <img [src]="getLargeAvatar(chatOverlay.clickedUser?.avatar)" alt="" />
+    <img [src]="chatController.getLargeAvatar(chatOverlay.clickedUser?.avatar)" alt="" />
 
     <div class="profile-name">
       <h3>{{ chatOverlay.clickedUser?.name ?? "Anon" }}</h3>
@@ -918,11 +918,11 @@
       class="message"
       [ngClass]="{
         'own-message': msg.uid === getUserId(),
-        'edit-message': editMessageIsOpen && editingMessageId === msg.id,
-        'not-edit-message': !editMessageIsOpen
+        'edit-message': chatController.editMessageIsOpen && chatController.editingMessageId === msg.id,
+        'not-edit-message': !chatController.editMessageIsOpen
       }"
       (mouseover)="chatController.hoverMessage(msg.id, msg.uid, $event)"
-      (mouseleave)="chatController.leaveMessage(msg.id); editMessageMenuOpen = null"
+      (mouseleave)="chatController.leaveMessage(msg.id); chatController.editMessageMenuOpen = null"
     >
       @if (msg.system === true) {
       <div class="system">
@@ -951,34 +951,34 @@
 
       <div
         class="message-container"
-        [ngClass]="{ 'edit-mode-width': editMessageIsOpen && editingMessageId === msg.id }"
+        [ngClass]="{ 'edit-mode-width': chatController.editMessageIsOpen && chatController.editingMessageId === msg.id }"
       >
         <img src="{{ getProfilePic(msg.uid) }}" alt="{{ msg.user }}" />
-        <div [ngClass]="{ 'edit-mode-width': editMessageIsOpen && editingMessageId === msg.id }">
+        <div [ngClass]="{ 'edit-mode-width': chatController.editMessageIsOpen && chatController.editingMessageId === msg.id }">
           <div>
             <strong>{{ msg.user }}</strong>
             <span
               class="timestamp"
               [ngClass]="{
-                'no-display': editMessageIsOpen && editingMessageId === msg.id
+                'no-display': chatController.editMessageIsOpen && chatController.editingMessageId === msg.id
               }"
               >{{ msg.timestamp | date : "HH:mm" }} Uhr</span
             >
           </div>
 
-          @if (editingMessageId === msg.id) {
+          @if (chatController.editingMessageId === msg.id) {
           <!-- Edit Mode -->
           <div
             class="message-edit-bubble"
             [ngClass]="{
               'edit-mode-bubble':
-                editMessageIsOpen && editingMessageId === msg.id,
+                chatController.editMessageIsOpen && chatController.editingMessageId === msg.id,
               'edit-mode-width':
-                editMessageIsOpen && editingMessageId === msg.id
+                chatController.editMessageIsOpen && chatController.editingMessageId === msg.id
             }"
           >
             <textarea
-              [(ngModel)]="editingMessageText"
+              [(ngModel)]="chatController.editingMessageText"
               rows="3"
               class="message-edit-textarea"
 
@@ -987,14 +987,14 @@
               <div class="button-group">
                 <button
                   type="button"
-                  (click)="cancelEdit()"
+                  (click)="chatController.cancelEdit()"
                   class="btn-secondary"
                 >
                   Abbrechen
                 </button>
                 <button
                   type="button"
-                  (click)="saveEditedMessage(msg.id)"
+                  (click)="chatController.saveEditedMessage(msg.id)"
                   class="btn-primary"
                 >
                   Speichern
@@ -1064,7 +1064,7 @@
           class="comment-hover-overlay"
           [id]="'comment-hover-' + msg.id"
           [ngClass]="{
-            'no-display': editMessageIsOpen && editingMessageId === msg.id
+            'no-display': chatController.editMessageIsOpen && chatController.editingMessageId === msg.id
           }"
         >
           <div (click)="chatController.addEmojiToMessageField('✓', msg.id)">
@@ -1089,16 +1089,16 @@
           <div
             [ngClass]="{ 'no-display': msg.uid !== getUserId() }"
             class="more-vert-button"
-            (click)="toggleEditMessageMenu(msg.id, $event)"
+            (click)="chatController.toggleEditMessageMenu(msg.id, $event)"
           >
             <img src="/assets/icons/svgs/moreVert.svg" alt="" />
           </div>
         </div>
         <div
           class="edit-message-menu"
-          [class.visible]="editMessageMenuOpen === msg.id"
+          [class.visible]="chatController.editMessageMenuOpen === msg.id"
         >
-          <div (click)="editMessage(msg.id)">Nachricht bearbeiten</div>
+          <div (click)="chatController.editMessage(msg.id)">Nachricht bearbeiten</div>
         </div>
       </div>
     </div>
@@ -1111,9 +1111,9 @@
 >
   <label for="message"></label>
   <div id="search-chat-channels" class="text-channel-list no-display">
-    <ng-container *ngFor="let channel of filteredChannels">
+    <ng-container *ngFor="let channel of chatController.filteredChannels">
       <div
-        (click)="insertMention(channel.name, messageInput)"
+        (click)="chatController.insertMention(channel.name, messageInput)"
       >
         <svg
           width="24"
@@ -1148,10 +1148,10 @@
     </ng-container>
   </div>
   <div id="search-chat-members" class="text-member-list no-display">
-    <ng-container *ngFor="let user of filteredUsers">
+    <ng-container *ngFor="let user of chatController.filteredUsers">
       <div
         *ngIf="user.name"
-        (click)="insertMention(user.name, messageInput)"
+        (click)="chatController.insertMention(user.name, messageInput)"
       >
         <article>
           <figure class="user-avatar">
