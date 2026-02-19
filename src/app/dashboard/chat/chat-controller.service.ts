@@ -1,11 +1,11 @@
-import {Injectable} from "@angular/core";
-import {User} from "../../core/interfaces/user";
-import {AuthService} from "../../auth.service";
-import {ActionService} from "../../action.service";
-import {ChatService} from "../../chat.service";
+import { Injectable } from "@angular/core";
+import { User } from "../../core/interfaces/user";
+import { AuthService } from "../../auth.service";
+import { ActionService } from "../../action.service";
+import { ChatService } from "../../chat.service";
 import { MentionService } from "../../mention.service";
-import {doc} from "firebase/firestore";
-import {Firestore, updateDoc} from "@angular/fire/firestore";
+import { doc } from "firebase/firestore";
+import { Firestore, updateDoc } from "@angular/fire/firestore";
 
 @Injectable()
 export class ChatControllerService {
