@@ -123,7 +123,9 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
   async emitPartner(partnerUid: string | undefined) {
     if (!partnerUid) return;
     if (window.innerWidth < 768) this.channelsMenu.emit();
-    let whisperUid = this.getPartnerUidFromWhisper(partnerUid, this.authService.readCurrentUser());
+    let whisperUid: string;
+    partnerUid === this.getUserId() ?  whisperUid = partnerUid
+      : whisperUid = this.getPartnerUidFromWhisper(partnerUid, this.authService.readCurrentUser())
     const partnerObj: User = this.users.find((user) => user.uid === whisperUid);
     this.partnerSelected.emit(partnerObj);
     this.toggleRequest.emit(true);
