@@ -9,7 +9,6 @@ import { Subject, distinctUntilChanged, filter, map, switchMap, takeUntil, tap }
 import { doc } from 'firebase/firestore';
 import { AuthService } from '../../auth.service';
 import { User } from '../../core/interfaces/user';
-import { ProfileOverlayService } from '../../profile-overlay.service';
 import { ReactionsComponent } from '../../shared/reactions/reactions.component';
 import { AutoScrollDirective } from "../../auto-scroll.directive";
 import { LinkifyPipe } from "../../linkify.pipe";
@@ -45,14 +44,12 @@ export class ChatComponent implements OnInit {
   today = new Date();
 
   userInChannel: boolean = false;
-  profileOverlay: boolean = false;
   editChannelName: boolean = false;
   editDescription: boolean = false;
   showPicker = false;
   showReactionPicker: { [messageId: string]: boolean } = {};
   addEmojiToMessage: { [messageId: string]: string } = {};
   wasEmpty: boolean = true;
-  inputFocused: boolean = false;
   selectedChannelUsers: any[] = [];
   channelUsers: any[] = [];
   filteredUsers: any[] = [];
@@ -74,14 +71,11 @@ export class ChatComponent implements OnInit {
   editMessageIsOpen: boolean = false;
   public Object = Object;
 
-  clickedUser: any;
-
   constructor(
     private chatService: ChatService,
     private cd: ChangeDetectorRef,
     private firestore: Firestore,
     private authService: AuthService,
-    private profileOverlayService: ProfileOverlayService,
     private mentionService: MentionService,
     private actionService: ActionService,
     public chatOverlay: ChatOverlayService
@@ -138,7 +132,7 @@ export class ChatComponent implements OnInit {
 
   emitPartner(partnerUid: string) {
     const partnerObj: User = this.users.find((user) => user.uid === partnerUid);
-    this.clickedUser = partnerObj;
+    this.chatOverlay.clickedUser = partnerObj;
     this.partnerSelected.emit(partnerObj);
     this.toggleRequestDirect.emit(true);
   }
@@ -379,20 +373,6 @@ export class ChatComponent implements OnInit {
     this.cancelEdit();
   }
 
-  openProfile(user: User) {
-    if (user.uid === this.getUserId()) {
-      this.profileOverlayService.triggerOpenProfile();
-    } else {
-      this.clickedUser = user;
-      this.chatOverlay.overlayActivated = true;
-      this.profileOverlay = true;
-    }
-  }
-
-  closeProfile() {
-    this.chatOverlay.overlayActivated = false;
-    this.profileOverlay = false;
-  }
 
   async addMembersToChannel() {
     const usersToAdd = this.selectedChannelUsers;
@@ -442,10 +422,6 @@ export class ChatComponent implements OnInit {
     if (!emoji) return;
     this.onReactionToggle(msg, { emoji, add: true });
   }
-
-  onFocus() { this.inputFocused = true }
-
-  onBlur() { this.inputFocused = false }
 
   insertEmojiIntoText(emoji: string) { this.messageText = this.actionService.emojiTextarea(emoji, this.messageText) }
 

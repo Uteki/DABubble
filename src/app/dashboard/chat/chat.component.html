@@ -1,18 +1,18 @@
 <section
   click-stop-propagation
-  (click)="profileOverlay = false"
+  (click)="chatOverlay.profileOverlay = false"
   class="darker-screen"
-  [ngClass]="{ 'no-display': !profileOverlay }"
+  [ngClass]="{ 'no-display': !chatOverlay.profileOverlay }"
 >
   <div
-    [ngClass]="{ 'no-display': !profileOverlay }"
+    [ngClass]="{ 'no-display': !chatOverlay.profileOverlay }"
     click-stop-propagation
     class="toggle-item"
   >
     <div>
       <h2>Profil</h2>
 
-      <button (click)="closeProfile()">
+      <button (click)="chatOverlay.closeProfile()">
         <svg
           width="24"
           height="24"
@@ -40,10 +40,10 @@
         </svg>
       </button>
     </div>
-    <img [src]="getLargeAvatar(clickedUser?.avatar)" alt="" />
+    <img [src]="getLargeAvatar(chatOverlay.clickedUser?.avatar)" alt="" />
 
     <div class="profile-name">
-      <h3>{{ clickedUser?.name ?? "Anon" }}</h3>
+      <h3>{{ chatOverlay.clickedUser?.name ?? "Anon" }}</h3>
     </div>
 
     <div class="profile-status">
@@ -56,11 +56,11 @@
         <img src="./../../../assets/img/mail.svg" alt="" />
         <h3>E-Mail-Adresse</h3>
       </div>
-      <a href="">{{ clickedUser?.email ?? "emre.iscan&#64;outlook.de" }} </a>
+      <a href="">{{ chatOverlay.clickedUser?.email ?? "emre.iscan&#64;outlook.de" }} </a>
     </div>
 
     <div
-      (click)="emitPartner(clickedUser?.uid); closeProfile()"
+      (click)="emitPartner(chatOverlay.clickedUser?.uid); chatOverlay.closeProfile()"
       class="profile-direct-message"
     >
       <svg
@@ -100,7 +100,7 @@
     chatOverlay.channelOverlay = false;
     chatOverlay.viewMemberOverlay = false;
     chatOverlay.addMemberOverlay = false;
-    profileOverlay = false
+    chatOverlay.profileOverlay = false
   "
   class="overlay"
   [ngClass]="{ 'no-display': !chatOverlay.overlayActivated }"
@@ -274,7 +274,7 @@
           </div>
           <div class="no-scrollbar">
             <div
-              (click)="openProfile(user)"
+              (click)="chatOverlay.openProfile(user)"
               class="no-scrollbar"
               *ngFor="let user of users; let i = index"
               [class.no-display]="!currentMemberIndices.includes(i)"
@@ -402,7 +402,7 @@
         <div class="members-list no-scrollbar">
           <div>
             <div
-              [ngClass]="{ 'no-display': inputFocused }"
+              [ngClass]="{ 'no-display': chatOverlay.inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
@@ -440,8 +440,8 @@
               id="member-input"
               [(ngModel)]="inputValue"
               #inputEl
-              (focus)="onFocus()"
-              (blur)="onBlur()"
+              (focus)="chatOverlay.onFocus()"
+              (blur)="chatOverlay.onBlur()"
               (input)="onMemberInputChange($any($event.target).value)"
               type="text"
               placeholder="Name eingeben"
@@ -515,7 +515,7 @@
         </div>
         <div class="no-scrollbar">
           <div
-            (click)="openProfile(user)"
+            (click)="chatOverlay.openProfile(user)"
             class="no-scrollbar"
             *ngFor="let user of users; let i = index"
             [class.no-display]="!currentMemberIndices.includes(i)"
@@ -620,7 +620,7 @@
         <div class="members-list no-scrollbar">
           <div>
             <div
-              [ngClass]="{ 'no-display': inputFocused }"
+              [ngClass]="{ 'no-display': chatOverlay.inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
@@ -658,8 +658,8 @@
               id="member-input"
               [(ngModel)]="inputValue"
               #inputEl
-              (focus)="onFocus()"
-              (blur)="onBlur()"
+              (focus)="chatOverlay.onFocus()"
+              (blur)="chatOverlay.onBlur()"
               (input)="onMemberInputChange($any($event.target).value)"
               type="text"
               placeholder="Name eingeben"
@@ -747,7 +747,7 @@
         <div class="members-list no-scrollbar">
           <div>
             <div
-              [ngClass]="{ 'no-display': inputFocused }"
+              [ngClass]="{ 'no-display': chatOverlay.inputFocused }"
               *ngFor="let channelUser of selectedChannelUsers; let i = index"
             >
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
@@ -785,8 +785,8 @@
               id="member-input"
               [(ngModel)]="inputValue"
               #inputEl
-              (focus)="onFocus()"
-              (blur)="onBlur()"
+              (focus)="chatOverlay.onFocus()"
+              (blur)="chatOverlay.onBlur()"
               (input)="onMemberInputChange($any($event.target).value)"
               type="text"
               placeholder="Name eingeben"
@@ -860,7 +860,7 @@
         </div>
         <div class="no-scrollbar">
           <div
-            (click)="openProfile(user)"
+            (click)="chatOverlay.openProfile(user)"
             class="no-scrollbar"
             *ngFor="let user of users; let i = index"
             [class.no-display]="!currentMemberIndices.includes(i)"
