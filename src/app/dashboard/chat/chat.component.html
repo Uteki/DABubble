@@ -921,8 +921,8 @@
         'edit-message': editMessageIsOpen && editingMessageId === msg.id,
         'not-edit-message': !editMessageIsOpen
       }"
-      (mouseover)="hoverMessage(msg.id, msg.uid, $event)"
-      (mouseleave)="leaveMessage(msg.id); editMessageMenuOpen = null"
+      (mouseover)="chatController.hoverMessage(msg.id, msg.uid, $event)"
+      (mouseleave)="chatController.leaveMessage(msg.id); editMessageMenuOpen = null"
     >
       @if (msg.system === true) {
       <div class="system">
@@ -1012,16 +1012,16 @@
           </div>
           <app-reactions
             [reactions]="msg.reactions || {}"
-            [currentUserId]="meId"
+            [currentUserId]="getUserId()"
             [users]="users"
             [compact]="false"
-            [addEmoji]="addEmojiToMessage[msg.id] || undefined"
-            [isOwnMessage]="msg.uid === meId"
-            [notOwnMessage]="msg.uid !== meId"
-            [externalPickerOpen]="showReactionPicker[msg.id] || false"
-            [(externalPickerOpen)]="showReactionPicker[msg.id]"
-            (toggled)="onReactionToggle(msg, $event)"
-            (addedNew)="onReactionAdd(msg, $event)"
+            [addEmoji]="chatController.addEmojiToMessage[msg.id] || undefined"
+            [isOwnMessage]="msg.uid === getUserId()"
+            [notOwnMessage]="msg.uid !== getUserId()"
+            [externalPickerOpen]="chatController.showReactionPicker[msg.id] || false"
+            [(externalPickerOpen)]="chatController.showReactionPicker[msg.id]"
+            (toggled)="chatController.onReactionToggle(msg, $event)"
+            (addedNew)="chatController.onReactionAdd(msg, $event)"
             [class.is-empty]="
               !(msg.reactions && Object.keys(msg.reactions).length > 0)
             "
@@ -1067,13 +1067,13 @@
             'no-display': editMessageIsOpen && editingMessageId === msg.id
           }"
         >
-          <div (click)="addEmojiToMessageField('✓', msg.id)">
+          <div (click)="chatController.addEmojiToMessageField('✓', msg.id)">
             <img src="/assets/img/checkMark.svg" alt="Reaktion hinzufügen" />
           </div>
-          <div (click)="addEmojiToMessageField('👍', msg.id)">
+          <div (click)="chatController.addEmojiToMessageField('👍', msg.id)">
             <img src="/assets/img/capa.svg" alt="Daumen hoch" />
           </div>
-          <div (click)="openReactionPicker(msg.id)">
+          <div (click)="chatController.openReactionPicker(msg.id)">
             <img src="/assets/icons/reactions/addReaction.png" alt="" />
           </div>
           <div
@@ -1184,19 +1184,19 @@
   <button
     type="button"
     class="emoji-insert"
-    (click)="showPicker = !showPicker"
+    (click)="chatController.showPicker = !chatController.showPicker"
     aria-label="Emoji einfügen"
   >
     😊
   </button>
 
-  <div class="picker" *ngIf="showPicker" (mouseleave)="showPicker = false">
+  <div class="picker" *ngIf="chatController.showPicker" (mouseleave)="chatController.showPicker = false">
     <button
       *ngFor="
         let e of ['😀', '👍', '🎉', '❤️', '😊', '🙏', '🚀', '🤔', '😅', '🔥', '✅']
       "
       type="button"
-      (click)="insertEmojiIntoText(e); showPicker = false"
+      (click)="chatController.insertEmojiIntoText(e); chatController.showPicker = false"
     >
       {{ e }}
     </button>

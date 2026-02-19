@@ -9,11 +9,17 @@ export class ChatControllerService {
   messages: any[] = [];
   messageText: string = '';
 
+  showReactionPicker: { [messageId: string]: boolean } = {};
+  addEmojiToMessage: { [messageId: string]: string } = {};
+  showPicker = false;
+
   constructor(
     private authService: AuthService,
     private actionService: ActionService,
     private chatService: ChatService
   ) {}
+
+  get meId() { return this.authService.readCurrentUser() }
 
   async sendMessage(users: User[]): Promise<void> {
     const currentUserId = this.authService.readCurrentUser();
@@ -34,6 +40,41 @@ export class ChatControllerService {
     const text = this.asciiToEmojiInText(raw);
     await this.chatService.sendMessage(this.chatService.currentChannel, {uid: logger.uid, text: text, user: logger.name, timestamp: Date.now(), reaction: {},});
     this.messageText = '';
+  }
+
+  insertEmojiIntoText(emoji: string) { this.messageText = this.actionService.emojiTextarea(emoji, this.messageText) }
+
+  openReactionPicker(msgId: string) { this.showReactionPicker[msgId] = true }
+
+  onReactionToggle(msg: any, ev: { emoji: string; add: boolean }) {
+    this.actionService.emojiRow(msg, ev, this.meId)
+    const channelId = this.chatService.currentChannel;
+    if (!channelId || !msg?.id) return;
+    this.chatService.reactChannelMessage(channelId, msg.id, ev.emoji, ev.add, this.meId).catch(console.error);
+  }
+
+  onReactionAdd(msg: any, emoji: string) {
+    if (!emoji) return;
+    this.onReactionToggle(msg, { emoji, add: true });
+  }
+
+  addEmojiToMessageField(emoji: string, messageId?: string) {
+    if (messageId) {
+      const message = this.messages.find((m) => m.id === messageId);
+      if (message) { this.onReactionAdd(message, emoji) }
+    } else { this.insertEmojiIntoText(emoji) }
+  }
+
+  hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {
+    this.actionService.hoverOnFocus(messageId, messageUid, this.meId, event);
+  }
+
+  leaveMessage(messageId: string) {
+    const messageElement = document.getElementById('message-text-' + messageId);
+    if (messageElement) {
+      messageElement.classList.remove('hovered-message');
+      messageElement.classList.remove('hovered-own-message');
+    }
   }
 
   private asciiToEmojiInText(s: string): string { return this.actionService.toEmoji(s) }

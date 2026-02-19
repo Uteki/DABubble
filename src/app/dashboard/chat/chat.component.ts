@@ -45,9 +45,6 @@ export class ChatComponent implements OnInit {
   userInChannel: boolean = false;
   editChannelName: boolean = false;
   editDescription: boolean = false;
-  showPicker = false;
-  showReactionPicker: { [messageId: string]: boolean } = {};
-  addEmojiToMessage: { [messageId: string]: string } = {};
   wasEmpty: boolean = true;
   selectedChannelUsers: any[] = [];
   channelUsers: any[] = [];
@@ -137,7 +134,6 @@ export class ChatComponent implements OnInit {
     this.toggleRequestDirect.emit(true);
   }
 
-
   async openThread(threadId: string, message: any) {
     this.toggleRequest.emit(true);
     this.threadSelected.emit(threadId);
@@ -180,7 +176,6 @@ export class ChatComponent implements OnInit {
   }
 
   getProfilePic(uid: string) { return (this.users.find((user) => user.uid === uid)?.avatar || 'assets/avatars/profile.png') }
-
   getUserId() { return this.authService.readCurrentUser() }
 
   async leaveChannel() {
@@ -369,41 +364,4 @@ export class ChatComponent implements OnInit {
     this.inputValue = ''; this.channelName = ''
     this.selectedChannelUsers = [];
   }
-
-  hoverMessage(messageId: string, messageUid: string, event?: MouseEvent) {
-    this.actionService.hoverOnFocus(messageId, messageUid, this.getUserId(), event);
-  }
-
-  leaveMessage(messageId: string) {
-    const messageElement = document.getElementById('message-text-' + messageId);
-    if (messageElement) {
-      messageElement.classList.remove('hovered-message');
-      messageElement.classList.remove('hovered-own-message');
-    }
-  }
-
-  get meId() { return this.authService.readCurrentUser() }
-
-  onReactionToggle(msg: any, ev: { emoji: string; add: boolean }) {
-    this.actionService.emojiRow(msg, ev, this.meId)
-    const channelId = this.chatService.currentChannel;
-    if (!channelId || !msg?.id) return;
-    this.chatService.reactChannelMessage(channelId, msg.id, ev.emoji, ev.add, this.meId).catch(console.error);
-  }
-
-  onReactionAdd(msg: any, emoji: string) {
-    if (!emoji) return;
-    this.onReactionToggle(msg, { emoji, add: true });
-  }
-
-  insertEmojiIntoText(emoji: string) { this.chatController.messageText = this.actionService.emojiTextarea(emoji, this.chatController.messageText) }
-
-  addEmojiToMessageField(emoji: string, messageId?: string) {
-    if (messageId) {
-      const message = this.chatController.messages.find((m) => m.id === messageId);
-      if (message) { this.onReactionAdd(message, emoji) }
-    } else { this.insertEmojiIntoText(emoji) }
-  }
-
-  openReactionPicker(msgId: string) { this.showReactionPicker[msgId] = true }
 }
