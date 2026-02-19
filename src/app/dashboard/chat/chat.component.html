@@ -565,7 +565,7 @@
     </output>
 
     <div
-      (click)="chatOverlay.overlayActivated = true; chatOverlay.addMemberOverlay = true; chatOverlay.viewMemberOverlay = true"
+      (click)="chatOverlay.overlayActivated = true; chatOverlay.addMemberOverlay = true; chatOverlay.viewMemberMedia()"
       *ngIf="currentChat && currentChat !== 'DALobby' && userInChannel"
     >
       <svg

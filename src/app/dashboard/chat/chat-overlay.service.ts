@@ -91,6 +91,9 @@ export class ChatOverlayService {
     this.switchAddMemberOverlay = false;
   }
 
+  /** Check if mobile + **/
+  viewMemberMedia() { if (window.innerWidth < 1024) this.viewMemberOverlay = true }
+
   /**
    * Opens a user profile.
    *
