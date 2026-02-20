@@ -134,8 +134,7 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
   /**
    * Adds members to the current channel.
    * - Uses either "all members" or the currently selected users list.
-   * - Skips guests and avoids duplicates in pendingUsers.
-   * - Resets UI state after completion.
+   * - Skips guests and avoids duplicates in pendingUsers and resets UI state after completion.
    */
   async addMembers() {
     const usersToAdd = this.selectedValue !== 'all-members' ? this.selectedChannelUsers : this.users;
@@ -167,8 +166,7 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
   }
 
   /**
-   * Opens a whisper message search result:
-   * 1. opens partner DM 2. scrolls to the message
+   * Opens a whisper message search result: 1. opens partner DM 2. scrolls to the message
    * @param result - global search result pointing to a whisper message
    */
   async openWhisperResult(result: GlobalSearchResult) {
@@ -276,26 +274,32 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
 
   /** Creates a new channel (desktop form). */
   createNewChannel() {
-    if (this.newChannel.length > 0) {
+    const similarNames = this.channels.some( (channel) => { return channel.name.toLowerCase() == this.newChannel.toLowerCase() })
+    if (this.newChannel.length > 0 && !similarNames) {
+      this.switchOverlay = true;
       const currentUid = this.authService.readCurrentUser();
       const currentUser = this.users.find((user) => user.uid === currentUid);
       this.chatService.createChannel({
         creator: currentUser.name, description: this.newChannelDescription,
         name: this.newChannel, users: [currentUser.uid],
       }).then(() => { this.newChannelDescription = ''; this.newChannel = '' });
-    }
+    } else { document.querySelector("#creation-warning")?.classList.remove("d-none");
+      setTimeout(()=> { document.querySelector("#creation-warning")?.classList.add("d-none") },2000)}
   }
 
   /** Creates a new channel (mobile form). */
   createNewChannelMobile() {
-    if (this.newChannelMobile.length > 0) {
+    const similarNames = this.channels.some( (channel) => { return channel.name.toLowerCase() == this.newChannelMobile.toLowerCase() })
+    if (this.newChannelMobile.length > 0 && !similarNames) {
+      this.switchOverlay = true;
       const currentUid = this.authService.readCurrentUser();
       const currentUser = this.users.find((user) => user.uid === currentUid);
       this.chatService.createChannel({
         creator: currentUser.name, description: this.newChannelDescriptionMobile,
         name: this.newChannelMobile, users: [currentUser.uid],
       }).then(() => {});
-    }
+    } else { document.querySelector("#creation-warning-mobile")?.classList.remove("d-none");
+      setTimeout(()=> { document.querySelector("#creation-warning-mobile")?.classList.add("d-none") },2000)}
   }
 
   /**
@@ -334,9 +338,7 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
     });
   }
 
-  /**
-   * Adds a user as recipient for message search / mention flows. Resets recipient input after adding.
-   */
+  /** Adds a user as recipient for message search / mention flows. Resets recipient input after adding. */
   addRecipient(userid: string, name: string, mail: string, avatar: string) {
     const partnerChat = this.buildPartnerChat(userid);
     if (this.recipient.some(r => r.type === 'user' && r.partnerChat === partnerChat)) return
@@ -345,9 +347,7 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
     this.onInputChange(this.recipientInput);
   }
 
-  /**
-   * Adds a channel as recipient for message search / mention flows. Resets recipient input after adding.
-   */
+  /** Adds a channel as recipient for message search / mention flows. Resets recipient input after adding. */
   addChannelRecipient(channelId: string, name: string) {
     if (this.recipient.some(r => r.type === 'channel' && r.channelId === channelId)) return
     this.recipient = [{type: 'channel', channelId, name}];

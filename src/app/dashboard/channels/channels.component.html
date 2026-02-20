@@ -65,7 +65,9 @@
       />
     </div>
     <div class="channel-create-one">
-      <button [disabled]="newChannel.length === 0" [class.disabled-button]="newChannel.length === 0" (click)="switchOverlay = true; createNewChannel()">
+      <p id="creation-warning" class="d-none" style="text-align: center; color: red; margin-right: 20px;">Channel existiert bereits!</p>
+
+      <button [disabled]="newChannel.length === 0" [class.disabled-button]="newChannel.length === 0" (click)="createNewChannel()">
         Erstellen
       </button>
     </div>
@@ -134,10 +136,11 @@
       />
     </div>
     <div class="channel-create-one">
-      <button [disabled]="newChannelMobile.length === 0" [class.disabled-button]="newChannelMobile.length === 0" (click)="switchOverlay = true; createNewChannelMobile()">
+      <button [disabled]="newChannelMobile.length === 0" [class.disabled-button]="newChannelMobile.length === 0" (click)="createNewChannelMobile()">
         Erstellen
       </button>
     </div>
+    <p id="creation-warning-mobile" class="d-none" style="text-align: center; color: red">Channel existiert bereits!</p>
   </div>
 
   <div
