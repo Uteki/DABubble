@@ -322,8 +322,7 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   }
 
   /**
-   * Handles recipient input changes.
-   * Behavior:
+   * Handles recipient input changes. Behavior:
    * - Hides message search results immediately
    * - Shows chooser dropdown on first character (`@` or `#`)
    * - When cleared, hides all search result containers
@@ -392,7 +391,9 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   changeUserName() {
     const inputNameElement = document.getElementById('input-name') as HTMLInputElement;
     let inputName = inputNameElement ? inputNameElement.value : '';
-    if (this.sessionData) this.userService.updateUserName(this.sessionData, inputName).catch((err) => console.error(err))
+    const hasWhitespace = /\s[A-Za-z]/.test(inputName);
+    if (this.sessionData && hasWhitespace) this.userService.updateUserName(this.sessionData, inputName
+      .toLowerCase().replace(/\b\w/g, l => l.toUpperCase())).catch((err) => console.error(err))
     inputName = ''; this.edit = false
   }
 }
