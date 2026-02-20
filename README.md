@@ -1,27 +1,221 @@
-# DABubble
+![Angular](https://img.shields.io/badge/Angular-17-red)
+![Firebase](https://img.shields.io/badge/Firebase-Firestore-orange)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.3.
 
-## Development server
+🚀 Chat Application
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+A modern real-time business chat application built with Angular and Firebase, supporting scalable messaging, mentions, reactions, and channel collaboration.
 
-## Code scaffolding
+---
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+🏗️ Tech Stack
 
-## Build
+Technology| Purpose
+Angular (Standalone Components)| Frontend framework
+Firebase Authentication| User authentication (Email + Google)
+Firestore| Real-time database
+AngularFire| Firebase SDK integration
+RxJS| Reactive programming
+SCSS| Styling & responsive design
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+---
 
-## Running unit tests
+✨ Features
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+💬 Real-Time Channels
 
-## Running end-to-end tests
+- Create and manage channels
+- Join / leave channels
+- Add or remove members
+- Edit channel name & description
+- Membership validation before sending messages
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+---
 
-## Further help
+👤 Direct Messages (Whispers)
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- Private 1-to-1 chats
+- Automatic partner chat ID generation
+- Profile overlay integration
+
+---
+
+🧵 Threads
+
+- Reply to messages in dedicated threads
+- Auto-create thread collections
+- Nested Firestore storage
+
+---
+
+😊 Reactions System
+
+- Emoji reaction picker
+- Add / remove reactions
+- Optimistic UI updates
+- Firestore synchronization
+
+---
+
+🏷 Mentions
+
+- "@username" mentions
+- "#channel" mentions
+- Live suggestion dropdown
+- Cursor-aware insertion
+- Mention parsing service
+
+---
+
+🔐 Authentication
+
+- Email & password login
+- Google popup login
+- Avatar setup for new users
+- Guest login support
+- Session storage handling
+
+---
+
+🎛 Chat Overlay Architecture
+
+UI overlays are separated into dedicated services:
+
+- "ChatOverlayService" → Overlay + modal state
+- "ChatControllerService" → Message + reaction logic
+
+This keeps components clean and maintainable.
+
+---
+
+🧠 Architecture Overview
+
+ChatComponent
+ ├── ChatControllerService   (messages, editing, reactions)
+ ├── ChatOverlayService      (overlay UI state)
+ ├── ChatService             (Firestore communication)
+ ├── MentionService          (mention parsing)
+ └── ActionService           (emoji + editing helpers)
+
+Architecture principles:
+
+- Service-driven logic separation
+- Reactive chat switching (RxJS)
+- Scoped providers per feature
+- Optimistic UI updates
+
+---
+
+📂 Firestore Structure
+
+channels/
+  {channelId}
+    name
+    description
+    creator
+    users[]
+
+    messages/
+      {messageId}
+        text
+        uid
+        timestamp
+        reactions{}
+
+        thread/
+          {threadMessageId}
+
+whispers/
+  {combinedUserId}
+    messages/
+
+---
+
+🛡 Validation & Security
+
+- Channel membership verification
+- Duplicate channel name prevention
+- Trimmed & normalized channel names
+- Controlled reaction toggling
+- Mention input sanitation
+
+---
+
+🖥 Responsive Design
+
+- Desktop-first layout
+- Mobile channel drawer
+- Adaptive overlays
+- Max-width content container
+- Breakpoint-based UI switching
+
+---
+
+⚙️ Installation
+
+git clone
+cd chat-app
+npm install
+ng serve
+
+Open:
+
+http://localhost:4200
+
+---
+
+🔑 Firebase Setup
+
+1. Create a Firebase project
+
+2. Enable:
+   
+   - Authentication (Email + Google)
+   - Firestore Database
+
+3. Add your config to:
+
+src/environments/environment.ts
+
+Example:
+
+export const environment = {
+  firebase: {
+    apiKey: "...",
+    authDomain: "...",
+    projectId: "...",
+    storageBucket: "...",
+    messagingSenderId: "...",
+    appId: "..."
+  }
+};
+
+---
+
+🚀 Future Improvements
+
+- User roles (Admin / Member)
+- Typing indicators
+- Read receipts
+- File uploads
+- Drag & drop attachments
+- Push notifications
+- Firestore security rules hardening
+
+---
+
+👨‍💻 Author
+
+Built with focus on:
+
+- Clean Angular architecture
+- Scalable real-time features
+- Service-based separation
+- Maintainable UI state
+
+---
+
+📜 License
+
+This project is licensed under the MIT License.
