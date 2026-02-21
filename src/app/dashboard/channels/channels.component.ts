@@ -73,6 +73,9 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
   /** New channel form state (desktop + mobile). */
   newChannel = ''; newChannelMobile = ''
   newChannelDescription = ''; newChannelDescriptionMobile = ''
+  /** Channel name validation error message. */
+  channelNameError: string | null = null;
+  channelNameErrorMobile: string | null = null;
   /** Member search input state. */
   inputValue = '';
   /** Current selector mode for adding members. */
@@ -214,6 +217,7 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
     this.overlayActivated = !this.overlayActivated;
     this.newChannel = ''; this.newChannelMobile = ''
     this.newChannelDescription = ''; this.selectedChannelUsers = []
+    this.channelNameError = null; this.channelNameErrorMobile = null;
     this.switchOverlay = false;
   }
 
@@ -275,6 +279,12 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
   /** Creates a new channel (desktop form). */
   createNewChannel() {
     if (this.newChannel.length > 0) {
+      if (this.channelExists(this.newChannel)) {
+        this.channelNameError = 'Ein Channel mit diesem Namen existiert bereits';
+        return;
+      }
+      this.channelNameError = null;
+      this.switchOverlay = true;
       const currentUid = this.authService.readCurrentUser();
       const currentUser = this.users.find((user) => user.uid === currentUid);
       this.chatService.createChannel({
@@ -287,6 +297,13 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
   /** Creates a new channel (mobile form). */
   createNewChannelMobile() {
     if (this.newChannelMobile.length > 0) {
+      // Check if channel name already exists
+      if (this.channelExists(this.newChannelMobile)) {
+        this.channelNameErrorMobile = 'Ein Channel mit diesem Namen existiert bereits';
+        return;
+      }
+      this.channelNameErrorMobile = null;
+      this.switchOverlay = true;
       const currentUid = this.authService.readCurrentUser();
       const currentUser = this.users.find((user) => user.uid === currentUid);
       this.chatService.createChannel({
@@ -394,4 +411,19 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
       .filter(index => index !== -1);
     this.nameInputValue = this.foundIndexes.length > 0;
   }
+
+  
+
+  /**
+   * Checks if a channel with the given name already exists (case-insensitive).
+   * @param channelName - the channel name to check
+   * @returns true if a channel with this name exists, false otherwise
+   */
+  private channelExists(channelName: string): boolean {
+    const normalizedName = channelName.trim().toLowerCase();
+    return this.channels.some(channel => 
+      channel.name.toLowerCase() === normalizedName
+    );
+  }
 }
+

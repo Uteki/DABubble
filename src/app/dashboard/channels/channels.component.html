@@ -49,10 +49,14 @@
       <h2>#</h2>
       <input
         [(ngModel)]="newChannel"
+        (input)="channelNameError = null"
         type="text"
         placeholder="z.B. Kooperationsprojekte"
       />
     </div>
+    <small *ngIf="channelNameError" class="error-message">{{
+      channelNameError
+    }}</small>
     <h4>
       Beschreibung
       <h4>(optional)</h4>
@@ -65,18 +69,17 @@
       />
     </div>
     <div class="channel-create-one">
-      <button [disabled]="newChannel.length === 0" [class.disabled-button]="newChannel.length === 0" (click)="switchOverlay = true; createNewChannel()">
+      <button
+        [disabled]="newChannel.length === 0"
+        [class.disabled-button]="newChannel.length === 0"
+        (click)="createNewChannel()"
+      >
         Erstellen
       </button>
     </div>
   </div>
 
-
-  <div
-    click-stop-propagation
-    class="create-channel create-channel-mobile"
-  >
-
+  <div click-stop-propagation class="create-channel create-channel-mobile">
     <div>
       <h3>Channel erstellen</h3>
       <div>
@@ -118,10 +121,14 @@
       <h2>#</h2>
       <input
         [(ngModel)]="newChannelMobile"
+        (input)="channelNameErrorMobile = null"
         type="text"
         placeholder="z.B. Kooperationsprojekte"
       />
     </div>
+    <small *ngIf="channelNameErrorMobile" class="error-message">{{
+      channelNameErrorMobile
+    }}</small>
     <h4>
       Beschreibung
       <h4>(optional)</h4>
@@ -134,7 +141,11 @@
       />
     </div>
     <div class="channel-create-one">
-      <button [disabled]="newChannelMobile.length === 0" [class.disabled-button]="newChannelMobile.length === 0" (click)="switchOverlay = true; createNewChannelMobile()">
+      <button
+        [disabled]="newChannelMobile.length === 0"
+        [class.disabled-button]="newChannelMobile.length === 0"
+        (click)="createNewChannelMobile()"
+      >
         Erstellen
       </button>
     </div>
@@ -145,9 +156,9 @@
     [ngClass]="{ 'd-none': !switchOverlay }"
     class="add-channel-member"
   >
-  <svg
-    class="svg-dropdown-mobile"
-    (click)="switchOverlay = false"
+    <svg
+      class="svg-dropdown-mobile"
+      (click)="switchOverlay = false"
       width="62"
       height="6"
       viewBox="0 0 62 6"
@@ -279,9 +290,9 @@
             <figure class="user-avatar">
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
               @if (channelUser.status) {
-              <img src="./../../../assets/img/online.png" alt="" />
+                <img src="./../../../assets/img/online.png" alt="" />
               } @else {
-              <img src="./../../../assets/img/offline.svg" alt="" />
+                <img src="./../../../assets/img/offline.svg" alt="" />
               }
             </figure>
             <p>{{ channelUser.name }}</p>
@@ -290,8 +301,14 @@
       </div>
       <div>
         <button
-        [disabled]="selectedChannelUsers.length === 0"
-        [class.disabled-button]="selectedChannelUsers.length === 0"
+          [disabled]="
+            selectedValue === 'specific-members' &&
+            selectedChannelUsers.length === 0
+          "
+          [class.disabled-button]="
+            selectedValue === 'specific-members' &&
+            selectedChannelUsers.length === 0
+          "
           (click)="
             switchOverlay = false; overlayActivated = false; addMembers()
           "
@@ -308,10 +325,10 @@
     [ngClass]="{ 'd-none': inputFocused }"
     *ngFor="let recipient of recipient; let i = index"
   >
-    @if (recipient.type === 'user') {
+    @if (recipient.type === "user") {
       <img src="{{ recipient.avatar }}" [alt]="recipient.name" />
       <p>{{ recipient.name }}</p>
-    } @else if (recipient.type === 'channel') {
+    } @else if (recipient.type === "channel") {
       <p>{{ recipient.name }}</p>
     }
     <div>
@@ -362,10 +379,13 @@
     class="search-icon"
   />
   <div #searchResult class="no-display" id="search-results-2">
-    <ng-container *ngIf="foundMessages.length > 0; else noResults" >
-      <div *ngFor="let messages of foundMessages" (click)="openFoundMessage(messages)">
+    <ng-container *ngIf="foundMessages.length > 0; else noResults">
+      <div
+        *ngFor="let messages of foundMessages"
+        (click)="openFoundMessage(messages)"
+      >
         <small *ngIf="messages.channelId">
-          #{{ getChannelName(messages.channelId)  }}
+          #{{ getChannelName(messages.channelId) }}
         </small>
 
         <small *ngIf="messages.whisperId">
@@ -380,7 +400,11 @@
       <p class="no-results">Keine Ergebnisse gefunden</p>
     </ng-template>
   </div>
-  <div class="no-display" id="search-results-contacts-2" *ngIf="recipient.length == 0">
+  <div
+    class="no-display"
+    id="search-results-contacts-2"
+    *ngIf="recipient.length == 0"
+  >
     <ng-container *ngFor="let user of filteredUsers">
       <div
         *ngIf="user.name"
@@ -402,11 +426,13 @@
       </div>
     </ng-container>
   </div>
-  <div class="no-display" id="search-results-channels-2" *ngIf="recipient.length == 0">
+  <div
+    class="no-display"
+    id="search-results-channels-2"
+    *ngIf="recipient.length == 0"
+  >
     <ng-container *ngFor="let channel of filteredChannels">
-      <div
-        (click)="addChannelRecipient(channel.id, channel.name)"
-      >
+      <div (click)="addChannelRecipient(channel.id, channel.name)">
         <svg
           width="24"
           height="24"
@@ -595,7 +621,7 @@
             channel.creator
           )
         "
-        [ngClass]="{'active-channel': isSelected(channel)}"
+        [ngClass]="{ 'active-channel': isSelected(channel) }"
       >
         <svg
           width="24"
@@ -688,7 +714,10 @@
       [class.deactive]="!directMessagesShown"
       class="direct-messages-list"
     >
-      <div *ngFor="let user of users" [ngClass]="{'active-user-chat': isSelectedUser(user)}">
+      <div
+        *ngFor="let user of users"
+        [ngClass]="{ 'active-user-chat': isSelectedUser(user) }"
+      >
         <article (click)="emitPartner(user.id)">
           <figure *ngIf="user?.uid" class="user-avatar">
             <img
@@ -696,12 +725,17 @@
               [alt]="user?.name || ''"
             />
             @if (user?.status) {
-            <img src="./../../../assets/img/online.png" alt="" />
+              <img src="./../../../assets/img/online.png" alt="" />
             } @else {
-            <img src="./../../../assets/img/offline.svg" alt="" />
+              <img src="./../../../assets/img/offline.svg" alt="" />
             }
           </figure>
-          <p>{{ user?.name || "" }}  @if(user.uid === getUserId()) { (Du) }</p>
+          <p>
+            {{ user?.name || "" }}
+            @if (user.uid === getUserId()) {
+              (Du)
+            }
+          </p>
         </article>
       </div>
     </div>

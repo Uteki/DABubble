@@ -66,6 +66,8 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   isGuest = sessionStorage.getItem('role') === 'guest';
   /** Responsive flag for mobile behavior (updated on resize). */
   isMobile = window.innerWidth < 768;
+  /** Validation error message for name input field. */
+  nameError: string | null = null;
   /**
    * Tracks whether the recipient input was previously empty.
    * Used to only open chooser lists (`@` / `#`) on the first character entry.
@@ -388,11 +390,29 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   /** Enables profile edit mode. */
   editProfile() { this.edit = true }
 
-  /** Updates the user name in the database using the value from the input field. Disables edit mode afterwards. */
+  /** 
+   * Updates the user name in the database using the value from the input field. 
+   * Validates that the name contains at least 2 words before updating.
+   * Disables edit mode afterwards. 
+   */
   changeUserName() {
     const inputNameElement = document.getElementById('input-name') as HTMLInputElement;
-    let inputName = inputNameElement ? inputNameElement.value : '';
-    if (this.sessionData) this.userService.updateUserName(this.sessionData, inputName).catch((err) => console.error(err))
-    inputName = ''; this.edit = false
+    let inputName = inputNameElement ? inputNameElement.value.trim() : '';
+    
+    // Validate: name must have at least 2 words
+    const words = inputName.split(/\s+/).filter(word => word.length > 0);
+    
+    if (words.length < 2) {
+      this.nameError = 'Der Name muss mindestens zwei Wörter enthalten.';
+      return;
+    }
+    
+    if (this.sessionData) {
+      this.userService.updateUserName(this.sessionData, inputName).catch((err) => console.error(err));
+    }
+    
+    this.nameError = null;
+    inputNameElement.value = '';
+    this.edit = false;
   }
 }
