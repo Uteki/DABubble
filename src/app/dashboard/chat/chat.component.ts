@@ -311,7 +311,8 @@ export class ChatComponent implements OnInit {
    * when entering save mode, persists name to Firestore - when canceling, restores display name from {@link currentChat}
    */
   saveEditedName() {
-    if (this.editChannelName) {
+    const similarNames = this.channels.some( (channel) => { return channel.name.toLowerCase() == this.channelName.trim().toLowerCase() })
+    if (this.editChannelName && !similarNames) {
       const newName = this.channelName.trim();
       if (!newName) return;
       this.updateChannelName(this.chatService.currentChannel, newName).then(() => {});

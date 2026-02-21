@@ -141,14 +141,11 @@
       />
     </div>
     <div class="channel-create-one">
-      <button
-        [disabled]="newChannelMobile.length === 0"
-        [class.disabled-button]="newChannelMobile.length === 0"
-        (click)="createNewChannelMobile()"
-      >
+      <button [disabled]="newChannelMobile.length === 0" [class.disabled-button]="newChannelMobile.length === 0" (click)="switchOverlay = true; createNewChannelMobile()">
         Erstellen
       </button>
     </div>
+    <p id="creation-warning-mobile" class="d-none" style="text-align: center; color: red">Channel existiert bereits!</p>
   </div>
 
   <div

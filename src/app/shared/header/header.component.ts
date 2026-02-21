@@ -324,8 +324,7 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   }
 
   /**
-   * Handles recipient input changes.
-   * Behavior:
+   * Handles recipient input changes. Behavior:
    * - Hides message search results immediately
    * - Shows chooser dropdown on first character (`@` or `#`)
    * - When cleared, hides all search result containers
