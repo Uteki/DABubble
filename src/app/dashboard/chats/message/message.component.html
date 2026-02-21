@@ -52,13 +52,13 @@
     </div>
 
     <div class="profile-status">
-      <img src="./../../../assets/img/active.svg" alt="" />
+      <img src="../../../../assets/img/active.svg" alt="" />
       <h3>Aktiv</h3>
     </div>
 
     <div class="profile-email">
       <div>
-        <img src="./../../../assets/img/mail.svg" alt="" />
+        <img src="../../../../assets/img/mail.svg" alt="" />
         <h3>E-Mail-Adresse</h3>
       </div>
       <a href="">{{ currentPartner?.email ?? "emre.iscan&#64;outlook.de" }} </a>
@@ -107,9 +107,9 @@
         [alt]="currentPartner?.name ?? 'Anon'"
       />
       @if (currentPartner?.status) {
-        <img src="./../../../assets/img/online.png" alt="" />
+        <img src="../../../../assets/img/online.png" alt="" />
       } @else {
-        <img src="./../../../assets/img/offline.svg" alt="" />
+        <img src="../../../../assets/img/offline.svg" alt="" />
       }
     </figure>
     <h2>
@@ -279,20 +279,20 @@
           }"
         >
           <div (click)="addEmojiToMessageField('✓', msg.id)">
-            <img src="/assets/img/checkMark.svg" alt="" />
+            <img src="/DABubble/src/assets/img/checkMark.svg" alt="" />
           </div>
           <div (click)="addEmojiToMessageField('👍', msg.id)">
-            <img src="/assets/img/capa.svg" alt="" />
+            <img src="/DABubble/src/assets/img/capa.svg" alt="" />
           </div>
           <div (click)="openReactionPicker(msg.id)">
-            <img src="/assets/icons/reactions/addReaction.png" alt="" />
+            <img src="/DABubble/src/assets/icons/reactions/addReaction.png" alt="" />
           </div>
           <div
             [ngClass]="{ 'no-display': msg.uid !== getUserId() }"
             class="more-vert-button"
             (click)="toggleEditMessageMenu(msg.id, $event)"
           >
-            <img src="/assets/icons/svgs/moreVert.svg" alt="" />
+            <img src="/DABubble/src/assets/icons/svgs/moreVert.svg" alt="" />
           </div>
         </div>
         <div
@@ -359,9 +359,9 @@
             <img [src]="user.avatar" [alt]="user.name" />
 
             @if (user.status) {
-              <img src="./../../../assets/img/online.png" alt="" />
+              <img src="../../../../assets/img/online.png" alt="" />
             } @else {
-              <img src="./../../../assets/img/offline.svg" alt="" />
+              <img src="../../../../assets/img/offline.svg" alt="" />
             }
           </figure>
 

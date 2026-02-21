@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
-import { Channel } from './core/interfaces/channel';
-import { ChatMessage } from './core/interfaces/chat-message';
-import { GlobalSearchResult } from './core/interfaces/global-search-result';
+import { Channel } from '../../../core/interfaces/channel';
+import { ChatMessage } from '../../../core/interfaces/chat-message';
+import { GlobalSearchResult } from '../../../core/interfaces/global-search-result';
 import { ChatApiService } from './chat-api.service';
 
 /**

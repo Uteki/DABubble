@@ -1,5 +1,5 @@
-import { AuthService } from '../../auth.service';
-import { ChatService } from '../../chat.service';
+import { AuthService } from '../services/auth.service';
+import { ChatService } from '../../dashboard/chats/services/chat.service';
 import { GlobalSearchResult } from '../interfaces/global-search-result';
 import { BroadcastRecipient } from '../type/recipient';
 

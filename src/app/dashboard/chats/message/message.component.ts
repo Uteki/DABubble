@@ -1,18 +1,18 @@
 import { Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core';
 import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { AuthService } from "../../auth.service";
-import { ChatService } from "../../chat.service";
-import { User } from "../../core/interfaces/user";
-import { ReactionsComponent } from '../../shared/reactions/reactions.component';
+import { AuthService } from "../../../core/services/auth.service";
+import { ChatService } from "../services/chat.service";
+import { User } from "../../../core/interfaces/user";
+import { ReactionsComponent } from '../../../shared/reactions/reactions.component';
 import { Firestore } from '@angular/fire/firestore';
 import { doc, updateDoc } from 'firebase/firestore';
-import { StopPropagationDirective } from "../../stop-propagation.directive";
-import { ProfileOverlayService } from "../../profile-overlay.service";
-import { AutoScrollDirective } from "../../auto-scroll.directive";
-import { LinkifyPipe } from "../../linkify.pipe";
-import { MentionService } from "../../mention.service";
-import { ActionService } from "../../action.service";
+import { StopPropagationDirective } from "../../../shared/directives/stop-propagation.directive";
+import { ProfileOverlayService } from "../../../shared/components/header/services/profile-overlay.service";
+import { AutoScrollDirective } from "../../../shared/directives/auto-scroll.directive";
+import { LinkifyPipe } from "../../../shared/pipes/linkify.pipe";
+import { MentionService } from "../services/mention.service";
+import { ActionService } from "../services/action.service";
 
 /**
  * MessageComponent

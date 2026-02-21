@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Injectable } from "@angular/core";
-import { User } from "../../core/interfaces/user";
-import { ProfileOverlayService } from '../../profile-overlay.service';
-import { AuthService } from "../../auth.service";
+import { User } from "../../../../core/interfaces/user";
+import { ProfileOverlayService } from '../../../../shared/components/header/services/profile-overlay.service';
+import { AuthService } from "../../../../core/services/auth.service";
 
 /**
  * ChatOverlayService

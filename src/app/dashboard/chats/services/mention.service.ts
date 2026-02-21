@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from "rxjs";
 import { ChatService } from "./chat.service";
-import { User } from "./core/interfaces/user";
+import { User } from "../../../core/interfaces/user";
 
 /**
  * MentionService

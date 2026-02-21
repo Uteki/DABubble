@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth, sendPasswordResetEmail } from '@angular/fire/auth';
-import { IntroService } from '../../intro.service';
+import { IntroService } from '../intro.service';
 
 /**
  * SendMailComponent

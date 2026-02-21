@@ -171,7 +171,7 @@
   } @else {
     <div class="logo-wrapper">
       <img
-        src="./../../../assets/icons/logo-DABubble.png"
+        src="../../../../assets/icons/logo-DABubble.png"
         alt="DABubble"
         class="logo"
       />
@@ -228,7 +228,7 @@
 
     <img
       (click)="searchMsg(this.users, this.channels)"
-      src="./../../../assets/img/search.svg"
+      src="../../../../assets/img/search.svg"
       alt="Search"
       class="search-icon"
     />
@@ -262,9 +262,9 @@
               <img [src]="user.avatar" [alt]="user.name" />
 
               @if (user.status) {
-                <img src="./../../../assets/img/online.png" alt="" />
+                <img src="../../../../assets/img/online.png" alt="" />
               } @else {
-                <img src="./../../../assets/img/offline.svg" alt="" />
+                <img src="../../../../assets/img/offline.svg" alt="" />
               }
             </figure>
 
@@ -316,9 +316,9 @@
     <div class="profile-pic" (click)="toggleDropdown()">
       <img [src]="returnAvatarPath()" alt="" />
       @if (userStatus) {
-      <img src="./../../../assets/img/online.png" alt="" />
+      <img src="../../../../assets/img/online.png" alt="" />
       } @else {
-      <img src="./../../../assets/img/offline.svg" alt="" />
+      <img src="../../../../assets/img/offline.svg" alt="" />
       }
     </div>
     <svg
@@ -400,7 +400,7 @@
       <div class="edit-profile-mask">
         <div>
           <div>
-            <img src="./../../../assets/img/account_circle.svg" alt="" />
+            <img src="../../../../assets/img/account_circle.svg" alt="" />
             <h3>Vollständiger Name</h3>
           </div>
           <div>
@@ -450,13 +450,13 @@
       </div>
 
       <div class="profile-status">
-        <img src="./../../../assets/img/active.svg" alt="" />
+        <img src="../../../../assets/img/active.svg" alt="" />
         <h3>Aktive</h3>
       </div>
 
       <div class="profile-email">
         <div>
-          <img src="./../../../assets/img/mail.svg" alt="" />
+          <img src="../../../../assets/img/mail.svg" alt="" />
           <h3>E-Mail-Adresse</h3>
         </div>
         <a href="">{{ useremail }}</a>

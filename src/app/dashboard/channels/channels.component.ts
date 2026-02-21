@@ -1,15 +1,15 @@
 import { Component, ElementRef, EventEmitter, OnInit, Input, Output, ViewChild, SimpleChanges } from '@angular/core';
 import { NgForOf, NgClass, NgIf } from '@angular/common';
-import { ChatService } from '../../chat.service';
+import { ChatService } from '../chats/services/chat.service';
 import { User } from '../../core/interfaces/user';
-import { StopPropagationDirective } from '../../stop-propagation.directive';
-import { AuthService } from '../../auth.service';
+import { StopPropagationDirective } from '../../shared/directives/stop-propagation.directive';
+import { AuthService } from '../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { MessageSearchBase } from "../../core/base/message-search.base";
-import { IdleTrackerService } from '../../idle-tracker.service';
+import { IdleTrackerService } from '../../core/services/idle-tracker.service';
 import { GlobalSearchResult } from "../../core/interfaces/global-search-result";
-import { FilterService } from "../../filter.service";
+import { FilterService } from "../../shared/components/header/services/filter.service";
 import { goToMessage, searchThrough } from "./channels.utils";
 
 /**
@@ -403,8 +403,6 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
     this.nameInputValue = this.foundIndexes.length > 0;
   }
 
-  
-
   /**
    * Checks if a channel with the given name already exists (case-insensitive).
    * @param channelName - the channel name to check
@@ -412,7 +410,7 @@ export class ChannelsComponent extends MessageSearchBase implements OnInit {
    */
   private channelExists(channelName: string): boolean {
     const normalizedName = channelName.trim().toLowerCase();
-    return this.channels.some(channel => 
+    return this.channels.some(channel =>
       channel.name.toLowerCase() === normalizedName
     );
   }

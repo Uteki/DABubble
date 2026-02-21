@@ -1,16 +1,16 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { ElementRef, HostListener, ViewChild } from '@angular/core';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
-import { MessageSearchBase } from "../../core/base/message-search.base";
-import { UserService } from '../../user.service';
-import { AuthService } from '../../auth.service';
-import { ChatService } from "../../chat.service";
-import { ProfileOverlayService } from '../../profile-overlay.service';
+import { MessageSearchBase } from "../../../core/base/message-search.base";
+import { UserService } from '../../../dashboard/user.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ChatService } from "../../../dashboard/chats/services/chat.service";
+import { ProfileOverlayService } from './services/profile-overlay.service';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { GlobalSearchResult } from "../../core/interfaces/global-search-result";
-import { User } from "../../core/interfaces/user";
+import { GlobalSearchResult } from "../../../core/interfaces/global-search-result";
+import { User } from "../../../core/interfaces/user";
 import { getLargeAvatar, returnAvatarPath, goToMessage, checkResultType } from './header.utils';
-import { FilterService } from "../../filter.service";
+import { FilterService } from "./services/filter.service";
 
 /**
  * HeaderComponent
@@ -389,26 +389,26 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   /** Enables profile edit mode. */
   editProfile() { this.edit = true }
 
-  /** 
-   * Updates the user name in the database using the value from the input field. 
+  /**
+   * Updates the user name in the database using the value from the input field.
    * Validates that the name contains at least 2 words before updating.
-   * Disables edit mode afterwards. 
+   * Disables edit mode afterwards.
    */
   changeUserName() {
     const inputNameElement = document.getElementById('input-name') as HTMLInputElement;
     let inputName = inputNameElement ? inputNameElement.value.trim() : '';
-    
+
     const words = inputName.split(/\s+/).filter(word => word.length > 0);
-    
+
     if (words.length < 2) {
       this.nameError = 'Der Name muss mindestens zwei Wörter enthalten.';
       return;
     }
-    
+
     if (this.sessionData) {
       this.userService.updateUserName(this.sessionData, inputName).catch((err) => console.error(err));
     }
-    
+
     this.nameError = null;
     inputNameElement.value = '';
     this.edit = false;

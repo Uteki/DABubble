@@ -1,20 +1,20 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ChatService } from '../../chat.service';
+import { ChatService } from '../services/chat.service';
 import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
-import { StopPropagationDirective } from '../../stop-propagation.directive';
+import { StopPropagationDirective } from '../../../shared/directives/stop-propagation.directive';
 import { addDoc, collection, Firestore, getDocs, updateDoc } from '@angular/fire/firestore';
 import { Subject, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rxjs';
 import { doc } from 'firebase/firestore';
-import { AuthService } from '../../auth.service';
-import { User } from '../../core/interfaces/user';
-import { ReactionsComponent } from '../../shared/reactions/reactions.component';
-import { AutoScrollDirective } from "../../auto-scroll.directive";
-import { LinkifyPipe } from "../../linkify.pipe";
-import { MentionService } from "../../mention.service";
-import { ChatOverlayService } from "./chat-overlay.service";
-import { ChatControllerService } from "./chat-controller.service";
+import { AuthService } from '../../../core/services/auth.service';
+import { User } from '../../../core/interfaces/user';
+import { ReactionsComponent } from '../../../shared/reactions/reactions.component';
+import { AutoScrollDirective } from "../../../shared/directives/auto-scroll.directive";
+import { LinkifyPipe } from "../../../shared/pipes/linkify.pipe";
+import { MentionService } from "../services/mention.service";
+import { ChatOverlayService } from "./services/chat-overlay.service";
+import { ChatControllerService } from "./services/chat-controller.service";
 
 /**
  * ChatComponent

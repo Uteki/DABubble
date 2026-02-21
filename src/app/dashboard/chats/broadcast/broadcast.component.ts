@@ -5,11 +5,11 @@ import {
   Output
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ChatService } from '../../chat.service';
+import { ChatService } from '../services/chat.service';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
-import { User } from '../../core/interfaces/user';
-import { BroadcastRecipient } from '../../core/type/recipient';
-import { AuthService } from '../../auth.service';
+import { User } from '../../../core/interfaces/user';
+import { BroadcastRecipient } from '../../../core/type/recipient';
+import { AuthService } from '../../../core/services/auth.service';
 
 type ReactionsMap = Record<string, string[]>;
 

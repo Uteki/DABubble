@@ -47,13 +47,13 @@
     </div>
 
     <div class="profile-status">
-      <img src="./../../../assets/img/active.svg" alt="" />
+      <img src="../../../../assets/img/active.svg" alt="" />
       <h3>Aktiv</h3>
     </div>
 
     <div class="profile-email">
       <div>
-        <img src="./../../../assets/img/mail.svg" alt="" />
+        <img src="../../../../assets/img/mail.svg" alt="" />
         <h3>E-Mail-Adresse</h3>
       </div>
       <a href="">{{ chatOverlay.clickedUser?.email ?? "emre.iscan&#64;outlook.de" }} </a>
@@ -286,9 +286,9 @@
                     [alt]="user?.name || ''"
                   />
                   @if (user?.status) {
-                  <img src="./../../../assets/img/online.png" alt="" />
+                  <img src="../../../../assets/img/online.png" alt="" />
                   } @else {
-                  <img src="./../../../assets/img/offline.svg" alt="" />
+                  <img src="../../../../assets/img/offline.svg" alt="" />
                   }
                 </figure>
                 <p>
@@ -462,9 +462,9 @@
               <figure class="user-avatar">
                 <img [src]="channelUser.avatar" [alt]="channelUser.name" />
                 @if (channelUser.status) {
-                <img src="./../../../assets/img/online.png" alt="" />
+                <img src="../../../../assets/img/online.png" alt="" />
                 } @else {
-                <img src="./../../../assets/img/offline.svg" alt="" />
+                <img src="../../../../assets/img/offline.svg" alt="" />
                 }
               </figure>
               <p>{{ channelUser.name }}</p>
@@ -527,9 +527,9 @@
                   [alt]="user?.name || ''"
                 />
                 @if (user?.status) {
-                <img src="./../../../assets/img/online.png" alt="" />
+                <img src="../../../../assets/img/online.png" alt="" />
                 } @else {
-                <img src="./../../../assets/img/offline.svg" alt="" />
+                <img src="../../../../assets/img/offline.svg" alt="" />
                 }
               </figure>
               <p>
@@ -680,9 +680,9 @@
               <figure class="user-avatar">
                 <img [src]="channelUser.avatar" [alt]="channelUser.name" />
                 @if (channelUser.status) {
-                <img src="./../../../assets/img/online.png" alt="" />
+                <img src="../../../../assets/img/online.png" alt="" />
                 } @else {
-                <img src="./../../../assets/img/offline.svg" alt="" />
+                <img src="../../../../assets/img/offline.svg" alt="" />
                 }
               </figure>
               <p>{{ channelUser.name }}</p>
@@ -807,9 +807,9 @@
               <figure class="user-avatar">
                 <img [src]="channelUser.avatar" [alt]="channelUser.name" />
                 @if (channelUser.status) {
-                <img src="./../../../assets/img/online.png" alt="" />
+                <img src="../../../../assets/img/online.png" alt="" />
                 } @else {
-                <img src="./../../../assets/img/offline.svg" alt="" />
+                <img src="../../../../assets/img/offline.svg" alt="" />
                 }
               </figure>
               <p>{{ channelUser.name }}</p>
@@ -872,9 +872,9 @@
                   [alt]="user?.name || ''"
                 />
                 @if (user?.status) {
-                <img src="./../../../assets/img/online.png" alt="" />
+                <img src="../../../../assets/img/online.png" alt="" />
                 } @else {
-                <img src="./../../../assets/img/offline.svg" alt="" />
+                <img src="../../../../assets/img/offline.svg" alt="" />
                 }
               </figure>
               <p>
@@ -1068,13 +1068,13 @@
           }"
         >
           <div (click)="chatController.addEmojiToMessageField('✓', msg.id)">
-            <img src="/assets/img/checkMark.svg" alt="Reaktion hinzufügen" />
+            <img src="/DABubble/src/assets/img/checkMark.svg" alt="Reaktion hinzufügen" />
           </div>
           <div (click)="chatController.addEmojiToMessageField('👍', msg.id)">
-            <img src="/assets/img/capa.svg" alt="Daumen hoch" />
+            <img src="/DABubble/src/assets/img/capa.svg" alt="Daumen hoch" />
           </div>
           <div (click)="chatController.openReactionPicker(msg.id)">
-            <img src="/assets/icons/reactions/addReaction.png" alt="" />
+            <img src="/DABubble/src/assets/icons/reactions/addReaction.png" alt="" />
           </div>
           <div
             (click)="
@@ -1085,13 +1085,13 @@
                 timestamp: msg.timestamp
               })
             "
-          ><img src="/assets/icons/svgs/comment.svg" alt="" /></div>
+          ><img src="/DABubble/src/assets/icons/svgs/comment.svg" alt="" /></div>
           <div
             [ngClass]="{ 'no-display': msg.uid !== getUserId() }"
             class="more-vert-button"
             (click)="chatController.toggleEditMessageMenu(msg.id, $event)"
           >
-            <img src="/assets/icons/svgs/moreVert.svg" alt="" />
+            <img src="/DABubble/src/assets/icons/svgs/moreVert.svg" alt="" />
           </div>
         </div>
         <div
@@ -1158,9 +1158,9 @@
             <img [src]="user.avatar" [alt]="user.name" />
 
             @if (user.status) {
-              <img src="./../../../assets/img/online.png" alt="" />
+              <img src="../../../../assets/img/online.png" alt="" />
             } @else {
-              <img src="./../../../assets/img/offline.svg" alt="" />
+              <img src="../../../../assets/img/offline.svg" alt="" />
             }
           </figure>
 

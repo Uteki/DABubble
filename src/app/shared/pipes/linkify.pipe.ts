@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { User } from './core/interfaces/user';
+import { User } from '../../core/interfaces/user';
 
 /**
  * LinkifyPipe

@@ -13,9 +13,9 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from '@angular/fire/auth';
-import { IntroService } from '../intro.service';
-import { AuthService } from '../auth.service';
-import { UserService } from '../user.service';
+import { IntroService } from './intro.service';
+import { AuthService } from '../core/services/auth.service';
+import { UserService } from '../dashboard/user.service';
 
 /**
  * LoginComponent

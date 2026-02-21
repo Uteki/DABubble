@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { AuthService } from './auth.service';
+import { AuthService } from './core/services/auth.service';
 import { Router } from '@angular/router';
-import { IdleTrackerService } from './idle-tracker.service';
+import { IdleTrackerService } from './core/services/idle-tracker.service';
 
 /**
  * AppComponent

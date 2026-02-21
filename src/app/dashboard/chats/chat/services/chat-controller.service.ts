@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
-import { User } from "../../core/interfaces/user";
-import { AuthService } from "../../auth.service";
-import { ActionService } from "../../action.service";
-import { ChatService } from "../../chat.service";
-import { MentionService } from "../../mention.service";
+import { User } from "../../../../core/interfaces/user";
+import { AuthService } from "../../../../core/services/auth.service";
+import { ActionService } from "../../services/action.service";
+import { ChatService } from "../../services/chat.service";
+import { MentionService } from "../../services/mention.service";
 import { doc } from "firebase/firestore";
 import { Firestore, updateDoc } from "@angular/fire/firestore";
 

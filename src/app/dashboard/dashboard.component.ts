@@ -1,16 +1,16 @@
 import {Component, OnInit, OnDestroy, HostListener} from '@angular/core';
-import { HeaderComponent } from '../shared/header/header.component';
-import { ThreadComponent } from './thread/thread.component';
+import { HeaderComponent } from '../shared/components/header/header.component';
+import { ThreadComponent } from './chats/thread/thread.component';
 import { ChannelsComponent } from './channels/channels.component';
-import { BroadcastComponent } from "./broadcast/broadcast.component";
-import { MessageComponent } from './message/message.component';
-import { ChatComponent } from './chat/chat.component';
-import { UserService } from '../user.service';
+import { BroadcastComponent } from "./chats/broadcast/broadcast.component";
+import { MessageComponent } from './chats/message/message.component';
+import { ChatComponent } from './chats/chat/chat.component';
+import { UserService } from './user.service';
 import { User } from '../core/interfaces/user';
-import { ChatService } from '../chat.service';
-import { AuthService } from '../auth.service';
+import { ChatService } from './chats/services/chat.service';
+import { AuthService } from '../core/services/auth.service';
 import { Subscription } from 'rxjs';
-import { MentionService } from "../mention.service";
+import { MentionService } from "./chats/services/mention.service";
 
 /**
  * DashboardComponent

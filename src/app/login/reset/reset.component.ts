@@ -12,7 +12,7 @@ import {
   verifyPasswordResetCode,
   confirmPasswordReset,
 } from '@angular/fire/auth';
-import { IntroService } from '../../intro.service';
+import { IntroService } from '../intro.service';
 
 /**
  * ResetComponent

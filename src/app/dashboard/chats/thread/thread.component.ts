@@ -1,13 +1,13 @@
 import { Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ChatService } from '../../chat.service';
+import { ChatService } from '../services/chat.service';
 import { DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
-import { User } from '../../core/interfaces/user';
-import { AuthService } from '../../auth.service';
-import { ReactionsComponent } from '../../shared/reactions/reactions.component';
-import { AutoScrollDirective } from "../../auto-scroll.directive";
-import { LinkifyPipe } from "../../linkify.pipe";
-import { MentionService } from "../../mention.service";
+import { User } from '../../../core/interfaces/user';
+import { AuthService } from '../../../core/services/auth.service';
+import { ReactionsComponent } from '../../../shared/reactions/reactions.component';
+import { AutoScrollDirective } from "../../../shared/directives/auto-scroll.directive";
+import { LinkifyPipe } from "../../../shared/pipes/linkify.pipe";
+import { MentionService } from "../services/mention.service";
 
 type ReactionsMap = Record<string, string[]>;
 

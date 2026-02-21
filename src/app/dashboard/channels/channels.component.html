@@ -287,9 +287,9 @@
             <figure class="user-avatar">
               <img [src]="channelUser.avatar" [alt]="channelUser.name" />
               @if (channelUser.status) {
-                <img src="./../../../assets/img/online.png" alt="" />
+                <img src="../../../assets/img/online.png" alt="" />
               } @else {
-                <img src="./../../../assets/img/offline.svg" alt="" />
+                <img src="../../../assets/img/offline.svg" alt="" />
               }
             </figure>
             <p>{{ channelUser.name }}</p>
@@ -371,7 +371,7 @@
 
   <img
     (click)="searchMsg(users, channels)"
-    src="./../../../assets/img/search.svg"
+    src="../../../assets/img/search.svg"
     alt="Search"
     class="search-icon"
   />
@@ -412,9 +412,9 @@
             <img [src]="user.avatar" [alt]="user.name" />
 
             @if (user.status) {
-              <img src="./../../../assets/img/online.png" alt="" />
+              <img src="../../../assets/img/online.png" alt="" />
             } @else {
-              <img src="./../../../assets/img/offline.svg" alt="" />
+              <img src="../../../assets/img/offline.svg" alt="" />
             }
           </figure>
 
@@ -722,9 +722,9 @@
               [alt]="user?.name || ''"
             />
             @if (user?.status) {
-              <img src="./../../../assets/img/online.png" alt="" />
+              <img src="../../../assets/img/online.png" alt="" />
             } @else {
-              <img src="./../../../assets/img/offline.svg" alt="" />
+              <img src="../../../assets/img/offline.svg" alt="" />
             }
           </figure>
           <p>

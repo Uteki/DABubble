@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
-import { ChatService } from '../../chat.service';
+import { ChatService } from '../../dashboard/chats/services/chat.service';
 import { FormsModule } from '@angular/forms';
 
 /**

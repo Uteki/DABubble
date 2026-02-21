@@ -1,4 +1,4 @@
-@import "./../../../assets/styles/_colors.scss";
+@import "../../../../assets/styles/colors";
 
 .header-section {
   position: relative;
@@ -53,7 +53,7 @@
       align-items: center;
       border-radius: 100%;
       justify-content: center;
-      background-image: url("../../../assets/img/devspace.png");
+      background-image: url("../../../../assets/img/devspace.png");
     }
   }
 
@@ -651,7 +651,7 @@
         border: 1px solid $light-purple;
         padding: 10px;
       }
-      
+
       .error-message {
         color: #ff4d4d;
         font-size: 12px;

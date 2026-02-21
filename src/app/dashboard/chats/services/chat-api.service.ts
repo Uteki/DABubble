@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Firestore, collection, addDoc, collectionData, orderBy, query, getDoc, updateDoc, deleteDoc, writeBatch, getDocs, docData } from '@angular/fire/firestore';
 import { doc, arrayUnion, setDoc, deleteField } from 'firebase/firestore';
 import { map, Observable } from 'rxjs';
-import { Channel } from './core/interfaces/channel';
-import { ChatMessage } from './core/interfaces/chat-message';
-import { GlobalSearchResult } from './core/interfaces/global-search-result';
+import { Channel } from '../../../core/interfaces/channel';
+import { ChatMessage } from '../../../core/interfaces/chat-message';
+import { GlobalSearchResult } from '../../../core/interfaces/global-search-result';
 
 /**
  * ChatApiService
