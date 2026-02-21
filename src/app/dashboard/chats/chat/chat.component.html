@@ -1068,13 +1068,13 @@
           }"
         >
           <div (click)="chatController.addEmojiToMessageField('✓', msg.id)">
-            <img src="/DABubble/src/assets/img/checkMark.svg" alt="Reaktion hinzufügen" />
+            <img src="./assets/img/checkMark.svg" alt="Reaktion hinzufügen" />
           </div>
           <div (click)="chatController.addEmojiToMessageField('👍', msg.id)">
-            <img src="/DABubble/src/assets/img/capa.svg" alt="Daumen hoch" />
+            <img src="./assets/img/capa.svg" alt="Daumen hoch" />
           </div>
           <div (click)="chatController.openReactionPicker(msg.id)">
-            <img src="/DABubble/src/assets/icons/reactions/addReaction.png" alt="" />
+            <img src="./assets/icons/reactions/addReaction.png" alt="" />
           </div>
           <div
             (click)="
@@ -1085,13 +1085,13 @@
                 timestamp: msg.timestamp
               })
             "
-          ><img src="/DABubble/src/assets/icons/svgs/comment.svg" alt="" /></div>
+          ><img src="./assets/icons/svgs/comment.svg" alt="" /></div>
           <div
             [ngClass]="{ 'no-display': msg.uid !== getUserId() }"
             class="more-vert-button"
             (click)="chatController.toggleEditMessageMenu(msg.id, $event)"
           >
-            <img src="/DABubble/src/assets/icons/svgs/moreVert.svg" alt="" />
+            <img src="./assets/icons/svgs/moreVert.svg" alt="" />
           </div>
         </div>
         <div

@@ -279,20 +279,20 @@
           }"
         >
           <div (click)="addEmojiToMessageField('✓', msg.id)">
-            <img src="/DABubble/src/assets/img/checkMark.svg" alt="" />
+            <img src="./assets/img/checkMark.svg" alt="" />
           </div>
           <div (click)="addEmojiToMessageField('👍', msg.id)">
-            <img src="/DABubble/src/assets/img/capa.svg" alt="" />
+            <img src="./assets/img/capa.svg" alt="" />
           </div>
           <div (click)="openReactionPicker(msg.id)">
-            <img src="/DABubble/src/assets/icons/reactions/addReaction.png" alt="" />
+            <img src="./assets/icons/reactions/addReaction.png" alt="" />
           </div>
           <div
             [ngClass]="{ 'no-display': msg.uid !== getUserId() }"
             class="more-vert-button"
             (click)="toggleEditMessageMenu(msg.id, $event)"
           >
-            <img src="/DABubble/src/assets/icons/svgs/moreVert.svg" alt="" />
+            <img src="./assets/icons/svgs/moreVert.svg" alt="" />
           </div>
         </div>
         <div
