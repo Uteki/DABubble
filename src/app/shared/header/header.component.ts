@@ -398,7 +398,6 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
     const inputNameElement = document.getElementById('input-name') as HTMLInputElement;
     let inputName = inputNameElement ? inputNameElement.value.trim() : '';
     
-    // Validate: name must have at least 2 words
     const words = inputName.split(/\s+/).filter(word => word.length > 0);
     
     if (words.length < 2) {
