@@ -91,10 +91,9 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
    * Note: `sendBeacon` is used because it is more reliable during unload.
    */
   private beforeUnloadHandler = () => {
-   if (this.sessionData) {
-      const url = `/api/updateStatus?uid=${this.sessionData}&active=false`;
-      navigator.sendBeacon(url);
-   }
+    const uid = this.authService.readCurrentUser();
+    if (!uid) return;
+    this.userService.updateUserStatus(uid, false).then();
   };
 
   /**
@@ -324,9 +323,9 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
 
   /** Marks the current user as active in the database. */
   changeUserStatus() {
-    if (this.sessionData) {
-      this.userService.updateUserStatus(this.sessionData, true).catch((err) => console.error(err));
-    }
+    const uid = this.authService.readCurrentUser();
+    if (!uid) return;
+    this.userService.updateUserStatus(uid, true).catch(console.error);
   }
 
   /**
@@ -336,10 +335,10 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
    * - signs out via {@link AuthService}
    */
   logout() {
-    if (this.sessionData) {
-      this.userService.updateUserStatus(this.sessionData, false).catch((err) => console.error(err));
-      sessionStorage.removeItem('sessionData');
-    } this.authService.signOut();
+    const uid = this.authService.readCurrentUser();
+    if (uid) this.userService.updateUserStatus(uid, false).catch(console.error);
+    sessionStorage.removeItem('sessionData');
+    this.authService.signOut();
   }
 
   /**
@@ -401,13 +400,13 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
 
   /** Opens the profile menu and disables edit mode. */
   openProfileMenu() {
-   this.edit = false; 
-   this.toggleProfileMenu = !this.toggleProfileMenu; 
+   this.edit = false;
+   this.toggleProfileMenu = !this.toggleProfileMenu;
   }
 
   /** Enables profile edit mode and prefills the input with current username and avatar. */
-  editProfile() { 
-    this.edit = true; this.editedUsername = this.username; 
+  editProfile() {
+    this.edit = true; this.editedUsername = this.username;
     this.selectedAvatar = this.userAvatar; this.originalAvatar = this.userAvatar;
     this.nameError = null;
   }
