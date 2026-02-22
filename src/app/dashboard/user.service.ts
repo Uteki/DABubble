@@ -88,6 +88,19 @@ export class UserService {
   }
 
   /**
+   * Updates the avatar of a user.
+   *
+   * Uses merge → preserves other document fields.
+   *
+   * @param uid - User UID
+   * @param newAvatar - New avatar path
+   */
+  async updateUserAvatar(uid: string, newAvatar: string): Promise<void> {
+    const userRef = doc(this.firestore, `users/${uid}`);
+    await setDoc(userRef, { avatar: newAvatar }, { merge: true });
+  }
+
+  /**
    * Checks whether a Google-authenticated user
    * already has a Firestore user document.
    *

@@ -1230,6 +1230,13 @@
   }
 }
 
+.error-message {
+  color: #ff4d4d;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
 .add-member-button {
   display: flex;
   align-items: center;
@@ -2041,6 +2048,12 @@
   @media (max-width: 1024px) {
     display: none;
   }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 }
 
 .edit-channel-mobile {
@@ -2051,7 +2064,11 @@
      transition: all 0.3s ease-in-out;
   }
 
-
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 }
 
 .member-overflow {

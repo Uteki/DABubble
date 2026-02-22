@@ -73,6 +73,8 @@ export class ChatComponent implements OnInit {
   editChannelName: boolean = false;
   /** Edit mode flag for channel description. */
   editDescription: boolean = false;
+  /** Validation error message for channel name. */
+  channelNameError: string | null = null;
   /** Whether the member dropdown should be shown (based on `foundIndexes`). */
   nameInputValue: boolean = false;
   /** Temp storage for a selected user entry (used while adding/removing). */
@@ -311,13 +313,34 @@ export class ChatComponent implements OnInit {
    * when entering save mode, persists name to Firestore - when canceling, restores display name from {@link currentChat}
    */
   saveEditedName() {
-    const similarNames = this.channels.some( (channel) => { return channel.name.toLowerCase() == this.channelName.trim().toLowerCase() })
-    if (this.editChannelName && !similarNames) {
-      const newName = this.channelName.trim();
-      if (!newName) return;
-      this.updateChannelName(this.chatService.currentChannel, newName).then(() => {});
-    } else { this.channelName = this.currentChat }
-    this.editChannelName = !this.editChannelName;
+    if (this.editChannelName) {
+      // Saving mode - validate channel name
+      const trimmedName = this.channelName.trim();
+      if (!trimmedName) {
+        this.channelName = this.currentChat;
+        this.editChannelName = false;
+        return;
+      }
+      
+      // Check if channel name already exists (excluding current channel)
+      const isDuplicate = this.channels.some(
+        (channel) => channel.name.toLowerCase() === trimmedName.toLowerCase() && channel.name.toLowerCase() !== this.currentChat.toLowerCase()
+      );
+      
+      if (isDuplicate) {
+        this.channelNameError = 'Ein Channel mit diesem Namen existiert bereits';
+        return;
+      }
+      
+      // Valid name - update in Firestore
+      this.channelNameError = null;
+      this.updateChannelName(this.chatService.currentChannel, trimmedName).then(() => {});
+      this.editChannelName = false;
+    } else {
+      // Entering edit mode
+      this.channelNameError = null;
+      this.editChannelName = true;
+    }
   }
 
   /**

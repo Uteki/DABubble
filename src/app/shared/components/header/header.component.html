@@ -17,8 +17,8 @@
     id="dropdown-item-mobile"
   >
     <svg
-    (click)="toggleDropdown()"
-    class="svg-dropdown-mobile"
+      (click)="toggleDropdown()"
+      class="svg-dropdown-mobile"
       width="62"
       height="6"
       viewBox="0 0 62 6"
@@ -93,8 +93,18 @@
   @if (menu && isMobile) {
     <div class="devspace-wrapper">
       <div>
-        <svg (click)="menuOn()" xmlns="http://www.w3.org/2000/svg" width="7" height="12" viewBox="0 0 7 12" fill="none">
-          <path d="M8.17621e-05 5.80729C8.17682e-05 5.6684 0.0261242 5.53403 0.0782077 5.40417C0.130291 5.27361 0.199735 5.16493 0.286541 5.07812L5.07821 0.286458C5.26918 0.0954856 5.51223 -5.72953e-08 5.80737 -4.43943e-08C6.10251 -3.14934e-08 6.34557 0.0954857 6.53654 0.286458C6.72751 0.47743 6.823 0.720486 6.823 1.01562C6.823 1.31076 6.72751 1.55382 6.53654 1.74479L2.47404 5.80729L6.53654 9.86979C6.72751 10.0608 6.823 10.3038 6.823 10.599C6.823 10.8941 6.72751 11.1372 6.53654 11.3281C6.34557 11.5191 6.10251 11.6146 5.80737 11.6146C5.51223 11.6146 5.26918 11.5191 5.07821 11.3281L0.286541 6.53646C0.182374 6.43229 0.108763 6.31944 0.0657074 6.19792C0.0219576 6.07639 8.17561e-05 5.94618 8.17621e-05 5.80729Z" fill="black"/>
+        <svg
+          (click)="menuOn()"
+          xmlns="http://www.w3.org/2000/svg"
+          width="7"
+          height="12"
+          viewBox="0 0 7 12"
+          fill="none"
+        >
+          <path
+            d="M8.17621e-05 5.80729C8.17682e-05 5.6684 0.0261242 5.53403 0.0782077 5.40417C0.130291 5.27361 0.199735 5.16493 0.286541 5.07812L5.07821 0.286458C5.26918 0.0954856 5.51223 -5.72953e-08 5.80737 -4.43943e-08C6.10251 -3.14934e-08 6.34557 0.0954857 6.53654 0.286458C6.72751 0.47743 6.823 0.720486 6.823 1.01562C6.823 1.31076 6.72751 1.55382 6.53654 1.74479L2.47404 5.80729L6.53654 9.86979C6.72751 10.0608 6.823 10.3038 6.823 10.599C6.823 10.8941 6.72751 11.1372 6.53654 11.3281C6.34557 11.5191 6.10251 11.6146 5.80737 11.6146C5.51223 11.6146 5.26918 11.5191 5.07821 11.3281L0.286541 6.53646C0.182374 6.43229 0.108763 6.31944 0.0657074 6.19792C0.0219576 6.07639 8.17561e-05 5.94618 8.17621e-05 5.80729Z"
+            fill="black"
+          />
         </svg>
 
         <div>
@@ -178,13 +188,11 @@
     </div>
   }
   <div class="search-wrapper">
-    <div
-      *ngFor="let recipient of recipient; let i = index"
-    >
-      @if (recipient.type === 'user') {
+    <div *ngFor="let recipient of recipient; let i = index">
+      @if (recipient.type === "user") {
         <img src="{{ recipient.avatar }}" [alt]="recipient.name" />
         <p>{{ recipient.name }}</p>
-      } @else if (recipient.type === 'channel') {
+      } @else if (recipient.type === "channel") {
         <p>{{ recipient.name }}</p>
       }
       <div>
@@ -233,15 +241,18 @@
       class="search-icon"
     />
     <div #searchResult class="no-display" id="search-results">
-      <ng-container *ngIf="foundMessages.length > 0; else noResults" >
-        <div *ngFor="let messages of foundMessages" (click)="openFoundMessage(messages)">
-            <small *ngIf="messages.channelId">
-              #{{ getChannelName(messages.channelId)  }}
-            </small>
+      <ng-container *ngIf="foundMessages.length > 0; else noResults">
+        <div
+          *ngFor="let messages of foundMessages"
+          (click)="openFoundMessage(messages)"
+        >
+          <small *ngIf="messages.channelId">
+            #{{ getChannelName(messages.channelId) }}
+          </small>
 
-            <small *ngIf="messages.whisperId">
-              Direktnachricht mit {{ getWhisperName(messages.whisperId) }}
-            </small>
+          <small *ngIf="messages.whisperId">
+            Direktnachricht mit {{ getWhisperName(messages.whisperId) }}
+          </small>
 
           <p class="text">{{ messages.user + ": " + messages.text }}</p>
         </div>
@@ -251,7 +262,11 @@
         <p class="no-results">Keine Ergebnisse gefunden</p>
       </ng-template>
     </div>
-    <div class="no-display" id="search-results-contacts" *ngIf="recipient.length == 0">
+    <div
+      class="no-display"
+      id="search-results-contacts"
+      *ngIf="recipient.length == 0"
+    >
       <ng-container *ngFor="let user of filteredUsers">
         <div
           *ngIf="user.name"
@@ -273,11 +288,13 @@
         </div>
       </ng-container>
     </div>
-    <div class="no-display" id="search-results-channels" *ngIf="recipient.length == 0">
+    <div
+      class="no-display"
+      id="search-results-channels"
+      *ngIf="recipient.length == 0"
+    >
       <ng-container *ngFor="let channel of filteredChannels">
-        <div
-          (click)="addChannelRecipient(channel.id, channel.name)"
-        >
+        <div (click)="addChannelRecipient(channel.id, channel.name)">
           <svg
             width="24"
             height="24"
@@ -316,9 +333,9 @@
     <div class="profile-pic" (click)="toggleDropdown()">
       <img [src]="returnAvatarPath()" alt="" />
       @if (userStatus) {
-      <img src="../../../../assets/img/online.png" alt="" />
+        <img src="../../../../assets/img/online.png" alt="" />
       } @else {
-      <img src="../../../../assets/img/offline.svg" alt="" />
+        <img src="../../../../assets/img/offline.svg" alt="" />
       }
     </div>
     <svg
@@ -362,9 +379,9 @@
     >
       <div>
         @if (edit) {
-        <h2>Dein Profil bearbeiten</h2>
+          <h2>Dein Profil bearbeiten</h2>
         } @else {
-        <h2>Profil</h2>
+          <h2>Profil</h2>
         }
 
         <button (click)="toggleProfile()">
@@ -395,72 +412,97 @@
           </svg>
         </button>
       </div>
-      <img [src]="getLargeAvatar(userAvatar)" alt="" />
+      <img  [src]="getLargeAvatar(selectedAvatar || userAvatar)" alt="" />
       @if (edit) {
-      <div class="edit-profile-mask">
-        <div>
+        <div class="edit-profile-mask">
           <div>
-            <img src="../../../../assets/img/account_circle.svg" alt="" />
-            <h3>Vollständiger Name</h3>
+            <div>
+              <img src="../../../../assets/img/account_circle.svg" alt="" />
+              <h3>Vollständiger Name</h3>
+            </div>
+            <div>
+              <input
+                id="input-name"
+                type="text"
+                [(ngModel)]="editedUsername"
+                (input)="validateName()"
+              />
+              <small *ngIf="nameError" class="error-message">{{
+                nameError
+              }}</small>
+            </div>
+            <div class="avatar-options">
+              <button
+                *ngFor="let avatar of avatarOptions"
+                class="avatar-option"
+                [class.selected]="selectedAvatar === avatar"
+                (click)="selectAvatar(avatar)"
+              >
+                <img [src]="avatar" alt="Avatar Option" />
+              </button>
+            </div>
           </div>
           <div>
-            <input id="input-name" type="text" placeholder="{{ username }}" (input)="nameError = null" />
-            <small *ngIf="nameError" class="error-message">{{ nameError }}</small>
+            <button (click)="toggleProfile()">Abbrechen</button>
+            <button
+              (click)="changeUserName()"
+              [disabled]="nameError !== null || editedUsername.trim() === ''"
+              [class.disabled-button]="
+                nameError !== null || editedUsername.trim() === ''
+              "
+            >
+              Speichern
+            </button>
           </div>
         </div>
-        <div>
-          <button (click)="toggleProfile()">Abbrechen</button>
-          <button (click)="changeUserName()">Speichern</button>
-        </div>
-      </div>
       } @else {
-      <div class="edit-profile">
-        <h3>{{ username }}</h3>
-        <h4 (click)="editProfile()" *ngIf="!isGuest">Bearbeiten</h4>
-        <svg
-        class="edit-icon"
-        *ngIf="!isGuest"
-        [ngClass]="{'edit-active': edit}"
-        (click)="editProfile()"
-          width="30"
-          height="30"
-          viewBox="0 0 30 30"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <rect width="30" height="30" rx="15" fill="#ECEEFE" />
-          <mask
-            id="mask0_761_13577"
-            style="mask-type: alpha"
-            maskUnits="userSpaceOnUse"
-            x="3"
-            y="3"
-            width="24"
-            height="24"
+        <div class="edit-profile">
+          <h3>{{ username }}</h3>
+          <h4 (click)="editProfile()" *ngIf="!isGuest">Bearbeiten</h4>
+          <svg
+            class="edit-icon"
+            *ngIf="!isGuest"
+            [ngClass]="{ 'edit-active': edit }"
+            (click)="editProfile()"
+            width="30"
+            height="30"
+            viewBox="0 0 30 30"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <rect x="3" y="3" width="24" height="24" fill="#D9D9D9" />
-          </mask>
-          <g mask="url(#mask0_761_13577)">
-            <path
-              d="M8 22H9.4L18.025 13.375L16.625 11.975L8 20.6V22ZM22.3 11.925L18.05 7.725L19.45 6.325C19.8333 5.94167 20.3043 5.75 20.863 5.75C21.421 5.75 21.8917 5.94167 22.275 6.325L23.675 7.725C24.0583 8.10833 24.2583 8.571 24.275 9.113C24.2917 9.65433 24.1083 10.1167 23.725 10.5L22.3 11.925ZM7 24C6.71667 24 6.47933 23.904 6.288 23.712C6.096 23.5207 6 23.2833 6 23V20.175C6 20.0417 6.025 19.9127 6.075 19.788C6.125 19.6627 6.2 19.55 6.3 19.45L16.6 9.15L20.85 13.4L10.55 23.7C10.45 23.8 10.3377 23.875 10.213 23.925C10.0877 23.975 9.95833 24 9.825 24H7Z"
-              fill="black"
-            />
-          </g>
-        </svg>
-      </div>
-
-      <div class="profile-status">
-        <img src="../../../../assets/img/active.svg" alt="" />
-        <h3>Aktive</h3>
-      </div>
-
-      <div class="profile-email">
-        <div>
-          <img src="../../../../assets/img/mail.svg" alt="" />
-          <h3>E-Mail-Adresse</h3>
+            <rect width="30" height="30" rx="15" fill="#ECEEFE" />
+            <mask
+              id="mask0_761_13577"
+              style="mask-type: alpha"
+              maskUnits="userSpaceOnUse"
+              x="3"
+              y="3"
+              width="24"
+              height="24"
+            >
+              <rect x="3" y="3" width="24" height="24" fill="#D9D9D9" />
+            </mask>
+            <g mask="url(#mask0_761_13577)">
+              <path
+                d="M8 22H9.4L18.025 13.375L16.625 11.975L8 20.6V22ZM22.3 11.925L18.05 7.725L19.45 6.325C19.8333 5.94167 20.3043 5.75 20.863 5.75C21.421 5.75 21.8917 5.94167 22.275 6.325L23.675 7.725C24.0583 8.10833 24.2583 8.571 24.275 9.113C24.2917 9.65433 24.1083 10.1167 23.725 10.5L22.3 11.925ZM7 24C6.71667 24 6.47933 23.904 6.288 23.712C6.096 23.5207 6 23.2833 6 23V20.175C6 20.0417 6.025 19.9127 6.075 19.788C6.125 19.6627 6.2 19.55 6.3 19.45L16.6 9.15L20.85 13.4L10.55 23.7C10.45 23.8 10.3377 23.875 10.213 23.925C10.0877 23.975 9.95833 24 9.825 24H7Z"
+                fill="black"
+              />
+            </g>
+          </svg>
         </div>
-        <a href="">{{ useremail }}</a>
-      </div>
+
+        <div class="profile-status">
+          <img src="../../../../assets/img/active.svg" alt="" />
+          <h3>Aktive</h3>
+        </div>
+
+        <div class="profile-email">
+          <div>
+            <img src="../../../../assets/img/mail.svg" alt="" />
+            <h3>E-Mail-Adresse</h3>
+          </div>
+          <a href="">{{ useremail }}</a>
+        </div>
       }
     </div>
   </div>

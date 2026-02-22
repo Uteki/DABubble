@@ -182,8 +182,9 @@
         <div>
           <h3>Channel-Name</h3>
           <img
-            (click)="saveEditedName()"
+            (click)="channelNameError === null && saveEditedName()"
             class="edit-channel-mobile"
+            [class.disabled]="channelNameError !== null && editChannelName"
             [src]="
               editChannelName
                 ? '/assets/icons/svgs/edit.svg'
@@ -193,7 +194,8 @@
           />
           <h3
             class="edit-channel"
-            (click)="saveEditedName()"
+            [class.disabled]="channelNameError !== null && editChannelName"
+            (click)="channelNameError === null && saveEditedName()"
             *ngIf="currentChat !== 'DALobby' && userInChannel"
           >
             @if (editChannelName) { Speichern } @else { Bearbeiten }
@@ -204,6 +206,7 @@
           <h2>#</h2>
           <input
             [(ngModel)]="channelName"
+            (input)="channelNameError = null"
             type="text"
             placeholder="{{
               currentChat.charAt(0).toUpperCase() + currentChat.slice(1)

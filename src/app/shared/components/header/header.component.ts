@@ -68,11 +68,20 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   isMobile = window.innerWidth < 768;
   /** Validation error message for name input field. */
   nameError: string | null = null;
+  /** Edited username value bound to the input field. */
+  editedUsername: string = '';
   /**
    * Tracks whether the recipient input was previously empty.
    * Used to only open chooser lists (`@` / `#`) on the first character entry.
    */
   private wasEmpty = true;
+  /** Currently selected avatar image path. */
+  selectedAvatar: string = '';
+  /** Original avatar path before editing (used for cancel operation). */
+  private originalAvatar: string = '';
+
+  /** Available avatar image options for selection. */
+   avatarOptions: string[] = ['./../../../assets/avatars/avatarSmall1.png','./../../../assets/avatars/avatarSmall2.png', './../../../assets/avatars/avatarSmall3.png', './../../../assets/avatars/avatarSmall4.png', './../../../assets/avatars/avatarSmall5.png', './../../../assets/avatars/avatarSmall6.png',];
 
   /**
    * beforeunload handler:
@@ -126,6 +135,16 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
    */
   ngOnDestroy(): void {
     window.removeEventListener('beforeunload', this.beforeUnloadHandler);
+  }
+
+   /**
+   * Selects an avatar from the available options.
+   * Clears validation error if previously shown.
+   *
+   * @param avatar Avatar image path
+   */
+  selectAvatar(avatar: string): void {
+    this.selectedAvatar = avatar;
   }
 
   /** Updates {@link isMobile} when the window size changes. */
@@ -374,43 +393,65 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
    */
   stopPropagation(event: Event) { event.stopPropagation() }
 
-  /** Toggles the profile menu and disables edit mode. */
+  /** Toggles the profile menu and disables edit mode. Resets avatar to original if canceled. */
   toggleProfile() {
-    this.edit = false;
-    this.toggleProfileMenu = !this.toggleProfileMenu;
-  }
+  if (this.edit) { this.userAvatar = this.originalAvatar; this.selectedAvatar = ''; }
+  this.edit = false; this.toggleProfileMenu = !this.toggleProfileMenu;
+}
 
   /** Opens the profile menu and disables edit mode. */
   openProfileMenu() {
-    this.edit = false;
-    this.toggleProfileMenu = !this.toggleProfileMenu;
+   this.edit = false; 
+   this.toggleProfileMenu = !this.toggleProfileMenu; 
   }
 
-  /** Enables profile edit mode. */
-  editProfile() { this.edit = true }
+  /** Enables profile edit mode and prefills the input with current username and avatar. */
+  editProfile() { 
+    this.edit = true;
+    this.editedUsername = this.username;
+    this.selectedAvatar = this.userAvatar;
+    this.originalAvatar = this.userAvatar;
+    this.nameError = null;
+  }
 
   /**
-   * Updates the user name in the database using the value from the input field.
+   * Validates the name input in real-time.
+   * Checks if the trimmed name is empty or contains less than 2 words.
+   */
+  validateName() {
+    const trimmedName = this.editedUsername.trim();
+    const words = trimmedName.split(/\s+/).filter(word => word.length > 0);
+    
+    if (trimmedName === '') {
+      this.nameError = 'Der Name darf nicht leer sein.';
+    } else if (words.length < 2) {
+      this.nameError = 'Der Name muss mindestens zwei Wörter enthalten.';
+    } else {
+      this.nameError = null;
+    }
+  }
+
+  /**
+   * Updates the user name and avatar in the database.
    * Validates that the name contains at least 2 words before updating.
+   * Updates avatar if a new one was selected.
    * Disables edit mode afterwards.
    */
   changeUserName() {
-    const inputNameElement = document.getElementById('input-name') as HTMLInputElement;
-    let inputName = inputNameElement ? inputNameElement.value.trim() : '';
-
-    const words = inputName.split(/\s+/).filter(word => word.length > 0);
-
-    if (words.length < 2) {
-      this.nameError = 'Der Name muss mindestens zwei Wörter enthalten.';
+    this.validateName();
+    if (this.nameError !== null || this.editedUsername.trim() === '') {
       return;
     }
-
+    const inputName = this.editedUsername.trim();
     if (this.sessionData) {
       this.userService.updateUserName(this.sessionData, inputName).catch((err) => console.error(err));
+      if (this.selectedAvatar) {
+        this.userService.updateUserAvatar(this.sessionData, this.selectedAvatar).catch((err) => console.error(err));
+        this.originalAvatar = this.selectedAvatar; 
+      }
     }
-
-    this.nameError = null;
-    inputNameElement.value = '';
+    this.username = inputName;
     this.edit = false;
+    this.toggleProfileMenu = !this.toggleProfileMenu;
   }
 }
