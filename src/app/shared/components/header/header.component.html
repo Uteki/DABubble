@@ -425,7 +425,7 @@
                 id="input-name"
                 type="text"
                 [(ngModel)]="editedUsername"
-                (input)="validateName()"
+                (input)="validationService.validationName(nameError, editedUsername)"
               />
               <small *ngIf="nameError" class="error-message">{{
                 nameError

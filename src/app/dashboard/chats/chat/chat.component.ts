@@ -314,33 +314,22 @@ export class ChatComponent implements OnInit {
    */
   saveEditedName() {
     if (this.editChannelName) {
-      // Saving mode - validate channel name
       const trimmedName = this.channelName.trim();
       if (!trimmedName) {
-        this.channelName = this.currentChat;
-        this.editChannelName = false;
+        this.channelName = this.currentChat; this.editChannelName = false;
         return;
       }
-      
-      // Check if channel name already exists (excluding current channel)
       const isDuplicate = this.channels.some(
         (channel) => channel.name.toLowerCase() === trimmedName.toLowerCase() && channel.name.toLowerCase() !== this.currentChat.toLowerCase()
       );
-      
       if (isDuplicate) {
         this.channelNameError = 'Ein Channel mit diesem Namen existiert bereits';
         return;
       }
-      
-      // Valid name - update in Firestore
       this.channelNameError = null;
       this.updateChannelName(this.chatService.currentChannel, trimmedName).then(() => {});
       this.editChannelName = false;
-    } else {
-      // Entering edit mode
-      this.channelNameError = null;
-      this.editChannelName = true;
-    }
+    } else {this.channelNameError = null; this.editChannelName = true;}
   }
 
   /**
@@ -409,9 +398,7 @@ export class ChatComponent implements OnInit {
       : this.chatController.handleChannelMention(mention, this.channels);
   }
 
-  /**
-   * Clears selection state after adding members and closes any open overlays. Also resets relevant inputs.
-   */
+  /** Clears selection state after adding members and closes any open overlays. Also resets relevant inputs.*/
   clearSelectedUsers() {
     this.selectedChannelUsers = [];
     this.channelUsers = []; this.channelUsers = [...this.users]

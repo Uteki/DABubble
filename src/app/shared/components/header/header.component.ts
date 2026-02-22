@@ -11,6 +11,7 @@ import { GlobalSearchResult } from "../../../core/interfaces/global-search-resul
 import { User } from "../../../core/interfaces/user";
 import { getLargeAvatar, returnAvatarPath, goToMessage, checkResultType } from './header.utils';
 import { FilterService } from "./services/filter.service";
+import { HeaderValidationService } from './services/header-validation.service';
 
 /**
  * HeaderComponent
@@ -94,7 +95,6 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
       const url = `/api/updateStatus?uid=${this.sessionData}&active=false`;
       navigator.sendBeacon(url);
    }
-   this.authService.signOutOnTabClose();
   };
 
   /**
@@ -107,7 +107,7 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
    */
   constructor(
     private userService: UserService, private profileOverlayService: ProfileOverlayService, private filterService: FilterService,
-    authService: AuthService, chatService: ChatService
+    authService: AuthService, chatService: ChatService, protected validationService: HeaderValidationService
   ) {
     super(chatService, authService);
     this.getUserInformation();
@@ -407,28 +407,9 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
 
   /** Enables profile edit mode and prefills the input with current username and avatar. */
   editProfile() { 
-    this.edit = true;
-    this.editedUsername = this.username;
-    this.selectedAvatar = this.userAvatar;
-    this.originalAvatar = this.userAvatar;
+    this.edit = true; this.editedUsername = this.username; 
+    this.selectedAvatar = this.userAvatar; this.originalAvatar = this.userAvatar;
     this.nameError = null;
-  }
-
-  /**
-   * Validates the name input in real-time.
-   * Checks if the trimmed name is empty or contains less than 2 words.
-   */
-  validateName() {
-    const trimmedName = this.editedUsername.trim();
-    const words = trimmedName.split(/\s+/).filter(word => word.length > 0);
-    
-    if (trimmedName === '') {
-      this.nameError = 'Der Name darf nicht leer sein.';
-    } else if (words.length < 2) {
-      this.nameError = 'Der Name muss mindestens zwei Wörter enthalten.';
-    } else {
-      this.nameError = null;
-    }
   }
 
   /**
@@ -438,20 +419,10 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
    * Disables edit mode afterwards.
    */
   changeUserName() {
-    this.validateName();
-    if (this.nameError !== null || this.editedUsername.trim() === '') {
-      return;
+    const result = this.validationService.changeNameValidation(this.nameError, this.editedUsername, this.sessionData, this.selectedAvatar, this.originalAvatar, this.username, this.edit, this.toggleProfileMenu);
+    if (result) {
+      this.username = result.username; this.edit = result.edit;
+      this.toggleProfileMenu = result.toggleProfileMenu; this.originalAvatar = result.originalAvatar;
     }
-    const inputName = this.editedUsername.trim();
-    if (this.sessionData) {
-      this.userService.updateUserName(this.sessionData, inputName).catch((err) => console.error(err));
-      if (this.selectedAvatar) {
-        this.userService.updateUserAvatar(this.sessionData, this.selectedAvatar).catch((err) => console.error(err));
-        this.originalAvatar = this.selectedAvatar; 
-      }
-    }
-    this.username = inputName;
-    this.edit = false;
-    this.toggleProfileMenu = !this.toggleProfileMenu;
   }
 }
