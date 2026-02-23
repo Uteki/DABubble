@@ -330,6 +330,7 @@ Example:
 - Drag & drop attachments
 - Push notifications
 - Firestore security rules hardening
+- English version
 
 ---
 
