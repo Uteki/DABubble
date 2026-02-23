@@ -3,7 +3,7 @@
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 
-# 🚀 Chat Application - [DABubble](https://dabubble.daniel-tran.com)
+# 🚀 Chat Application - [DABubble](https://bubble.daniel-tran.com)
 
 
 #### A modern real-time business chat application built with Angular and Firebase, supporting scalable messaging, mentions, reactions, and channel collaboration.
