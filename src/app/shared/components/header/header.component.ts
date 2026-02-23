@@ -113,12 +113,7 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
     this.changeUserStatus();
   }
 
-  /**
-   * Angular lifecycle hook.
-   * Initializes:
-   * - beforeunload handler (only when session exists)
-   * - profile overlay open subscription
-   */
+  /** Initializes beforeunload handler and profile overlay subscription. */
   ngOnInit(): void {
     if (this.sessionData) {window.addEventListener('beforeunload', this.beforeUnloadHandler)}
     this.profileOverlayService.openProfile$.subscribe(() => {
@@ -126,20 +121,13 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
     });
   }
 
-  /**
-   * Angular lifecycle hook.
-   * Cleans up:
-   * - beforeunload handler
-   * Note: If you subscribe manually in this component, consider cleaning up subscriptions too.
-   */
+  /** Cleans up beforeunload handler. */
   ngOnDestroy(): void {
     window.removeEventListener('beforeunload', this.beforeUnloadHandler);
   }
 
    /**
    * Selects an avatar from the available options.
-   * Clears validation error if previously shown.
-   *
    * @param avatar Avatar image path
    */
   selectAvatar(avatar: string): void {
@@ -195,10 +183,7 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   }
 
   /**
-   * Opens a channel result from global search:
-   * - selects channel in chat service
-   * - switches UI to channel mode
-   * - scrolls to the target message
+   * Opens a channel result from global search and scrolls to message.
    * @param result Search result pointing to a channel message.
    */
   async openChannelResult(result: GlobalSearchResult) {
@@ -210,9 +195,7 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   }
 
   /**
-   * Opens a whisper result from global search:
-   * - selects whisper partner
-   * - scrolls to the target message
+   * Opens a whisper result from global search and scrolls to message.
    * @param result Search result pointing to a whisper message.
    */
   async openWhisperResult(result: GlobalSearchResult) {
@@ -342,10 +325,7 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   }
 
   /**
-   * Handles recipient input changes. Behavior:
-   * - Hides message search results immediately
-   * - Shows chooser dropdown on first character (`@` or `#`)
-   * - When cleared, hides all search result containers
+   * Handles recipient input changes. Shows chooser dropdown on first character (`@` or `#`).
    * @param value Current input value.
    */
   onInputChange(value: string) {
@@ -412,16 +392,21 @@ export class HeaderComponent extends MessageSearchBase implements OnInit, OnDest
   }
 
   /**
-   * Updates the user name and avatar in the database.
-   * Validates that the name contains at least 2 words before updating.
-   * Updates avatar if a new one was selected.
-   * Disables edit mode afterwards.
+   * Validates the name input in real-time.
    */
+  validateName() {
+    this.nameError = this.validationService.validationName(this.editedUsername);
+  }
+
+  /** Updates user name and avatar in DB after validation. */
   changeUserName() {
-    const result = this.validationService.changeNameValidation(this.nameError, this.editedUsername, this.sessionData, this.selectedAvatar, this.originalAvatar, this.username, this.edit, this.toggleProfileMenu);
+    const result = this.validationService.changeNameValidation(this.editedUsername, this.sessionData, this.selectedAvatar, this.originalAvatar, this.username, this.edit, this.toggleProfileMenu);
     if (result) {
-      this.username = result.username; this.edit = result.edit;
-      this.toggleProfileMenu = result.toggleProfileMenu; this.originalAvatar = result.originalAvatar;
+      this.username = result.username;
+      this.edit = result.edit;
+      this.toggleProfileMenu = result.toggleProfileMenu;
+      this.originalAvatar = result.originalAvatar;
+      this.nameError = result.nameError;
     }
   }
 }

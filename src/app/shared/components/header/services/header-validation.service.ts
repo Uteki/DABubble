@@ -14,9 +14,12 @@ export class HeaderValidationService {
    * Updates avatar if a new one was selected.
    * Disables edit mode afterwards.
    */
-  changeNameValidation(nameError: string | null , editedUsername:string, sessionData: string | null, selectedAvatar: string , originalAvatar:string, username:string, edit:boolean, toggleProfileMenu: boolean ) {
-    this.validationName(nameError, editedUsername);
-    if (nameError !== null || editedUsername.trim() === '') return;
+  changeNameValidation(editedUsername: string, sessionData: string | null, selectedAvatar: string, originalAvatar: string, username: string, edit: boolean, toggleProfileMenu: boolean) {
+    const nameError = this.validationName(editedUsername);
+    if (nameError !== null || editedUsername.trim() === '') {
+      return { username, edit, toggleProfileMenu, originalAvatar, nameError };
+    }
+    
     const inputName = editedUsername.trim();
     if (sessionData) {
       this.userService.updateUserName(sessionData, inputName).catch((err) => console.error(err));
@@ -28,22 +31,24 @@ export class HeaderValidationService {
     username = inputName;
     edit = false;
     toggleProfileMenu = !toggleProfileMenu;
-    return {username, edit, toggleProfileMenu, originalAvatar};
+    return { username, edit, toggleProfileMenu, originalAvatar, nameError };
   }
 
   /**
    * Validates the name input in real-time.
    * Checks if the trimmed name is empty or contains less than 2 words.
+   * @returns The validation error message or null if valid
    */
-  validationName(nameError:string | null , editedUsername:string ) {
-   const trimmedName = editedUsername.trim();
+  validationName(editedUsername: string): string | null {
+    const trimmedName = editedUsername.trim();
     const words = trimmedName.split(/\s+/).filter(word => word.length > 0);
+    
     if (trimmedName === '') {
-      nameError = 'Der Name darf nicht leer sein.';
+      return 'Der Name darf nicht leer sein.';
     } else if (words.length < 2) {
-      nameError = 'Der Name muss mindestens zwei Wörter enthalten.';
+      return 'Der Name muss mindestens zwei Wörter enthalten.';
     } else {
-      nameError = null;
+      return null;
     }
   }
 }
